@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 3.6 (Modules BIONIC™ Complets)
+## Version: 3.7 (Architecture BIONIC™ Engines)
 ## Dernière mise à jour: 2026-02-03
 
 ---
@@ -199,6 +199,56 @@ Voir `/app/FRONTPAGE_REPORT.md` pour le détail complet.
 - `/app/frontend/src/hooks/geospatial/index.js`
 - `/app/frontend/src/components/geospatial/`
 
+### 3.7 Architecture BIONIC™ Engines Python (NOUVEAU - v3.7) ✅
+
+**WMS Proxy Backend** (`/app/backend/geospatial/controllers/wms_proxy_controller.py`):
+- 11 sources WMS configurées (SIGÉOM, LiDAR, GRHQ, Forest, HydroSHEDS, OSM, CanVec, USGS, NOAA, NASA GIBS, Sentinel Hub)
+- Cache intelligent 24h (MD5 hash)
+- Contournement CORS automatique
+- Configuration MapLibre GL ready
+
+**Endpoints WMS Proxy:**
+- `GET /api/geospatial/wms/sources` - Liste toutes les sources
+- `GET /api/geospatial/wms/source/{id}` - Détails d'une source
+- `GET /api/geospatial/wms/tile/{source}/{layer}` - Récupère une tuile WMS
+- `GET /api/geospatial/wms/tile-url/{source}/{layer}` - Template URL pour MapLibre
+- `GET /api/geospatial/wms/maplibre-config` - Config complète MapLibre (23 couches)
+- `POST /api/geospatial/wms/cache/clear` - Vide le cache
+
+**HydroEngine Python** (`/app/bionic/engines/hydroEngine/`):
+```
+hydroEngine/
+├── __init__.py
+├── api/
+│   ├── __init__.py
+│   └── endpoints.py      # 15+ endpoints FastAPI
+├── core/
+│   ├── __init__.py
+│   ├── extractor.py      # Extraction WMS/WFS GRHQ
+│   ├── analyzer.py       # Scores proximité, densité réseau
+│   └── network.py        # Analyse confluences, corridors
+├── data/
+│   ├── cache/
+│   ├── processed/
+│   └── raw/
+├── layers/
+└── tests/
+```
+
+**Endpoints HydroEngine:**
+- `GET /api/bionic/hydro/status` - État du moteur
+- `POST /api/bionic/hydro/extract` - Extraction complète (rivières, lacs, wetlands)
+- `GET /api/bionic/hydro/extract/rivers` - Données cours d'eau
+- `GET /api/bionic/hydro/extract/lakes` - Données lacs
+- `GET /api/bionic/hydro/extract/wetlands` - Données milieux humides
+- `POST /api/bionic/hydro/analyze` - Analyse territoriale complète
+- `GET /api/bionic/hydro/score/proximity` - Score proximité eau
+- `GET /api/bionic/hydro/score/network-density` - Densité réseau hydrographique
+- `GET /api/bionic/hydro/network/corridors` - Analyse corridors
+- `GET /api/bionic/hydro/network/funnel-types` - Types de points d'entonnoir
+- `GET /api/bionic/hydro/species-preferences` - Préférences eau par espèce
+- `GET /api/bionic/hydro/wetland-types` - Types de milieux humides
+
 ---
 
 ## 4. APIs Développées
@@ -247,8 +297,12 @@ Voir `/app/FRONTPAGE_REPORT.md` pour le détail complet.
 ### P1 - Important (EN COURS)
 - [x] ~~Interface Territoire complète~~ ✅ (v3.6)
 - [x] ~~Algorithmes de scoring territoire~~ ✅ (v3.6)
-- [ ] **Pipeline d'analyse combinée backend** - Exposer /api/geospatial/analyze/combined
-- [ ] **Proxy WMS backend** - Contourner CORS des serveurs gouvernementaux
+- [x] ~~Proxy WMS backend~~ ✅ (v3.7) - Contourne CORS, cache 24h, 11 sources
+- [x] ~~HydroEngine Python~~ ✅ (v3.7) - Extraction, analyse, réseau hydrographique
+- [ ] **SentinelEngine Python** - Traitement images Sentinel-2
+- [ ] **SigeomEngine Python** - Données géologiques SIGÉOM
+- [ ] **EnvironmentEngine Python** - Analyse combinée multi-moteurs
+- [ ] Pipeline d'analyse combinée backend - Exposer /api/geospatial/analyze/combined
 - [ ] Connexion modules Blog/Community/Partners au backend
 - [ ] Export PDF des analyses
 
