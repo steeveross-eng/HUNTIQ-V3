@@ -122,7 +122,7 @@ Fusionner HUNTIQ V1 et V2 + Intégrer l'IA GPT-5.2 pour l'analyse d'attractants.
 - [x] ~~Module Admin accessible depuis UI~~ ✅ (Icône cadenas dans navigation)
 
 ### P1 - Important
-- [ ] Sécuriser mot de passe admin (déplacer dans .env)
+- [x] ~~Sécuriser mot de passe admin~~ ✅ (déplacé dans .env)
 - [ ] Optimiser temps de réponse IA (caching)
 - [ ] Ajouter plus d'espèces (faisan, lièvre, etc.)
 - [ ] Export PDF des analyses
