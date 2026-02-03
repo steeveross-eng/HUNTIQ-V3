@@ -421,5 +421,21 @@ REACT_APP_BACKEND_URL="https://xxx.emergent.sh"
 
 ---
 
+## 9. Changelog
+
+### 2026-02-03 - Plan de Développement BIONIC™
+- ✅ Créé endpoint API `GET /api/backup/development-plan` dans `backup_manager.py`
+- ✅ Ajouté nouvel onglet "Plan BIONIC™" dans `BackupManager.jsx`
+- ✅ Intégré `react-markdown` pour le rendu du plan
+- ✅ Affichage des métadonnées (date, lignes, taille)
+- ✅ Le plan de développement est accessible via Admin > Backup > Plan BIONIC™
+
+**Fichiers modifiés:**
+- `/app/backend/backup_manager.py` - Nouvel endpoint
+- `/app/frontend/src/components/BackupManager.jsx` - Nouvel onglet avec rendu Markdown
+- `/app/memory/BIONIC_DEVELOPMENT_PLAN.md` - Document source (565 lignes)
+
+---
+
 *HUNTIQ V3 BIONIC™ - Powered by GPT-5.2 & Emergent Platform*
 *La chasse réinventée au Québec 🦌*
