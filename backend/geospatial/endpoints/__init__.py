@@ -1287,3 +1287,75 @@ async def list_bionic_modules():
             {"id": "prediction_ia", "name": "Prédiction IA", "status": "in_development"}
         ]
     }
+
+
+# =============================================================================
+# WEATHER ENDPOINTS - OpenWeatherMap API (Real-time)
+# =============================================================================
+
+@geospatial_router.get("/weather/current")
+async def get_current_weather(
+    lat: float = Query(..., description="Latitude"),
+    lon: float = Query(..., description="Longitude"),
+    units: str = Query("metric", description="Units: metric (°C) or imperial (°F)")
+):
+    """
+    Get current weather conditions for a location.
+    
+    Includes hunting score calculation based on temperature, wind, pressure, etc.
+    
+    **Data Source:** OpenWeatherMap API
+    """
+    return await weather_controller.get_current_weather(lat, lon, units)
+
+
+@geospatial_router.get("/weather/forecast")
+async def get_weather_forecast(
+    lat: float = Query(..., description="Latitude"),
+    lon: float = Query(..., description="Longitude"),
+    units: str = Query("metric", description="Units: metric (°C) or imperial (°F)")
+):
+    """
+    Get 5-day weather forecast for a location.
+    
+    Includes daily hunting scores and optimal hunting hours.
+    
+    **Data Source:** OpenWeatherMap API
+    """
+    return await weather_controller.get_forecast(lat, lon, units)
+
+
+@geospatial_router.get("/weather/hunting-score")
+async def get_hunting_weather_score(
+    lat: float = Query(..., description="Latitude"),
+    lon: float = Query(..., description="Longitude")
+):
+    """
+    Get hunting score based on current weather conditions.
+    
+    Score factors:
+    - Temperature (optimal: 5-15°C)
+    - Wind speed (optimal: < 10 km/h)
+    - Barometric pressure
+    - Cloud cover
+    - Precipitation
+    
+    Returns score 0-100 with level and recommendations.
+    """
+    weather = await weather_controller.get_current_weather(lat, lon, "metric")
+    
+    if weather.get("status") != "success":
+        return weather
+    
+    return {
+        "status": "success",
+        "location": weather.get("location"),
+        "hunting_score": weather.get("hunting_score"),
+        "current_conditions": {
+            "temperature": weather.get("current", {}).get("temperature"),
+            "humidity": weather.get("current", {}).get("humidity"),
+            "wind": weather.get("wind"),
+            "condition": weather.get("weather", {}).get("condition")
+        },
+        "timestamp": weather.get("timestamp")
+    }
