@@ -1509,23 +1509,6 @@ function App() {
         </div>
       </AuthProvider>
     </LanguageProvider>
-    <div className="App min-h-screen bg-background">
-      <BrowserRouter>
-        <Navigation cartCount={cartCount} onCartOpen={() => setIsCartOpen(true)} />
-        <CartSheet isOpen={isCartOpen} onOpenChange={setIsCartOpen} cartItems={cartItems} onUpdateQuantity={handleUpdateQuantity} onRemoveItem={handleRemoveItem} />
-        <Routes>
-          <Route path="/" element={<HomePage products={products} onAddToCart={handleAddToCart} onAffiliateClick={handleAffiliateClick} />} />
-          <Route path="/analyze" element={<AnalyzerModule />} />
-          <Route path="/compare" element={<ComparePage products={products} />} />
-          <Route path="/shop" element={<ShopPage products={products} onAddToCart={handleAddToCart} onAffiliateClick={handleAffiliateClick} />} />
-          <Route path="/referral" element={<ReferralModule />} />
-          <Route path="/admin" element={<AdminPage onProductsUpdate={fetchProducts} />} />
-        </Routes>
-        <DynamicReferralWidget />
-        <Footer />
-        <Toaster position="bottom-right" richColors />
-      </BrowserRouter>
-    </div>
   );
 }
 
