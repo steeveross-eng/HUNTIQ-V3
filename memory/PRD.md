@@ -145,7 +145,35 @@ Voir `/app/FRONTPAGE_REPORT.md` pour le détail complet.
 - ✅ Forest - Inventaire forestier
 - ✅ Geomorphology - Analyse terrain
 - ✅ Potential - Calcul score de chasse (0-100)
+- ✅ **Nutrition** - Analyse nutritionnelle (v0.1.0)
 - 🔄 AI Predictions - En développement
+
+### 3.6 Module Nutrition BIONIC™ (NOUVEAU - v3.5) ✅
+
+**Architecture 100% modulaire dans `/bionic/modules/nutrition/`:**
+- `speciesProfiles.js` - Profils nutritionnels des espèces
+- `resourceClassifier.js` - Classification des ressources par couverture terrestre
+- `deficiencyDetector.js` - Détection des carences nutritionnelles
+- `recommendationEngine.js` - Génération de recommandations
+- `nutritionEngine.js` - Orchestrateur principal
+- `utils/math.js` - Fonctions utilitaires
+- `index.js` - Point d'entrée unique
+
+**Espèces supportées:**
+- Cerf de Virginie (deer)
+- Orignal (moose)
+- Ours noir (bear)
+
+**Types de couverture terrestre:**
+- Feuillus, Conifères, Plantes herbacées, Milieu humide, Forêt mixte
+
+**Endpoints API:**
+- `/api/geospatial/nutrition/species` - Liste des espèces
+- `/api/geospatial/nutrition/species/{key}` - Profil nutritionnel
+- `/api/geospatial/nutrition/full-analysis` - Analyse complète
+- `/api/geospatial/modules` - Liste des modules BIONIC™
+
+**Tests unitaires:** 16/16 passés (`/app/backend/tests/test_nutrition_module.py`)
 
 **Endpoints implémentés (30+):**
 - `/api/geospatial/status` - État du moteur
