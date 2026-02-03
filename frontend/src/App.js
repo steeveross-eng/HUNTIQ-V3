@@ -406,7 +406,7 @@ function App() {
 
   const handleAddToCart = async (product) => {
     try {
-      const response = await axios.post(`${API}/cart/add`, {
+      const response = await axios.post(`${API}/cart`, {
         session_id: sessionId,
         product_id: product.id,
         quantity: 1
