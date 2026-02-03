@@ -775,7 +775,8 @@ const ShopPage = ({ products, onAddToCart, onAffiliateClick }) => {
 
 import TerritoryRankings from "@/components/TerritoryRankings";
 import GpsHotspots from "@/components/GpsHotspots";
-const AdminPage = ({ onProductsUpdate }) => {
+
+const TerritoryPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
