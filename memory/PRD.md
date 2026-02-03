@@ -88,12 +88,41 @@ Fusionner HUNTIQ V1 et V2 + Intégrer l'IA GPT-5.2 pour l'analyse d'attractants.
 
 ---
 
+### 3.4 Module Administration (18 onglets)
+**Accès:** Icône cadenas dans la navigation (à droite du sélecteur de langue)
+**URL:** `/admin`
+**Mot de passe:** `Saturn5858*` (⚠️ À déplacer dans .env)
+
+**Onglets disponibles:**
+1. Tableau de bord - Vue d'ensemble
+2. Ventes - Gestion des ventes
+3. Produits - CRUD produits
+4. Partenaires - Gestion partenaires
+5. Clients - Base clients
+6. Commissions - Calcul commissions
+7. Performances - Analytics
+8. Catégories - Gestion catégories
+9. Contenu SEO - Optimisation SEO
+10. BACKUP - Sauvegarde données
+11. Accès Site - Contrôle d'accès
+12. Terres à louer - Gestion locations
+13. Réseautage - Module networking
+14. Email - Gestion emails
+15. Marketing - Outils marketing
+16. Partenaires (2) - Détails partenaires
+17. Contrôles - Paramètres système
+18. Identité - Branding
+
+---
+
 ## 5. Backlog Restant
 
 ### P0 - Critique
 - [x] ~~Tests fonctionnels~~ ✅ Complétés
+- [x] ~~Module Admin accessible depuis UI~~ ✅ (Icône cadenas dans navigation)
 
 ### P1 - Important
+- [ ] Sécuriser mot de passe admin (déplacer dans .env)
 - [ ] Optimiser temps de réponse IA (caching)
 - [ ] Ajouter plus d'espèces (faisan, lièvre, etc.)
 - [ ] Export PDF des analyses
