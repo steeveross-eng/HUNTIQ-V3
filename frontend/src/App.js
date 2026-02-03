@@ -1255,11 +1255,6 @@ const FormationsPage = () => {
           </DialogContent>
         </Dialog>
 
-        {/* FédéCP Section */}
-        <section className="mb-12">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-blue-500/20 rounded-lg">
-              <BookOpen className="h-6 w-6 text-blue-400" />
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-card border border-border flex-wrap h-auto p-1">
