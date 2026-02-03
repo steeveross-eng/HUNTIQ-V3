@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 3.7 (Architecture BIONIC™ Engines)
+## Version: 3.10 (Architecture BIONIC™ Complete)
 ## Dernière mise à jour: 2026-02-03
 
 ---
