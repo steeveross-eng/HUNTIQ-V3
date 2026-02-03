@@ -125,6 +125,52 @@ Voir `/app/FRONTPAGE_REPORT.md` pour le détail complet.
 - **URL:** `/admin`
 - **Mot de passe:** Variable `ADMIN_PASSWORD` dans `.env`
 
+### 3.5 Moteur Géospatial BIONIC™ (NOUVEAU - v3.4) ✅
+
+**Sources de données gratuites connectées (8 sources):**
+1. ✅ **LiDAR Québec** - Modèles numériques d'élévation (CC-BY 4.0)
+2. ✅ **SIGÉOM** - Géologie du socle et dépôts de surface (Données ouvertes Québec)
+3. ✅ **GRHQ** - Hydrographie (rivières, lacs, milieux humides) (CC-BY 4.0)
+4. ✅ **MFFP** - Inventaire écoforestier (CC-BY 4.0)
+5. ✅ **Sentinel-2** - Imagerie satellite (Free and Open)
+6. ✅ **Landsat 8/9** - Imagerie satellite (Public Domain)
+7. ✅ **MNE Québec** - Modèle numérique d'élévation (CC-BY 4.0)
+8. ✅ **OpenStreetMap** - Routes et infrastructures (ODbL)
+
+**Modules actifs:**
+- ✅ LiDAR - Analyse terrain
+- ✅ Sentinel - Imagerie satellite
+- ✅ SIGÉOM - Données géologiques
+- ✅ Hydro - Hydrologie
+- ✅ Forest - Inventaire forestier
+- ✅ Geomorphology - Analyse terrain
+- ✅ Potential - Calcul score de chasse (0-100)
+- 🔄 AI Predictions - En développement
+
+**Endpoints implémentés (30+):**
+- `/api/geospatial/status` - État du moteur
+- `/api/geospatial/data-sources` - Liste sources
+- `/api/geospatial/lidar/*` - Données LiDAR
+- `/api/geospatial/sigeom/*` - Géologie
+- `/api/geospatial/hydro/*` - Hydrologie
+- `/api/geospatial/forest/*` - Forêt
+- `/api/geospatial/sentinel/*` - Satellite
+- `/api/geospatial/geomorph/*` - Géomorphologie
+- `/api/geospatial/ai/*` - Prédictions IA
+- `/api/geospatial/potential/*` - Potentiel de chasse
+
+**Composants frontend:**
+- `MapModule.jsx` - Carte interactive avec régions Québec
+- `HuntingPotentialAnalysis.jsx` - Calcul de score
+- `DataSourcesPanel.jsx` - Affichage des sources
+
+**Fichiers:**
+- `/app/backend/geospatial/controllers/__init__.py`
+- `/app/backend/geospatial/endpoints/__init__.py`
+- `/app/frontend/src/services/geospatial/geospatial.service.js`
+- `/app/frontend/src/hooks/geospatial/index.js`
+- `/app/frontend/src/components/geospatial/`
+
 ---
 
 ## 4. APIs Développées
