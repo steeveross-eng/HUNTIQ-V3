@@ -1273,21 +1273,6 @@ function App() {
       }
     };
     checkSiteStatus();
-  const [siteStatus, setSiteStatus] = useState({ maintenance_mode: false });
-  const [checkingStatus, setCheckingStatus] = useState(true);
-
-  const sessionId = getSessionId();
-
-  // Check site maintenance status
-  const checkSiteStatus = useCallback(async () => {
-    try {
-      const response = await axios.get(`${API}/site/status`);
-      setSiteStatus(response.data);
-    } catch (error) {
-      console.error("Error checking site status:", error);
-      setSiteStatus({ maintenance_mode: false });
-    }
-    setCheckingStatus(false);
   }, []);
 
   const fetchProducts = useCallback(async () => {
