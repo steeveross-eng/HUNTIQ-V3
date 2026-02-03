@@ -140,7 +140,7 @@ const HeroSection = () => {
         <Logo size="large" />
       </div>
       <h1 className="text-4xl md:text-5xl golden-text font-bold mb-8 max-w-4xl leading-tight">
-        {t('hero_title')}
+        {brand.tagline}
       </h1>
       <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
         <Link to="/analyze">
@@ -162,9 +162,9 @@ const HeroSection = () => {
         </Link>
       </div>
       <div className="max-w-3xl mx-auto space-y-4">
-        <p className="text-gray-300">{t('hero_desc1')}</p>
-        <p className="text-[#f5a623] font-medium">{t('hero_desc2')}</p>
-        <p className="text-[#f5a623] font-semibold text-xl mt-6">{t('hero_slogan')}</p>
+        <p className="text-gray-300">{t('hero_description')}</p>
+        <p className="text-[#f5a623] font-medium">{t('hero_highlight')}</p>
+        <p className="text-[#f5a623] font-semibold text-xl mt-6">{brand.slogan}</p>
       </div>
     </section>
   );
