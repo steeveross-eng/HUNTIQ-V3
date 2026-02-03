@@ -54,7 +54,7 @@ import {
   Building2,
   MapPin,
   Tent,
-  RefreshCw
+  RefreshCw,
   BookOpen,
   Sparkles,
   Target,
