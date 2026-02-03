@@ -1,5 +1,3 @@
-// AnalyzerModule.jsx - Module Click & Analyse complet
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // AnalyzerModule.jsx - Module Click & Analyse Intelligent avec boutons sticky
 import { useState, useEffect, useCallback } from "react";
@@ -56,7 +54,7 @@ import {
   Building2,
   MapPin,
   Tent,
-  RefreshCw,
+  RefreshCw
   BookOpen,
   Sparkles,
   Target,
