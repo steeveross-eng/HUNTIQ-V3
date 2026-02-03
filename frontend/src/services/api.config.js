@@ -129,6 +129,16 @@ export const API_ENDPOINTS = {
   GEOSPATIAL_POTENTIAL_HOTSPOTS: '/api/geospatial/potential/hotspots',
   GEOSPATIAL_POTENTIAL_STAND_LOCATIONS: '/api/geospatial/potential/stand-locations',
   GEOSPATIAL_POTENTIAL_COMPONENTS: '/api/geospatial/potential/components',
+  
+  // Weather endpoints
+  GEOSPATIAL_WEATHER_CURRENT: '/api/geospatial/weather/current',
+  GEOSPATIAL_WEATHER_FORECAST: '/api/geospatial/weather/forecast',
+  GEOSPATIAL_WEATHER_HUNTING_SCORE: '/api/geospatial/weather/hunting-score',
+  
+  // Nutrition endpoints
+  GEOSPATIAL_NUTRITION_SPECIES: '/api/geospatial/nutrition/species',
+  GEOSPATIAL_NUTRITION_ANALYZE: '/api/geospatial/nutrition/full-analysis',
+  GEOSPATIAL_MODULES: '/api/geospatial/modules',
 };
 
 export default API_CONFIG;
