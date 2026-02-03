@@ -52,7 +52,30 @@ Fusionner HUNTIQ V1 et V2 + Intégrer l'IA GPT-5.2 pour l'analyse d'attractants 
 ├── useCommunity.js
 ├── useBlog.js
 ├── usePartners.js
+├── geospatial/
+│   └── index.js         # Hooks géospatiales (7 hooks)
 └── index.js (15+ hooks)
+```
+
+### Architecture Géospatiale BIONIC™ (NOUVEAU - v3.4)
+```
+/app/backend/geospatial/
+├── controllers/
+│   └── __init__.py      # Connecteurs APIs WMS/WFS (6 sources)
+├── endpoints/
+│   └── __init__.py      # 30+ endpoints REST
+└── models/
+    └── __init__.py      # Modèles Pydantic
+
+/app/frontend/src/
+├── services/geospatial/
+│   └── geospatial.service.js  # Service API client
+├── hooks/geospatial/
+│   └── index.js         # React hooks (7 hooks)
+└── components/geospatial/
+    ├── HuntingPotentialAnalysis.jsx
+    ├── DataSourcesPanel.jsx
+    └── index.js
 ```
 
 ### Nouvelles Dépendances Frontend
