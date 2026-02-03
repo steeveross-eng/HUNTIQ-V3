@@ -1,6 +1,5 @@
 // AnalyzerModule.jsx - Module Click & Analyse Intelligent avec boutons sticky
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -824,6 +823,33 @@ const AnalyzerModule = () => {
     setSelectedCategory(null);
     setSelectedSubcategory(null);
     setActiveTab("categories");
+  };
+  
+  return (
+    <main className="pt-20 min-h-screen bg-background">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Back Button */}
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/')}
+          className="mb-4 text-gray-400 hover:text-white hover:bg-gray-800/50"
+          data-testid="back-button-analyzer"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Retour à l'accueil
+        </Button>
+
+        {/* Header - Compact */}
+        <div className="text-center mb-4">
+          <div className="inline-flex items-center gap-2 bg-[#f5a623]/10 px-3 py-1.5 rounded-full mb-2">
+            <FlaskConical className="h-4 w-4 text-[#f5a623]" />
+            <span className="text-[#f5a623] font-semibold text-sm">Click & Analyse</span>
+          </div>
+          <h1 className="golden-text text-2xl md:text-3xl font-bold mb-2">Analysez votre Pourvoyeur et Produits</h1>
+          <p className="text-gray-400 text-sm max-w-xl mx-auto">
+            Notre IA analysera la composition, l'efficacité et comparera aux meilleurs produits du marché.
+    setSmartDetection(null);
+    setActiveView("input");
   };
   
   const handleStickyAnalyze = () => {
