@@ -397,49 +397,6 @@ const HeroSection = () => {
     </section>
   );
 };
-const HeroSection = () => (
-  <section className="hero-bg min-h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8 pt-16" data-testid="hero-section">
-    <div className="golden-border rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 bg-black/60">
-      <Logo size="large" />
-    </div>
-    <h1 className="text-hero golden-text font-bold mb-6 sm:mb-8 max-w-4xl leading-tight">
-      Votre parcours guidé vers l'attractant parfait
-    </h1>
-    <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-      <Link to="/analyze">
-        <Button className="btn-golden text-black font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full flex items-center gap-2 text-sm sm:text-base">
-          <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" /> Analysez
-        </Button>
-      </Link>
-      <ChevronRight className="text-[#f5a623] h-5 w-5 sm:h-6 sm:w-6 hidden md:block" />
-      <Link to="/compare">
-        <Button className="btn-golden text-black font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full flex items-center gap-2 text-sm sm:text-base">
-          <GitCompare className="h-4 w-4 sm:h-5 sm:w-5" /> Comparez
-        </Button>
-      </Link>
-      <ChevronRight className="text-[#f5a623] h-5 w-5 sm:h-6 sm:w-6 hidden md:block" />
-      <Link to="/shop">
-        <Button className="btn-golden text-black font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full flex items-center gap-2 text-sm sm:text-base">
-          <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" /> Commandez
-        </Button>
-      </Link>
-    </div>
-    <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4 px-2">
-      <p className="text-gray-300 text-body">
-        Explorez et comparez vous-même les leurres, urines, gels et attractants avec la plateforme 
-        scientifique de SCENT SCIENCE™ Laboratory, basée exclusivement sur des données publiques, 
-        déclarées et vérifiables.
-      </p>
-      <p className="text-[#f5a623] font-medium text-body">
-        Identifiez gratuitement les plus performants et repérez instantanément les meilleures solutions et prix.
-      </p>
-      <p className="text-gray-400 italic text-small">Devenez le professionnel des leurres en quelques clics.</p>
-      <p className="text-[#f5a623] font-semibold text-h3 mt-4 sm:mt-6">
-        La science valide maintenant ce que le terrain confirme.
-      </p>
-    </div>
-  </section>
-);
 
 // Product Card Component
 const ProductCard = ({ product, onAddToCart, onAffiliateClick }) => {
