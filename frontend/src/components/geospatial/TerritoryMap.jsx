@@ -22,6 +22,7 @@ import useMapLibre, {
   QUEBEC_WMS_LAYERS,
   QUEBEC_CENTER 
 } from '@/lib/maplibre';
+import WMSLayerSelector from './WMSLayerSelector';
 
 // Layer configuration with icons
 const AVAILABLE_LAYERS = [
