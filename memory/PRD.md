@@ -1,14 +1,14 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 3.2 (Frontpage BIONIC™ Complète)
+## Version: 3.3 (Intégration Backend ↔ Frontend)
 ## Dernière mise à jour: 2026-02-03
 
 ---
 
 ## 1. Énoncé du Problème Original
 
-Fusionner HUNTIQ V1 et V2 + Intégrer l'IA GPT-5.2 pour l'analyse d'attractants + Reconstruire entièrement la frontpage selon la vision BIONIC™.
+Fusionner HUNTIQ V1 et V2 + Intégrer l'IA GPT-5.2 pour l'analyse d'attractants + Reconstruire entièrement la frontpage selon la vision BIONIC™ + **Intégration complète Backend ↔ Frontend**.
 
 ### Sources
 - **HUNTIQ V2** (base): https://github.com/steeveross-eng/HUNTIQ-V2
@@ -25,6 +25,36 @@ Fusionner HUNTIQ V1 et V2 + Intégrer l'IA GPT-5.2 pour l'analyse d'attractants 
 - **IA**: GPT-5.2 via Emergent LLM Key
 - **Hébergement**: Emergent Platform
 
+### Architecture Services (NOUVEAU)
+```
+/app/frontend/src/services/
+├── api.config.js      # Configuration & endpoints (75+)
+├── api.client.js      # Client HTTP centralisé
+├── products.service.js
+├── cart.service.js
+├── analysis.service.js
+├── territory.service.js
+├── weather.service.js
+├── admin.service.js
+├── community.service.js
+├── blog.service.js
+├── partners.service.js
+├── newsletter.service.js
+└── index.js
+```
+
+### Architecture Hooks (NOUVEAU)
+```
+/app/frontend/src/hooks/
+├── useProducts.js
+├── useCart.js
+├── useWeather.js
+├── useCommunity.js
+├── useBlog.js
+├── usePartners.js
+└── index.js (15+ hooks)
+```
+
 ### Nouvelles Dépendances Frontend
 - `framer-motion` - Animations
 - `embla-carousel-react` - Carrousel produits
@@ -35,14 +65,14 @@ Fusionner HUNTIQ V1 et V2 + Intégrer l'IA GPT-5.2 pour l'analyse d'attractants 
 
 ## 3. Fonctionnalités Implémentées ✅
 
-### 3.1 Frontpage BIONIC™ (19 Modules) ✅ NOUVEAU
+### 3.1 Frontpage BIONIC™ (19 Modules) ✅
 Voir `/app/FRONTPAGE_REPORT.md` pour le détail complet.
 
 **Modules implémentés:**
 1. ✅ **Hero Section** - Parallax, BIONIC™ branding, stats animées
 2. ✅ **Product Carousel** - Embla carousel, API /products/top
 3. ✅ **Map Module** - Placeholder Mapbox (à activer)
-4. ✅ **Weather Module** - Météo simulée, score de chasse
+4. ✅ **Weather Module** - Service WeatherService, score de chasse
 5. ✅ **Bento Grid** - Intelligence Tactique (5 items)
 6. ✅ **Marketplace** - Vente flash, produits premium
 7. ✅ **Media & Formations** - Hunt TV + FédéCP
