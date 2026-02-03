@@ -675,36 +675,6 @@ const AnalyzePage = ({ products }) => (
   </main>
 );
 
-// Shop Page
-const ShopPage = ({ products, onAddToCart, onAffiliateClick }) => {
-  const navigate = useNavigate();
-  
-  return (
-    <main className="pt-20 min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Back Button */}
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate('/')}
-          className="mb-4 text-gray-400 hover:text-white hover:bg-gray-800/50"
-          data-testid="back-button-shop"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Retour à l'accueil
-        </Button>
-        
-        <h1 className="golden-text text-4xl font-bold mb-4">Magasin</h1>
-        <p className="text-gray-400 mb-8">Découvrez notre sélection complète de produits premium.</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} onAffiliateClick={onAffiliateClick} />
-          ))}
-        </div>
-      </div>
-    </main>
-  );
-};
-
 // ============================================
 // TERRITORY PAGE - Map Interface
 // ============================================
