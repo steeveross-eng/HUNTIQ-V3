@@ -292,13 +292,20 @@ const TerritoryMap = ({
         </div>
       )}
 
-      {/* Layer panel */}
+      {/* WMS Layer Selector - New advanced panel */}
       {mapLoaded && showLayerPanel && (
-        <LayerPanel
-          layers={AVAILABLE_LAYERS}
-          activeLayers={activeLayers}
-          onToggle={handleLayerToggle}
-          onOpacityChange={handleOpacityChange}
+        <WMSLayerSelector
+          map={map}
+          mapLoaded={mapLoaded}
+          position="left"
+          initialExpanded={true}
+          onLayerChange={(action, layerId) => {
+            if (action === 'add') {
+              setActiveLayers(prev => [...prev.filter(id => id !== layerId), layerId]);
+            } else {
+              setActiveLayers(prev => prev.filter(id => id !== layerId));
+            }
+          }}
         />
       )}
 
