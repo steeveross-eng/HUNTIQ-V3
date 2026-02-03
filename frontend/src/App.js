@@ -508,7 +508,6 @@ const FeaturesSection = () => {
   ];
   return (
     <section className="py-16 px-4 bg-black/50" data-testid="features-section">
-    <section className="section-padding px-4 sm:px-6 lg:px-8 bg-black/50">
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {features.map((feature, index) => (
@@ -518,8 +517,6 @@ const FeaturesSection = () => {
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">{t(feature.titleKey)}</h3>
               <p className="text-gray-400">{t(feature.descKey)}</p>
-              <h3 className="text-h3 font-semibold text-white mb-2">{feature.title}</h3>
-              <p className="text-gray-400 text-small">{feature.description}</p>
             </div>
           ))}
         </div>
