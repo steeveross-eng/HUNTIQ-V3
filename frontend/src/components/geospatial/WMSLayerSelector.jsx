@@ -660,7 +660,46 @@ const WMSLayerSelector = ({
       removeLayerFromMap(layerId);
     });
     setActiveLayers([]);
+    setCurrentPreset('');
   }, [activeLayers, removeLayerFromMap]);
+  
+  // Apply species preset
+  const handleApplyPreset = useCallback((speciesKey, preset) => {
+    if (!wmsConfig?.layers || !preset) return;
+    
+    // Clear existing layers first
+    activeLayers.forEach(layerId => {
+      removeLayerFromMap(layerId);
+    });
+    
+    // Find and activate preset layers
+    const newActiveLayers = [];
+    const newOpacities = { ...layerOpacities };
+    
+    preset.layers.forEach(presetLayerId => {
+      const layer = wmsConfig.layers.find(l => l.id === presetLayerId);
+      if (layer) {
+        addLayerToMap(layer);
+        newActiveLayers.push(layer.id);
+        // Apply preset opacity
+        if (preset.opacities && preset.opacities[presetLayerId]) {
+          newOpacities[layer.id] = preset.opacities[presetLayerId];
+          if (map && map.getLayer(layer.id)) {
+            map.setPaintProperty(layer.id, 'raster-opacity', preset.opacities[presetLayerId]);
+          }
+        }
+      }
+    });
+    
+    setActiveLayers(newActiveLayers);
+    setLayerOpacities(newOpacities);
+    setCurrentPreset(speciesKey);
+    
+    // Notify parent
+    if (onLayerChange) {
+      onLayerChange('preset', speciesKey);
+    }
+  }, [wmsConfig, activeLayers, layerOpacities, addLayerToMap, removeLayerFromMap, map, onLayerChange]);
   
   // Panel position styles
   const positionStyles = position === 'left' 
