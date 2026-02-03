@@ -707,7 +707,7 @@ function App() {
               onRemoveItem={handleRemoveItem}
             />
             <Routes>
-              <Route path="/" element={<HomePage products={products} onAddToCart={handleAddToCart} />} />
+              <Route path="/" element={<BionicHomePage onAddToCart={handleAddToCart} />} />
               <Route path="/analyze" element={<AnalyzerModule />} />
               <Route path="/compare" element={<ComparePage products={products} />} />
               <Route path="/shop" element={<ShopPage products={products} onAddToCart={handleAddToCart} />} />
@@ -723,7 +723,6 @@ function App() {
               <Route path="/become-partner" element={<BecomePartner />} />
               <Route path="/partner/dashboard" element={<PartnerDashboard />} />
             </Routes>
-            <Footer />
             <ScrollNavigator />
             <Toaster position="bottom-right" richColors />
             <CookieConsent />
