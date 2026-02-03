@@ -82,6 +82,9 @@ const HydroAnalysisPanel = ({
   const [targetSpecies, setTargetSpecies] = useState('deer');
   const [proximityScore, setProximityScore] = useState(null);
   
+  // Check if inline mode (embedded in parent card)
+  const isInline = position === 'inline';
+  
   // Fetch hydrology analysis
   const fetchAnalysis = useCallback(async () => {
     if (!bbox) return;
