@@ -562,9 +562,9 @@ const WMSLayerSelector = ({
     return acc;
   }, {});
   
-  // Add layer to map
+  // Add layer to map with error handling
   const addLayerToMap = useCallback((layer) => {
-    if (!map || !mapLoaded || !layer?.sourceConfig) return;
+    if (!map || !mapLoaded || !layer?.sourceConfig) return false;
     
     try {
       // Check if source exists
@@ -585,11 +585,20 @@ const WMSLayerSelector = ({
             'raster-opacity': layerOpacities[layer.id] || 0.7
           }
         });
+        
+        // Add error handler for the layer
+        map.on('error', (e) => {
+          if (e.sourceId === layer.layerConfig.source) {
+            console.warn(`WMS layer error (${layer.displayName}):`, e.error?.message || 'Source indisponible');
+          }
+        });
       } else {
         map.setLayoutProperty(layer.id, 'visibility', 'visible');
       }
+      return true;
     } catch (err) {
       console.warn(`Failed to add layer ${layer.id}:`, err.message);
+      return false;
     }
   }, [map, mapLoaded, layerOpacities]);
   
