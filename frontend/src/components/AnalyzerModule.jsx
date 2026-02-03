@@ -849,25 +849,14 @@ const AnalyzerModule = () => {
           <h1 className="golden-text text-2xl md:text-3xl font-bold mb-2">Analysez votre Pourvoyeur et Produits</h1>
           <p className="text-gray-400 text-sm max-w-xl mx-auto">
             Notre IA analysera la composition, l'efficacité et comparera aux meilleurs produits du marché.
-    setSmartDetection(null);
-    setActiveView("input");
-  };
-  
-  const handleStickyAnalyze = () => {
-    if (activeView === "results") {
-      resetAnalysis();
-    } else {
-      handleAnalyze();
-    }
-  };
-  
-  const handleStickyCompare = () => {
-    setShowCompareModal(true);
-  };
-  
-  return (
-    <main className="pt-20 min-h-screen bg-background relative pb-24 md:pb-8">
-      {/* Sticky Sidebar Buttons */}
+          </p>
+        </div>
+      </section>
+    </main>
+  );
+};
+
+export default AnalyzerModule;
       <StickySidebarButtons
         onAnalyzeClick={handleStickyAnalyze}
         onCompareClick={handleStickyCompare}
