@@ -775,49 +775,8 @@ const TerritoryPage = () => {
       </main>
     );
   }
-    const checkAuth = async () => {
-      const auth = localStorage.getItem('admin_authenticated');
-      if (auth === 'true') {
-        setIsAuthenticated(true);
-        return;
-      }
-      
-      // Try auto-login with saved password
-      const savedPassword = localStorage.getItem('admin_saved_password');
-      const savedRememberMe = localStorage.getItem('admin_remember_me') === 'true';
-      
-      if (savedPassword && savedRememberMe && !autoLoginAttempted) {
-        setAutoLoginAttempted(true);
-        setPassword(savedPassword);
-        setRememberMe(true);
-        // Auto-login
-        try {
-          setLoading(true);
-          await axios.post(`${API}/admin/login`, { password: savedPassword });
-          localStorage.setItem('admin_authenticated', 'true');
-          setIsAuthenticated(true);
-          toast.success("Reconnexion automatique réussie!");
-        } catch (error) {
-          // Clear saved credentials on failed auto-login
-          localStorage.removeItem('admin_saved_password');
-          localStorage.removeItem('admin_remember_me');
-          setPassword("");
-          setRememberMe(false);
-          toast.error("Session expirée - veuillez vous reconnecter");
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-    
-    checkAuth();
-  }, [autoLoginAttempted]);
 
-  useEffect(() => {
-    if (isAuthenticated) loadAllData();
-  }, [isAuthenticated]);
-
-  const loadAllData = async () => {
+  return (
     try {
       const [statsRes, productsRes, suppliersRes, ordersRes, customersRes, commissionsRes, alertsRes, salesRes, productsReportRes, siteSettingsRes] = await Promise.all([
         axios.get(`${API}/admin/stats`),
