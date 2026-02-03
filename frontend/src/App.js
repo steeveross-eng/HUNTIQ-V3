@@ -1117,38 +1117,17 @@ const FormationsPage = () => {
             <p className="text-gray-400">FédéCP & BIONIC™ - Devenez un chasseur expert</p>
           </div>
         </div>
-          <TabsList className="bg-card border border-border flex-wrap h-auto p-1">
-            <TabsTrigger value="dashboard" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
-              <BarChart3 className="h-4 w-4 mr-2" />Tableau de bord
-            </TabsTrigger>
-            <TabsTrigger value="sales" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
-              <TrendingUp className="h-4 w-4 mr-2" />Ventes
-            </TabsTrigger>
-            <TabsTrigger value="products" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
-              <Package className="h-4 w-4 mr-2" />Produits
-            </TabsTrigger>
-            <TabsTrigger value="suppliers" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
-              <Store className="h-4 w-4 mr-2" />Partenaires
-            </TabsTrigger>
-            <TabsTrigger value="customers" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
-              <Users className="h-4 w-4 mr-2" />Clients
-            </TabsTrigger>
-            <TabsTrigger value="commissions" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
-              <Percent className="h-4 w-4 mr-2" />Commissions
-            </TabsTrigger>
-            <TabsTrigger value="referral" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
-              <Gift className="h-4 w-4 mr-2" />Parrainage
-            </TabsTrigger>
-            <TabsTrigger value="discovery" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
-              <Bot className="h-4 w-4 mr-2" />Découverte IA
-            </TabsTrigger>
-            <TabsTrigger value="performance" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
-              <Award className="h-4 w-4 mr-2" />Performances
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Dashboard Tab */}
-          <TabsContent value="dashboard" className="space-y-6">
+        
+        {/* FédéCP Section */}
+        <section className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-blue-500/20 rounded-lg">
+              <BookOpen className="h-6 w-6 text-blue-400" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Formations FédéCP</h2>
+              <p className="text-gray-400 text-sm">Fédération québécoise des chasseurs et pêcheurs</p>
+            </div>
             {/* Stats Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Card className="bg-card border-border">
