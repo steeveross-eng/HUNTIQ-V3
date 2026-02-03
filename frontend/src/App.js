@@ -406,14 +406,17 @@ function App() {
 
   const handleAddToCart = async (product) => {
     try {
-      const response = await axios.post(`${API}/cart`, {
+      await axios.post(`${API}/cart`, {
         session_id: sessionId,
         product_id: product.id,
         quantity: 1
       });
-      setCartItems(response.data.items || []);
+      // Fetch updated cart
+      const cartResponse = await axios.get(`${API}/cart/${sessionId}`);
+      setCartItems(cartResponse.data.items || cartResponse.data || []);
       toast.success("Produit ajouté au panier!");
     } catch (error) {
+      console.error("Cart error:", error);
       toast.error("Erreur lors de l'ajout au panier");
     }
   };
