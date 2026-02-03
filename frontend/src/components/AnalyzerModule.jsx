@@ -1359,12 +1359,11 @@ const AnalyzerModule = () => {
                         </div>
                       </div>
                     </div>
-                    <span>{step}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                  </CardContent>
+                </Card>
+              </>
+            )}
+          </div>
         )}
         
         {/* ============================================ */}
