@@ -132,58 +132,51 @@ class TestDataSources:
 class TestHuntingPotentialCalculation:
     """Tests for hunting potential calculation endpoint"""
     
+    # Full payload with center_point as required by the model
+    POTENTIAL_PAYLOAD = {
+        "bbox": TEST_BBOX,
+        "center_point": {
+            "latitude": 46.25,
+            "longitude": -74.25
+        },
+        "radius_m": 2000.0,
+        "target_species": "deer",
+        "season": "rut",
+        "include_ai_predictions": True
+    }
+    
     def test_potential_calculate_returns_200(self):
         """Test /api/geospatial/potential/calculate returns 200"""
-        payload = {
-            "bbox": TEST_BBOX,
-            "target_species": "deer",
-            "season": "rut"
-        }
-        response = requests.post(f"{BASE_URL}/api/geospatial/potential/calculate", json=payload)
-        assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+        response = requests.post(f"{BASE_URL}/api/geospatial/potential/calculate", json=self.POTENTIAL_PAYLOAD)
+        assert response.status_code == 200, f"Expected 200, got {response.status_code}. Response: {response.text}"
         print(f"✅ /api/geospatial/potential/calculate returned 200")
     
     def test_potential_calculate_returns_score(self):
         """Test that calculation returns a valid score"""
-        payload = {
-            "bbox": TEST_BBOX,
-            "target_species": "deer",
-            "season": "rut"
-        }
-        response = requests.post(f"{BASE_URL}/api/geospatial/potential/calculate", json=payload)
+        response = requests.post(f"{BASE_URL}/api/geospatial/potential/calculate", json=self.POTENTIAL_PAYLOAD)
         data = response.json()
         
-        assert "overall_score" in data, "Response should include overall_score"
+        assert "overall_score" in data, f"Response should include overall_score. Got: {data}"
         score = data["overall_score"]
         assert 0 <= score <= 100, f"Score should be 0-100, got {score}"
         print(f"✅ Hunting potential score: {score}")
     
     def test_potential_calculate_returns_level(self):
         """Test that calculation returns a level"""
-        payload = {
-            "bbox": TEST_BBOX,
-            "target_species": "deer",
-            "season": "rut"
-        }
-        response = requests.post(f"{BASE_URL}/api/geospatial/potential/calculate", json=payload)
+        response = requests.post(f"{BASE_URL}/api/geospatial/potential/calculate", json=self.POTENTIAL_PAYLOAD)
         data = response.json()
         
-        assert "level" in data, "Response should include level"
+        assert "level" in data, f"Response should include level. Got: {data}"
         valid_levels = ["excellent", "good", "moderate", "low", "poor"]
         assert data["level"] in valid_levels, f"Invalid level: {data['level']}"
         print(f"✅ Hunting potential level: {data['level']}")
     
     def test_potential_calculate_returns_components(self):
         """Test that calculation returns component scores"""
-        payload = {
-            "bbox": TEST_BBOX,
-            "target_species": "deer",
-            "season": "rut"
-        }
-        response = requests.post(f"{BASE_URL}/api/geospatial/potential/calculate", json=payload)
+        response = requests.post(f"{BASE_URL}/api/geospatial/potential/calculate", json=self.POTENTIAL_PAYLOAD)
         data = response.json()
         
-        assert "component_scores" in data, "Response should include component_scores"
+        assert "component_scores" in data, f"Response should include component_scores. Got: {data}"
         components = data["component_scores"]
         
         expected_components = ["terrain", "water", "forest", "geology", "vegetation"]
@@ -194,15 +187,10 @@ class TestHuntingPotentialCalculation:
     
     def test_potential_calculate_returns_recommendations(self):
         """Test that calculation returns recommendations"""
-        payload = {
-            "bbox": TEST_BBOX,
-            "target_species": "deer",
-            "season": "rut"
-        }
-        response = requests.post(f"{BASE_URL}/api/geospatial/potential/calculate", json=payload)
+        response = requests.post(f"{BASE_URL}/api/geospatial/potential/calculate", json=self.POTENTIAL_PAYLOAD)
         data = response.json()
         
-        assert "recommendations" in data, "Response should include recommendations"
+        assert "recommendations" in data, f"Response should include recommendations. Got: {data}"
         assert isinstance(data["recommendations"], list), "Recommendations should be a list"
         print(f"✅ Returned {len(data['recommendations'])} recommendations")
 
