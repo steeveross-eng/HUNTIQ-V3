@@ -3,7 +3,7 @@ import sys
 from datetime import datetime
 
 class HuntiqAPITester:
-    def __init__(self, base_url="https://huntiq-fusion.preview.emergentagent.com"):
+    def __init__(self, base_url="https://huntiq-fusion-1.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.tests_run = 0
