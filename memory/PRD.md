@@ -1,13 +1,13 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 3.0
+## Version: 3.1 (avec IA GPT-5.2)
 
 ---
 
 ## 1. Énoncé du Problème Original
 
-Fusionner HUNTIQ (V1) et HUNTIQ V2 en un seul projet modulaire, performant, fiable, extensible et optimisé pour l'intégration IA.
+Fusionner HUNTIQ V1 et V2 + Intégrer l'IA GPT-5.2 pour l'analyse d'attractants.
 
 ### Sources
 - **HUNTIQ V2** (base): https://github.com/steeveross-eng/HUNTIQ-V2
@@ -21,148 +21,99 @@ Fusionner HUNTIQ (V1) et HUNTIQ V2 en un seul projet modulaire, performant, fiab
 - **Frontend**: React 18 + Tailwind CSS + ShadCN UI
 - **Backend**: FastAPI (Python)
 - **Base de données**: MongoDB
+- **IA**: GPT-5.2 via Emergent LLM Key
 - **Hébergement**: Emergent Platform
 
-### Structure du Projet
-```
-/app/
-├── backend/
-│   ├── server.py          # API FastAPI
-│   ├── requirements.txt
-│   └── .env
-├── frontend/
-│   ├── src/
-│   │   ├── App.js         # Composant principal
-│   │   ├── components/    # Composants React
-│   │   ├── pages/         # Pages séparées
-│   │   ├── contexts/      # Context providers
-│   │   └── hooks/         # Custom hooks
-│   └── public/
-└── memory/
-    ├── PRD.md
-    ├── analysis_report.md
-    └── missing_features_report.md
-```
+---
+
+## 3. Fonctionnalités Implémentées ✅
+
+### 3.1 AnalyzerModule BIONIC™ Complet
+- **13 Critères d'Évaluation** pondérés scientifiquement
+  1. Durée d'attraction (15%)
+  2. Appétence naturelle (12%)
+  3. Puissance olfactive (12%)
+  4. Persistance (10%)
+  5. Nutrition (10%)
+  6. Composés comportementaux (10%)
+  7. Résistance intempéries (8%)
+  8. Sécurité alimentaire (7%)
+  9. Certification ACIA (6%)
+  10. Résistance physique (4%)
+  11. Pureté ingrédients (3%)
+  12. Fidélisation (2%)
+  13. Stabilité chimique (1%)
+
+### 3.2 Analyse IA GPT-5.2
+- **Paramètres personnalisables**:
+  - Espèce cible (cerf, orignal, ours, sanglier, dindon)
+  - Saison (printemps, été, automne/rut, hiver)
+  - Conditions météo (froid, normal, chaud, pluie, neige)
+  - Type de terrain (forêt, champ, marais, montagne)
+- **Résultats**: Score, recommandation, meilleur moment, conseils d'application, produits alternatifs, base scientifique
+
+### 3.3 FormationsPage FédéCP & BIONIC™
+**Formations FédéCP officielles:**
+1. Initiation chasse avec arme à feu (Obligatoire, 8h, ~75$)
+2. Initiation chasse à l'arc (Obligatoire arc/arbalète, 4h, ~50$)
+3. Formation au piégeage (Obligatoire, 8h, ~60$)
+4. Formation chasse à l'orignal (Facultatif, 4h, ~40$)
+
+**Formations BIONIC™ exclusives:**
+1. Analyse de territoire BIONIC™
+2. Science des attractants
+3. Météo et mouvement du gibier
+
+**Types de Territoires au Québec:**
+1. Terres publiques (MFFP)
+2. ZEC (Zones d'exploitation contrôlée)
+3. Pourvoiries (privées avec services)
+4. Réserves fauniques (SÉPAQ)
+5. Terres privées
 
 ---
 
-## 3. Personas Utilisateurs
+## 4. APIs Développées
 
-### Chasseur Amateur
-- Recherche les meilleurs attractants
-- Compare les produits
-- Achète via dropshipping/affiliation
+### Endpoints d'Analyse
+- `POST /api/analyze` - Analyse standard
+- `POST /api/analyze/ai-advanced` - Analyse IA GPT-5.2
+- `GET /api/analyze/criteria` - Liste des 13 critères
+- `GET /api/analyze/references` - Références scientifiques
 
-### Chasseur Expert
-- Analyse son territoire
-- Utilise les cartes GPS
-- Participe au réseau social
-
-### Partenaire/Fournisseur
-- Gère ses produits
-- Suit les commissions
-- Accède au tableau de bord
-
-### Administrateur
-- Gère les produits/commandes
-- Configure le site
-- Analyse les statistiques
+### Endpoints Produits
+- `GET /api/products/top` - Top produits
+- `POST /api/products` - Créer produit
+- `GET /api/cart/{session_id}` - Voir panier
 
 ---
 
-## 4. Exigences Principales (Core Requirements)
-
-### 4.1 Navigation
-- [x] Page d'accueil avec hero section
-- [x] Menu de navigation (Home, Analyze, Compare, Shop, Territory)
-- [x] Sélecteur de langue FR/EN
-- [x] Authentification utilisateur
-- [x] Panier d'achat
-
-### 4.2 Analyse de Produits
-- [x] Module d'analyse BIONIC™
-- [x] 13 critères d'évaluation
-- [x] Recommandations IA
-- [x] Comparaison côte à côte
-
-### 4.3 Boutique
-- [x] Catalogue produits
-- [x] Système dropshipping/affiliation
-- [x] Panier et checkout
-- [x] Gestion commandes
-
-### 4.4 Territoire
-- [x] Carte interactive
-- [x] Points GPS (waypoints)
-- [x] Analyse de territoire
-- [x] Export GPX
-
-### 4.5 Administration
-- [x] Tableau de bord
-- [x] Gestion produits
-- [x] Gestion commandes
-- [x] Mode maintenance
-
----
-
-## 5. Implémenté (✅)
-
-### Session 2026-02-03
-- [x] Clone et analyse des repos V1 et V2
-- [x] Identification des erreurs de fusion
-- [x] Correction des imports dupliqués
-- [x] Suppression des composants dupliqués
-- [x] Reconstruction App.js modulaire
-- [x] Simplification AnalyzerModule.jsx
-- [x] Installation dépendances
-- [x] Seed de 5 produits test
-- [x] Tests fonctionnels (85-100% pass)
-- [x] Correction API panier
-
----
-
-## 6. Backlog Priorisé
+## 5. Backlog Restant
 
 ### P0 - Critique
-- [ ] Tests E2E complets
-- [ ] Documentation API
+- [x] ~~Tests fonctionnels~~ ✅ Complétés
 
 ### P1 - Important
-- [ ] Restaurer AnalyzerModule complet avec tous les critères
-- [ ] Améliorer FormationsPage avec données réelles
-- [ ] Intégration paiement Stripe
+- [ ] Optimiser temps de réponse IA (caching)
+- [ ] Ajouter plus d'espèces (faisan, lièvre, etc.)
+- [ ] Export PDF des analyses
 
 ### P2 - Souhaitable
-- [ ] Mode hors-ligne PWA
-- [ ] Notifications push
-- [ ] Système de parrainage complet
+- [ ] Historique des analyses utilisateur
+- [ ] Comparaison multi-produits IA
+- [ ] Mode hors-ligne
 
 ---
 
-## 7. Prochaines Actions
+## 6. Configuration
 
-1. **Immédiat**: Tests manuels des pages principales
-2. **Court terme**: Restaurer les fonctionnalités avancées de AnalyzerModule
-3. **Moyen terme**: Intégration IA pour analyses produits
-4. **Long terme**: Préparation pour production
-
----
-
-## 8. Notes Techniques
-
-### Erreurs Résolues
-- Virgules manquantes dans imports lucide-react
-- Composants dupliqués (HeroSection, ComparePage, ShopPage)
-- Blocs JSX mal fermés
-- Imports mal placés (au milieu du fichier)
-
-### API Endpoints Principaux
-- `GET /api/products/top` - Top produits
-- `GET /api/products` - Tous les produits
-- `POST /api/cart` - Ajouter au panier
-- `GET /api/cart/{session_id}` - Voir panier
-- `POST /api/analyze/product` - Analyser produit
+### Variables d'environnement Backend
+```
+MONGO_URL="mongodb://localhost:27017"
+DB_NAME="test_database"
+EMERGENT_LLM_KEY="sk-emergent-xxxx"
+```
 
 ---
 
-*Généré par HUNTIQ V3 Fusion Process*
+*HUNTIQ V3 - Powered by GPT-5.2 & Emergent Platform*
