@@ -7,48 +7,67 @@ import {
   CloudSnow, CloudFog, Zap
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { WeatherService } from '@/services';
 
 const WeatherModule = () => {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Simulated weather data for Quebec hunting regions
+  // Fetch weather data from service
   useEffect(() => {
-    // In production, this would fetch from OpenWeatherMap API
-    const mockWeather = {
-      location: 'Laurentides, QC',
-      current: {
-        temp: -5,
-        feels_like: -12,
-        humidity: 75,
-        pressure: 1018,
-        wind_speed: 15,
-        wind_dir: 'NO',
-        visibility: 10,
-        condition: 'Partiellement nuageux',
-        icon: 'cloud-sun'
-      },
-      hunting: {
-        score: 85,
-        status: 'Excellent',
-        advice: 'Conditions idéales pour la chasse au cerf. Vent faible, pression stable.'
-      },
-      sunrise: '07:15',
-      sunset: '16:45',
-      moon_phase: 'Croissant',
-      forecast: [
-        { day: 'Lun', temp_high: -3, temp_low: -10, icon: 'sun' },
-        { day: 'Mar', temp_high: -1, temp_low: -8, icon: 'cloud' },
-        { day: 'Mer', temp_high: 2, temp_low: -5, icon: 'cloud-rain' },
-        { day: 'Jeu', temp_high: -2, temp_low: -9, icon: 'cloud-snow' },
-        { day: 'Ven', temp_high: -4, temp_low: -12, icon: 'sun' },
-      ]
+    const fetchWeather = async () => {
+      setLoading(true);
+      try {
+        const data = await WeatherService.getRegionWeather('laurentides');
+        // Transform data for component
+        setWeather({
+          location: `${data.location}, QC`,
+          current: {
+            temp: data.temp,
+            feels_like: data.feels_like,
+            humidity: data.humidity,
+            pressure: data.pressure,
+            wind_speed: data.wind_speed,
+            wind_dir: data.wind_dir,
+            visibility: data.visibility,
+            condition: data.condition,
+            icon: data.icon
+          },
+          hunting: data.hunting,
+          sunrise: data.sunrise || '07:15',
+          sunset: data.sunset || '16:45',
+          moon_phase: data.moon_phase || 'Croissant',
+          forecast: data.forecast || []
+        });
+      } catch (err) {
+        console.error('Weather fetch error:', err);
+        // Fallback to simulated data
+        const fallback = WeatherService.getSimulatedWeather('Laurentides');
+        setWeather({
+          location: `${fallback.location}, QC`,
+          current: {
+            temp: fallback.temp,
+            feels_like: fallback.feels_like,
+            humidity: fallback.humidity,
+            pressure: fallback.pressure,
+            wind_speed: fallback.wind_speed,
+            wind_dir: fallback.wind_dir,
+            visibility: fallback.visibility,
+            condition: fallback.condition,
+            icon: fallback.icon
+          },
+          hunting: fallback.hunting,
+          sunrise: fallback.sunrise,
+          sunset: fallback.sunset,
+          moon_phase: fallback.moon_phase,
+          forecast: fallback.forecast
+        });
+      } finally {
+        setLoading(false);
+      }
     };
     
-    setTimeout(() => {
-      setWeather(mockWeather);
-      setLoading(false);
-    }, 500);
+    fetchWeather();
   }, []);
 
   const getWeatherIcon = (icon) => {
