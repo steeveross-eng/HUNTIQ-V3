@@ -317,11 +317,12 @@ const AnalyzePage = ({ products }) => (
   </main>
 );
 
-// TerritoryPage Component
+// Import new Territory Page
+import TerritoryPageNew from "@/pages/TerritoryPage";
+
+// TerritoryPage Component - Now using the full BIONIC™ Territory Page
 const TerritoryPage = () => (
-  <main className="pt-16 min-h-screen bg-background">
-    <MonTerritoireBionicPage />
-  </main>
+  <TerritoryPageNew />
 );
 
 // MarketplacePage Component
