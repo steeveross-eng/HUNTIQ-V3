@@ -590,6 +590,24 @@ const TerritoryPage = () => {
                   onCalculate={setTerritoryScore}
                 />
 
+                {/* Hydro Analysis Panel - BIONIC™ HydroEngine */}
+                {currentBbox && (
+                  <Card className="bg-[#1a1a1a] border-white/10">
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center gap-2">
+                        <Droplets className="h-5 w-5 text-blue-400" />
+                        <CardTitle className="text-sm text-white">Analyse Hydrologique</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <HydroAnalysisPanel
+                        bbox={currentBbox}
+                        position="inline"
+                      />
+                    </CardContent>
+                  </Card>
+                )}
+
                 {/* Weather panel */}
                 {selectedLocation && (
                   <WeatherPanel
