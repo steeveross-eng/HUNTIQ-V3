@@ -162,6 +162,11 @@ def main():
     print("\n🛒 Testing Cart Functionality...")
     tester.test_cart_functionality()
     
+    print("\n🧪 Testing Analyzer Module...")
+    tester.test_analyze_criteria()
+    tester.test_analyze_basic()
+    tester.test_analyze_ai_advanced()
+    
     # Print results
     print("\n" + "=" * 50)
     print(f"📊 Test Results: {tester.tests_passed}/{tester.tests_run} passed")
