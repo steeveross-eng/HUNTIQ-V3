@@ -7,7 +7,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://terra-analysis-2.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://territory-view.preview.emergentagent.com')
 
 # Test coordinates for Quebec City
 TEST_LAT = 46.8139
