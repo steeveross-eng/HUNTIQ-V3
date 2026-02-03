@@ -431,6 +431,15 @@ const TerritoryPage = () => {
   const [waypoints, setWaypoints] = useState([]);
   const [territoryScore, setTerritoryScore] = useState(null);
   const [activeTab, setActiveTab] = useState('map');
+  const [showHydroPanel, setShowHydroPanel] = useState(true);
+  
+  // Build bbox from selected location
+  const currentBbox = selectedLocation ? {
+    min_lat: selectedLocation.lat - 0.1,
+    max_lat: selectedLocation.lat + 0.1,
+    min_lon: selectedLocation.lng - 0.1,
+    max_lon: selectedLocation.lng + 0.1
+  } : null;
 
   // Handle location selection from map
   const handleLocationSelect = useCallback((location) => {
