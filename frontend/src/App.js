@@ -783,12 +783,6 @@ const TerritoryPage = () => {
   const [autoLoginFailed, setAutoLoginFailed] = useState(false);
   const [activeTab, setActiveTab] = useState('map'); // 'map', 'rankings', or 'hotspots'
   const [navigateToCoords, setNavigateToCoords] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [userName, setUserName] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [autoLoginFailed, setAutoLoginFailed] = useState(false);
-  const [activeTab, setActiveTab] = useState('map'); // 'map', 'rankings', or 'hotspots'
-  const [navigateToCoords, setNavigateToCoords] = useState(null);
 
   // Function to navigate to map with specific coordinates
   const handleNavigateToMap = (lat, lng) => {
