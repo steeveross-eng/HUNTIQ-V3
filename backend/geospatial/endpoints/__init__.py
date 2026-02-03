@@ -32,6 +32,7 @@ from ..controllers import (
     osm_controller,
     hunting_potential,
 )
+from ..controllers.weather_controller import weather_controller
 
 # Create router for geospatial endpoints
 geospatial_router = APIRouter(prefix="/api/geospatial", tags=["Geospatial Engine"])
