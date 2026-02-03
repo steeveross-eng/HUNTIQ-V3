@@ -327,7 +327,15 @@ const BackupManager = () => {
 
       {/* Sub-tabs */}
       <Tabs value={activeSubTab} onValueChange={setActiveSubTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-card">
+        <TabsList className="grid w-full grid-cols-3 bg-card">
+          <TabsTrigger 
+            value="plan" 
+            className="data-[state=active]:bg-emerald-500 data-[state=active]:text-white"
+            data-testid="backup-plan-tab"
+          >
+            <Rocket className="h-4 w-4 mr-2" />
+            Plan BIONIC™
+          </TabsTrigger>
           <TabsTrigger 
             value="prompts" 
             className="data-[state=active]:bg-blue-500 data-[state=active]:text-white"
@@ -345,6 +353,125 @@ const BackupManager = () => {
             Code
           </TabsTrigger>
         </TabsList>
+
+        {/* Development Plan Tab */}
+        <TabsContent value="plan" className="space-y-4">
+          <Card className="bg-card border-border">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Rocket className="h-5 w-5 text-emerald-400" />
+                    Plan de Développement BIONIC™
+                  </CardTitle>
+                  <CardDescription>
+                    Feuille de route officielle du projet - Version 3.10
+                  </CardDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={loadDevPlan}
+                    disabled={devPlanLoading}
+                    className="border-emerald-500/50 text-emerald-400"
+                  >
+                    {devPlanLoading ? (
+                      <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4 mr-1" />
+                    )}
+                    Actualiser
+                  </Button>
+                  {devPlan && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyContent(devPlan)}
+                      className="border-gray-500/50 text-gray-400"
+                    >
+                      <Copy className="h-4 w-4 mr-1" />
+                      Copier
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {/* Metadata badges */}
+              {devPlanMetadata && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <Badge variant="outline" className="text-emerald-400 border-emerald-500/50">
+                    <Calendar className="h-3 w-3 mr-1" />
+                    {new Date(devPlanMetadata.modified_at).toLocaleDateString("fr-CA")}
+                  </Badge>
+                  <Badge variant="outline" className="text-blue-400 border-blue-500/50">
+                    <Layers className="h-3 w-3 mr-1" />
+                    {devPlanMetadata.lines} lignes
+                  </Badge>
+                  <Badge variant="outline" className="text-purple-400 border-purple-500/50">
+                    <Database className="h-3 w-3 mr-1" />
+                    {formatBytes(devPlanMetadata.size_bytes)}
+                  </Badge>
+                </div>
+              )}
+              
+              {/* Loading State */}
+              {devPlanLoading && !devPlan && (
+                <div className="flex items-center justify-center py-12">
+                  <RefreshCw className="h-8 w-8 animate-spin text-emerald-400" />
+                </div>
+              )}
+              
+              {/* Markdown Content */}
+              {devPlan && (
+                <ScrollArea className="h-[600px] rounded-lg border border-border">
+                  <div className="p-6 prose prose-invert prose-sm max-w-none
+                    prose-headings:text-white prose-headings:font-bold
+                    prose-h1:text-2xl prose-h1:border-b prose-h1:border-emerald-500/30 prose-h1:pb-2 prose-h1:mb-4
+                    prose-h2:text-xl prose-h2:text-emerald-400 prose-h2:mt-6
+                    prose-h3:text-lg prose-h3:text-blue-400
+                    prose-h4:text-base prose-h4:text-purple-400
+                    prose-p:text-gray-300 prose-p:leading-relaxed
+                    prose-a:text-emerald-400 prose-a:no-underline hover:prose-a:underline
+                    prose-strong:text-white
+                    prose-code:bg-background prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-emerald-300
+                    prose-pre:bg-background prose-pre:border prose-pre:border-border
+                    prose-ul:text-gray-300 prose-ol:text-gray-300
+                    prose-li:marker:text-emerald-400
+                    prose-table:border-collapse
+                    prose-th:bg-emerald-500/20 prose-th:text-white prose-th:p-2 prose-th:border prose-th:border-border
+                    prose-td:p-2 prose-td:border prose-td:border-border prose-td:text-gray-300
+                    prose-hr:border-border
+                  ">
+                    <ReactMarkdown>{devPlan}</ReactMarkdown>
+                  </div>
+                </ScrollArea>
+              )}
+              
+              {/* Empty State */}
+              {!devPlanLoading && !devPlan && (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Rocket className="h-16 w-16 text-gray-600 mb-4" />
+                  <h3 className="text-lg font-medium text-white mb-2">
+                    Plan de développement non disponible
+                  </h3>
+                  <p className="text-gray-400 mb-4">
+                    Le fichier du plan de développement n'a pas été trouvé.
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={loadDevPlan}
+                    className="border-emerald-500/50 text-emerald-400"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Réessayer
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {/* Prompts Tab */}
         <TabsContent value="prompts" className="space-y-4">
