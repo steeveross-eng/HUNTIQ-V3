@@ -105,13 +105,13 @@ const Navigation = ({ cartCount, onCartOpen }) => {
         </nav>
         <div className="flex items-center gap-4">
           <LanguageSwitcher />
-          {/* Admin Link */}
+          <UserMenu />
+          {/* Admin Link - Right after Connexion button */}
           <Link to="/admin">
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-[#f5a623]" data-testid="admin-link">
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-[#f5a623]" data-testid="admin-link" title="Administration">
               <Lock className="h-4 w-4" />
             </Button>
           </Link>
-          <UserMenu />
           <Button variant="outline" onClick={onCartOpen} className="relative" data-testid="cart-button">
             <ShoppingCart className="h-5 w-5" />
             {cartCount > 0 && (
