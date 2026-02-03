@@ -1209,18 +1209,19 @@ const AnalyzerModule = () => {
                   "Détection du type de produit",
                   "Catégorisation intelligente",
                   "Analyse des ingrédients",
-                  "Calcul du score d&apos;attraction",
+                  "Calcul du score d'attraction",
                   "Identification des meilleurs produits",
                   "Préparation des recommandations"
                 ].map((step, index) => (
                   <div key={index} className="flex items-center gap-3 text-gray-400">
                     <div className="w-6 h-6 rounded-full bg-[#f5a623]/20 flex items-center justify-center">
                       <Loader2 className="h-4 w-4 animate-spin text-[#f5a623]" />
-                      <span>{step}</span>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
+                    <span>{step}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
             </Card>
           </TabsContent>
           
