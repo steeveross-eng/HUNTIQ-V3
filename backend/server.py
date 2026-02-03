@@ -4590,6 +4590,22 @@ try:
 except ImportError as e:
     print(f"Hydrology Engine not available: {e}")
 
+# Include BIONIC™ Sentinel Engine
+try:
+    from sentinelEngine.api.endpoints import sentinel_engine_router
+    app.include_router(sentinel_engine_router)
+    print("BIONIC™ Sentinel Engine loaded - Vegetation analysis active")
+except ImportError as e:
+    print(f"Sentinel Engine not available: {e}")
+
+# Include BIONIC™ SIGÉOM Engine
+try:
+    from sigeomEngine.api.endpoints import sigeom_engine_router
+    app.include_router(sigeom_engine_router)
+    print("BIONIC™ SIGÉOM Engine loaded - Geology analysis active")
+except ImportError as e:
+    print(f"SIGÉOM Engine not available: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
