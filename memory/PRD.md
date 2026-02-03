@@ -201,10 +201,12 @@ Voir `/app/FRONTPAGE_REPORT.md` pour le détail complet.
 - [x] ~~Module Admin accessible~~ ✅
 - [x] ~~Sécuriser mot de passe admin~~ ✅
 - [x] ~~Reconstruction Frontpage BIONIC™~~ ✅
+- [x] ~~Moteur Géospatial BIONIC™~~ ✅ (v3.4)
 
 ### P1 - Important
-- [ ] **Mapbox Integration** - Activer carte interactive avec clé API
-- [ ] **OpenWeatherMap Integration** - Données météo réelles
+- [ ] **Mapbox Integration** - Carte vectorielle interactive (clé API disponible)
+- [ ] **OpenWeatherMap Integration** - Données météo temps réel (clé API disponible)
+- [ ] Connexion modules Blog/Community/Partners au backend
 - [ ] Optimiser temps de réponse IA (caching)
 - [ ] Export PDF des analyses
 
