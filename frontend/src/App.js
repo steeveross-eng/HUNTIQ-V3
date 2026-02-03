@@ -1115,8 +1115,6 @@ const FormationsPage = () => {
               Centre de Formations
             </h1>
             <p className="text-gray-400">FédéCP & BIONIC™ - Devenez un chasseur expert</p>
-            <h1 className="golden-text text-4xl font-bold">Administration</h1>
-            <p className="text-gray-400 mt-2">Système Hybride Dropshipping + Affiliation</p>
           </div>
           <div className="flex items-center gap-2">
             {/* Maintenance Mode Indicator & Button */}
