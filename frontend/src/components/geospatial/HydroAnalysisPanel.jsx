@@ -138,10 +138,112 @@ const HydroAnalysisPanel = ({
     }
   }, [bbox, fetchAnalysis, fetchProximityScore]);
   
-  // Position styles
+  // Position styles (for absolute positioning)
   const positionStyles = position === 'right'
     ? 'right-4 top-4'
-    : 'left-4 top-4';
+    : position === 'left'
+    ? 'left-4 top-4'
+    : '';
+  
+  // If inline mode, render without Card wrapper
+  if (isInline) {
+    return (
+      <div className="p-4 space-y-4">
+        {/* Species Selector */}
+        <div className="space-y-2">
+          <label className="text-xs text-gray-400">Espèce cible</label>
+          <Select value={targetSpecies} onValueChange={setTargetSpecies}>
+            <SelectTrigger className="bg-black/40 border-white/10 text-white h-9">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-[#1a1a1a] border-white/10">
+              {SPECIES_OPTIONS.map(species => (
+                <SelectItem key={species.value} value={species.value} className="text-white">
+                  <div className="flex items-center gap-2">
+                    <span>{species.icon}</span>
+                    <span>{species.label}</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        {/* Loading state */}
+        {loading && (
+          <div className="flex items-center justify-center py-6">
+            <Loader2 className="h-6 w-6 text-blue-400 animate-spin" />
+          </div>
+        )}
+        
+        {/* Error state */}
+        {error && !loading && (
+          <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-sm">
+            <AlertCircle className="h-4 w-4 text-red-400" />
+            <p className="text-sm text-red-400">{error}</p>
+          </div>
+        )}
+        
+        {/* Analysis Results */}
+        {analysis && !loading && (
+          <>
+            {/* Overall Score */}
+            <div className="p-4 bg-gradient-to-r from-blue-500/10 to-transparent rounded-sm border border-blue-500/20">
+              <ScoreDisplay
+                score={analysis.overall_score || 0}
+                level={analysis.level || 'modéré'}
+                label="Score Hydrologique"
+              />
+            </div>
+            
+            {/* Proximity Score */}
+            {proximityScore && (
+              <div className="p-3 bg-black/30 rounded-sm border border-white/5">
+                <div className="flex items-center gap-2 mb-2">
+                  <Target className="h-4 w-4 text-[#f5a623]" />
+                  <span className="text-sm font-medium text-white">Proximité Eau</span>
+                </div>
+                <p className="text-xs text-gray-400">
+                  {proximityScore.interpretation}
+                </p>
+              </div>
+            )}
+            
+            {/* Recommendations */}
+            {analysis.recommendations && analysis.recommendations.length > 0 && (
+              <div className="space-y-2">
+                <span className="text-xs text-gray-400">Recommandations</span>
+                <div className="space-y-2">
+                  {analysis.recommendations.slice(0, 2).map((rec, i) => (
+                    <RecommendationCard key={i} text={rec} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+        
+        {/* Refresh button */}
+        {bbox && (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={fetchAnalysis}
+            disabled={loading}
+            className="w-full border-white/20 text-gray-300 hover:text-white"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Actualiser
+          </Button>
+        )}
+        
+        {/* Data source */}
+        <p className="text-xs text-gray-500 text-center">
+          BIONIC™ HydroEngine | Données GRHQ
+        </p>
+      </div>
+    );
+  }
   
   return (
     <Card className={`absolute ${positionStyles} z-10 w-80 bg-black/95 border-white/10 backdrop-blur-md shadow-xl max-h-[600px] overflow-hidden`}>
