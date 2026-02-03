@@ -2166,7 +2166,7 @@ async def ai_advanced_analysis(request: AIAnalysisRequest):
                 "scientific_basis": "Analyse basée sur la composition chimique et les études comportementales des cervidés",
                 "weather_impact": f"Par temps {request.weather}, l'efficacité peut varier",
                 "seasonal_advice": f"En {request.season}, privilégiez les produits adaptés au comportement saisonnier",
-                "recommendation": response.text[:500] if response.text else "Produit recommandé pour ces conditions"
+                "recommendation": response[:500] if response else "Produit recommandé pour ces conditions"
             }
         
         return AIAnalysisResponse(
