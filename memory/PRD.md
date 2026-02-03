@@ -280,6 +280,29 @@ hydroEngine/
 10. NASA GIBS (2 couches) - MODIS Terra, VIIRS
 11. Sentinel Hub - Couleur réelle, NDVI (si clé API fournie)
 
+### 3.9 Préréglages de Couches par Espèce (NOUVEAU - v3.9) ✅
+
+**6 Préréglages d'espèces avec couches optimisées:**
+
+| Espèce | Icône | Couches activées |
+|--------|-------|------------------|
+| **Orignal** | 🫎 | Hydrologie (cours d'eau, lacs, wetlands), Forêt, LiDAR DTM |
+| **Cerf de Virginie** | 🦌 | Forêt (peuplements, espèces), LiDAR DTM, Hydrologie, OSM |
+| **Ours noir** | 🐻 | Forêt, Hydrologie, LiDAR DTM, NASA MODIS |
+| **Sauvagine** | 🦆 | Milieux humides, Lacs, Cours d'eau, HydroSHEDS, NASA MODIS |
+| **Dindon sauvage** | 🦃 | Forêt (peuplements, espèces), LiDAR, OSM, NASA MODIS |
+| **Petit gibier** | 🐰 | Forêt, Milieux humides, Cours d'eau, LiDAR CHM |
+
+**Fonctionnalités:**
+- Sélection rapide via dropdown "Préréglage par gibier"
+- Application automatique des couches avec opacités optimisées
+- Description de l'habitat pour chaque espèce
+- Bouton "Tout effacer" pour réinitialiser
+
+### 3.10 Position Admin Icon (v3.9) ✅
+- L'icône d'administration (🔒) est maintenant positionnée **juste à droite** du bouton "Connexion"
+- Ordre dans le header: Langue → Connexion → Admin → Panier
+
 ---
 
 ## 4. APIs Développées
