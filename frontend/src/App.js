@@ -46,7 +46,7 @@ import {
   Package, Users, Store, Percent, BarChart3, Award, Info, Lock, Clock, AlertTriangle,
   ExternalLink, Trash2, Edit, Plus, Loader2, GraduationCap, BookOpen, Brain,
   Map, Globe, Construction, Power, Mail, Handshake, XCircle, Moon, Sun, Bot,
-  Radar, Share2, Gift
+  Radar, Share2, Gift, DollarSign
 } from "lucide-react";
 import {
   Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle
