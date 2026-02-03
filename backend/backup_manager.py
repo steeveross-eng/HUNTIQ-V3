@@ -578,3 +578,39 @@ async def clear_backup_history(backup_type: str, keep_latest: int = 5):
         "deleted": deleted,
         "kept_per_item": keep_latest
     }
+
+
+# ==================== DEVELOPMENT PLAN ====================
+
+DEVELOPMENT_PLAN_PATH = "/app/memory/BIONIC_DEVELOPMENT_PLAN.md"
+
+@router.get("/development-plan")
+async def get_development_plan():
+    """Get the BIONIC™ Development Plan markdown content"""
+    try:
+        if not os.path.exists(DEVELOPMENT_PLAN_PATH):
+            raise HTTPException(
+                status_code=404, 
+                detail="Plan de développement non trouvé"
+            )
+        
+        with open(DEVELOPMENT_PLAN_PATH, "r", encoding="utf-8") as f:
+            content = f.read()
+        
+        # Get file stats
+        stat = os.stat(DEVELOPMENT_PLAN_PATH)
+        
+        return {
+            "success": True,
+            "content": content,
+            "metadata": {
+                "path": DEVELOPMENT_PLAN_PATH,
+                "size_bytes": stat.st_size,
+                "modified_at": datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat(),
+                "lines": len(content.splitlines())
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la lecture: {str(e)}")
