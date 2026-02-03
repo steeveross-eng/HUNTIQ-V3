@@ -97,6 +97,18 @@ const MainLayout = ({ children, cart = [], onLanguageChange }) => {
                 </Button>
               )}
 
+              {/* Admin Settings - Right after Connexion */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/admin')}
+                className="text-gray-300 hover:text-[#f5a623]"
+                data-testid="header-admin-btn"
+                title="Administration"
+              >
+                <Settings className="h-5 w-5" />
+              </Button>
+
               {/* Language Selector */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -114,16 +126,6 @@ const MainLayout = ({ children, cart = [], onLanguageChange }) => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-
-              {/* Settings */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/admin')}
-                className="text-gray-300 hover:text-[#f5a623]"
-              >
-                <Settings className="h-5 w-5" />
-              </Button>
 
               {/* Cart */}
               <Button
