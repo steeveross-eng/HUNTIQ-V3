@@ -101,9 +101,16 @@ const Navigation = ({ cartCount, onCartOpen }) => {
           <Link to="/compare" className="text-gray-400 hover:text-white transition-colors">{t('nav_compare')}</Link>
           <Link to="/shop" className="text-gray-400 hover:text-white transition-colors">{t('nav_shop')}</Link>
           <Link to="/territoire" className="text-gray-400 hover:text-white transition-colors">{t('nav_territory')}</Link>
+          <Link to="/formations" className="text-gray-400 hover:text-white transition-colors">Formations</Link>
         </nav>
         <div className="flex items-center gap-4">
           <LanguageSwitcher />
+          {/* Admin Link */}
+          <Link to="/admin">
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-[#f5a623]" data-testid="admin-link">
+              <Lock className="h-4 w-4" />
+            </Button>
+          </Link>
           <UserMenu />
           <Button variant="outline" onClick={onCartOpen} className="relative" data-testid="cart-button">
             <ShoppingCart className="h-5 w-5" />
