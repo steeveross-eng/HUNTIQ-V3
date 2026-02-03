@@ -94,7 +94,7 @@ Voir `/app/FRONTPAGE_REPORT.md` pour le détail complet.
 **Modules implémentés:**
 1. ✅ **Hero Section** - Parallax, BIONIC™ branding, stats animées
 2. ✅ **Product Carousel** - Embla carousel, API /products/top
-3. ✅ **Map Module** - Placeholder Mapbox (à activer)
+3. ✅ **Map Module** - Moteur géospatial BIONIC™ actif (8 sources)
 4. ✅ **Weather Module** - Service WeatherService, score de chasse
 5. ✅ **Bento Grid** - Intelligence Tactique (5 items)
 6. ✅ **Marketplace** - Vente flash, produits premium
