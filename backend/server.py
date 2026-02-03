@@ -4572,6 +4572,14 @@ try:
 except ImportError as e:
     print(f"WMS Proxy API not available: {e}")
 
+# Include BIONIC™ Geospatial Engine
+try:
+    from geospatial.endpoints import geospatial_router
+    app.include_router(geospatial_router)
+    print("BIONIC™ Geospatial Engine loaded - Free data sources active")
+except ImportError as e:
+    print(f"Geospatial Engine not available: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
