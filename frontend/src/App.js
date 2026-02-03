@@ -333,54 +333,291 @@ const MarketplacePage = () => (
 // FormationsPage Component
 const FormationsPage = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+  
+  // Formations FédéCP officielles
+  const fedecpFormations = [
+    {
+      id: "securite",
+      title: "Initiation à la chasse avec arme à feu",
+      description: "Formation obligatoire pour obtenir le certificat du chasseur au Québec",
+      icon: "🔫",
+      duration: "8 heures (2 jours)",
+      type: "Obligatoire",
+      price: "Environ 75$",
+      link: "https://fedecp.com/la-chasse/japprends/initiation-des-chasseurs/",
+      topics: ["Sécurité et manipulation des armes", "Réglementation provinciale", "Éthique de chasse", "Identification du gibier", "Examen théorique et pratique"]
+    },
+    {
+      id: "arc",
+      title: "Initiation à la chasse à l'arc",
+      description: "Formation pour la chasse à l'arc et à l'arbalète",
+      icon: "🏹",
+      duration: "4 heures",
+      type: "Obligatoire pour arc/arbalète",
+      price: "Environ 50$",
+      link: "https://fedecp.com/la-chasse/japprends/initiation-des-chasseurs/",
+      topics: ["Sécurité avec arc et arbalète", "Choix de l'équipement", "Techniques de tir", "Réglementation spécifique"]
+    },
+    {
+      id: "piegeage",
+      title: "Formation au piégeage",
+      description: "Cours obligatoire pour obtenir le certificat de piégeur",
+      icon: "🪤",
+      duration: "8 heures",
+      type: "Obligatoire",
+      price: "Environ 60$",
+      link: "https://fedecp.com/le-piegeage/formation-au-piegeage/",
+      topics: ["Réglementation sur le piégeage", "Types de pièges autorisés", "Éthique et bien-être animal", "Techniques de capture", "Traitement des fourrures"]
+    },
+    {
+      id: "orignal",
+      title: "Formation chasse à l'orignal",
+      description: "Techniques avancées pour la chasse au roi de nos forêts",
+      icon: "🫎",
+      duration: "4 heures",
+      type: "Facultatif",
+      price: "Environ 40$",
+      link: "https://fedecp.com/la-chasse/orignal/",
+      topics: ["Comportement de l'orignal", "Appels et leurres", "Stratégies de chasse", "Débitage et conservation"]
+    }
+  ];
+  
+  // Formations BIONIC™ exclusives
+  const bionicFormations = [
+    {
+      id: "analyse-territoire",
+      title: "Analyse de territoire BIONIC™",
+      description: "Maîtrisez les outils d'analyse GPS et cartographique pour optimiser votre territoire de chasse",
+      icon: "🗺️",
+      duration: "Auto-formation",
+      type: "Exclusif BIONIC™",
+      modules: ["Lecture de cartes topographiques", "Identification des corridors", "Placement stratégique des caches", "Analyse des points d'eau"]
+    },
+    {
+      id: "attractants",
+      title: "Science des attractants",
+      description: "Comprenez la chimie et la biologie derrière les leurres et attractants",
+      icon: "🧪",
+      duration: "Auto-formation",
+      type: "Exclusif BIONIC™",
+      modules: ["Composés olfactifs", "Phéromones et comportement", "Timing et application", "13 critères d'évaluation"]
+    },
+    {
+      id: "meteo",
+      title: "Météo et mouvement du gibier",
+      description: "Apprenez à prédire le comportement du gibier selon les conditions météo",
+      icon: "🌤️",
+      duration: "Auto-formation",
+      type: "Exclusif BIONIC™",
+      modules: ["Pression atmosphérique", "Phases lunaires", "Front météo et activité", "Prévisions optimales"]
+    }
+  ];
+  
+  // Types de territoires au Québec
+  const territoireTypes = [
+    {
+      type: "Terres publiques",
+      description: "Territoires libres gérés par le MFFP",
+      color: "#22c55e",
+      features: ["Accès gratuit avec permis", "Tirage au sort pour certaines zones", "Règles de capacité de support"]
+    },
+    {
+      type: "ZEC",
+      description: "Zones d'exploitation contrôlée",
+      color: "#3b82f6",
+      features: ["Droit d'accès requis", "Gestion par associations", "Quotas et enregistrement obligatoire"]
+    },
+    {
+      type: "Pourvoiries",
+      description: "Territoires privés avec services",
+      color: "#f59e0b",
+      features: ["Hébergement et guidage", "Droits exclusifs", "Forfaits tout inclus"]
+    },
+    {
+      type: "Réserves fauniques",
+      description: "Territoires protégés par la SÉPAQ",
+      color: "#8b5cf6",
+      features: ["Réservation obligatoire", "Secteurs contingentés", "Haute qualité de chasse"]
+    },
+    {
+      type: "Terres privées",
+      description: "Propriétés privées avec permission",
+      color: "#ef4444",
+      features: ["Autorisation du propriétaire", "Ententes de chasse", "Location possible"]
+    }
+  ];
+
   return (
     <main className="min-h-screen bg-background pt-20 pb-16">
       <div className="max-w-7xl mx-auto px-4">
-        <Button variant="ghost" onClick={() => navigate('/')} className="mb-4 text-gray-400 hover:text-white">
-          <ArrowLeft className="h-4 w-4 mr-2" /> Retour
+        {/* Back Button */}
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/')}
+          className="mb-4 text-gray-400 hover:text-white hover:bg-gray-800/50"
+          data-testid="back-button-formations"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Retour à l'accueil
         </Button>
-        <h1 className="text-3xl font-bold text-white flex items-center gap-3 mb-8">
-          <GraduationCap className="h-8 w-8 text-[#f5a623]" />
-          Centre de Formations
-        </h1>
-        <p className="text-gray-400 mb-8">FédéCP & BIONIC™ - Devenez un chasseur expert</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="text-white">Formation Sécurité</CardTitle>
-              <CardDescription>Cours obligatoire pour le permis de chasse</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <a href="https://fedecp.com/la-chasse/japprends/initiation-des-chasseurs/" target="_blank" rel="noopener noreferrer">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                  <ExternalLink className="h-4 w-4 mr-2" /> Accéder
-                </Button>
-              </a>
-            </CardContent>
-          </Card>
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="text-white">Formation Piégeage</CardTitle>
-              <CardDescription>Techniques de piégeage responsable</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <a href="https://fedecp.com/la-chasse/japprends/initiation-des-chasseurs/" target="_blank" rel="noopener noreferrer">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                  <ExternalLink className="h-4 w-4 mr-2" /> Accéder
-                </Button>
-              </a>
-            </CardContent>
-          </Card>
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="text-white">Formation BIONIC™</CardTitle>
-              <CardDescription>Analyse de territoire avancée</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full btn-golden text-black">Commencer</Button>
-            </CardContent>
-          </Card>
+        
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+              <GraduationCap className="h-8 w-8 text-[#f5a623]" />
+              Centre de Formations
+            </h1>
+            <p className="text-gray-400">FédéCP & BIONIC™ - Devenez un chasseur expert</p>
+          </div>
         </div>
+
+        {/* FédéCP Section */}
+        <section className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-blue-500/20 rounded-lg">
+              <BookOpen className="h-6 w-6 text-blue-400" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Formations FédéCP officielles</h2>
+              <p className="text-gray-400 text-sm">Fédération québécoise des chasseurs et pêcheurs</p>
+            </div>
+            <a 
+              href="https://fedecp.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="ml-auto"
+            >
+              <Badge className="bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 cursor-pointer">
+                <ExternalLink className="h-3 w-3 mr-1" /> fedecp.com
+              </Badge>
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {fedecpFormations.map((formation) => (
+              <Card key={formation.id} className="bg-card border-border hover:border-blue-500/50 transition-all">
+                <CardHeader className="pb-2">
+                  <div className="flex items-start justify-between">
+                    <span className="text-3xl">{formation.icon}</span>
+                    <Badge className={formation.type === 'Obligatoire' || formation.type.includes('Obligatoire') ? 'bg-red-500/20 text-red-400' : 'bg-gray-500/20 text-gray-400'}>
+                      {formation.type}
+                    </Badge>
+                  </div>
+                  <CardTitle className="text-white text-lg">{formation.title}</CardTitle>
+                  <CardDescription className="text-xs">{formation.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2 text-xs text-gray-400 mb-2">
+                    <Clock className="h-3 w-3" />
+                    <span>{formation.duration}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
+                    <DollarSign className="h-3 w-3" />
+                    <span>{formation.price}</span>
+                  </div>
+                  <ul className="space-y-1 mb-4">
+                    {formation.topics.slice(0, 3).map((topic, idx) => (
+                      <li key={idx} className="text-xs text-gray-300 flex items-center gap-1">
+                        <CheckCircle className="h-3 w-3 text-green-500" />
+                        {topic}
+                      </li>
+                    ))}
+                    {formation.topics.length > 3 && (
+                      <li className="text-xs text-gray-500">+{formation.topics.length - 3} autres...</li>
+                    )}
+                  </ul>
+                  <a href={formation.link} target="_blank" rel="noopener noreferrer">
+                    <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700">
+                      <ExternalLink className="h-3 w-3 mr-1" /> S'inscrire
+                    </Button>
+                  </a>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* BIONIC Section */}
+        <section className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-[#f5a623]/20 rounded-lg">
+              <Brain className="h-6 w-6 text-[#f5a623]" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Formations BIONIC™</h2>
+              <p className="text-gray-400 text-sm">Maîtrisez les outils d'analyse de territoire</p>
+            </div>
+            <Badge className="ml-auto bg-[#f5a623]/20 text-[#f5a623]">Exclusif</Badge>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {bionicFormations.map((formation) => (
+              <Card key={formation.id} className="bg-card border-border hover:border-[#f5a623]/50 transition-all">
+                <CardHeader className="pb-2">
+                  <div className="flex items-start justify-between">
+                    <span className="text-3xl">{formation.icon}</span>
+                    <Badge className="bg-[#f5a623]/20 text-[#f5a623]">{formation.type}</Badge>
+                  </div>
+                  <CardTitle className="text-white text-lg">{formation.title}</CardTitle>
+                  <CardDescription className="text-xs">{formation.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
+                    <Clock className="h-3 w-3" />
+                    <span>{formation.duration}</span>
+                  </div>
+                  <ul className="space-y-1 mb-4">
+                    {formation.modules.map((module, idx) => (
+                      <li key={idx} className="text-xs text-gray-300 flex items-center gap-1">
+                        <CheckCircle className="h-3 w-3 text-[#f5a623]" />
+                        {module}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button size="sm" className="w-full btn-golden text-black">
+                    Commencer
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Territoire Types Section */}
+        <section>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-green-500/20 rounded-lg">
+              <Map className="h-6 w-6 text-green-400" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Types de Territoires au Québec</h2>
+              <p className="text-gray-400 text-sm">Connaissez les différentes zones de chasse</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {territoireTypes.map((territoire) => (
+              <Card key={territoire.type} className="bg-card border-border" style={{ borderLeftColor: territoire.color, borderLeftWidth: '4px' }}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg" style={{ color: territoire.color }}>{territoire.type}</CardTitle>
+                  <CardDescription className="text-xs">{territoire.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-1">
+                    {territoire.features.map((feature, idx) => (
+                      <li key={idx} className="text-xs text-gray-300 flex items-center gap-1">
+                        <CheckCircle className="h-3 w-3" style={{ color: territoire.color }} />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
       </div>
     </main>
   );
