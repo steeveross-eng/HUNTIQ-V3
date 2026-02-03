@@ -2140,12 +2140,12 @@ async def ai_advanced_analysis(request: AIAnalysisRequest):
         
         response = await chat.send_message(UserMessage(text=prompt))
         
-        # Parse JSON response
+        # Parse JSON response - response is a string directly
         import json
         import re
         
         # Extract JSON from response
-        json_match = re.search(r'\{[\s\S]*\}', response.text)
+        json_match = re.search(r'\{[\s\S]*\}', response)
         if json_match:
             ai_data = json.loads(json_match.group())
         else:
