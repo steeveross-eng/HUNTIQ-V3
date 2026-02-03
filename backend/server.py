@@ -4580,6 +4580,16 @@ try:
 except ImportError as e:
     print(f"Geospatial Engine not available: {e}")
 
+# Include BIONIC™ Hydrology Engine
+try:
+    import sys
+    sys.path.insert(0, '/app/bionic/engines')
+    from hydroEngine.api import hydro_engine_router
+    app.include_router(hydro_engine_router)
+    print("BIONIC™ Hydrology Engine loaded - Water analysis active")
+except ImportError as e:
+    print(f"Hydrology Engine not available: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
