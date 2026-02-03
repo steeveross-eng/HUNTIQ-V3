@@ -290,14 +290,8 @@ const CartSheet = ({ isOpen, onOpenChange, cartItems, onUpdateQuantity, onRemove
   );
 };
 
-// HomePage Component
-const HomePage = ({ products, onAddToCart }) => (
-  <main>
-    <HeroSection />
-    <ProductsSection products={products} onAddToCart={onAddToCart} />
-    <FeaturesSection />
-  </main>
-);
+// Import new BIONIC Homepage
+import BionicHomePage from '@/pages/BionicHomePage';
 
 // AnalyzePage Component
 const AnalyzePage = ({ products }) => (
