@@ -80,6 +80,11 @@ const BackupManager = () => {
   const [promptVersions, setPromptVersions] = useState([]);
   const [selectedPromptVersion, setSelectedPromptVersion] = useState(null);
   const [showPromptVersionModal, setShowPromptVersionModal] = useState(false);
+  
+  // Development Plan state
+  const [devPlan, setDevPlan] = useState(null);
+  const [devPlanLoading, setDevPlanLoading] = useState(false);
+  const [devPlanMetadata, setDevPlanMetadata] = useState(null);
 
   // Helper functions
   const formatDate = (dateStr) => {
