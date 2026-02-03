@@ -114,6 +114,34 @@ class HuntiqAPITester:
         """Test site status endpoint"""
         return self.run_test("Site Status", "GET", "site/status", 200)
 
+    def test_analyze_basic(self):
+        """Test basic product analysis endpoint"""
+        analyze_data = {
+            "product_name": "Buck Bomb Deer"
+        }
+        return self.run_test("Basic Analysis", "POST", "analyze", 200, data=analyze_data)
+
+    def test_analyze_ai_advanced(self):
+        """Test AI advanced analysis endpoint with GPT-5.2"""
+        ai_analyze_data = {
+            "product_name": "BIONIC Apple Jelly",
+            "species": "cerf",
+            "season": "automne",
+            "weather": "normal",
+            "terrain": "forêt"
+        }
+        success, response = self.run_test("AI Advanced Analysis", "POST", "analyze/ai-advanced", 200, data=ai_analyze_data)
+        if success and isinstance(response, dict):
+            print(f"   AI Analysis Score: {response.get('score', 'N/A')}")
+            print(f"   Effectiveness Rating: {response.get('effectiveness_rating', 'N/A')}")
+            print(f"   Species: {response.get('species', 'N/A')}")
+            print(f"   Season: {response.get('season', 'N/A')}")
+        return success, response
+
+    def test_analyze_criteria(self):
+        """Test analysis criteria endpoint"""
+        return self.run_test("Analysis Criteria", "GET", "analyze/criteria", 200)
+
 def main():
     print("🚀 Starting HUNTIQ V3 API Testing...")
     print("=" * 50)
