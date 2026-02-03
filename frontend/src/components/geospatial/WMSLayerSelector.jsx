@@ -401,6 +401,62 @@ const SourceGroup = ({
 };
 
 /**
+ * Species Preset Selector Component
+ */
+const SpeciesPresetSelector = ({ 
+  onApplyPreset, 
+  currentPreset, 
+  disabled 
+}) => {
+  const [selectedSpecies, setSelectedSpecies] = useState(currentPreset || '');
+  
+  const handlePresetChange = (speciesKey) => {
+    setSelectedSpecies(speciesKey);
+    if (speciesKey && SPECIES_PRESETS[speciesKey]) {
+      onApplyPreset(speciesKey, SPECIES_PRESETS[speciesKey]);
+    }
+  };
+  
+  return (
+    <div className="p-3 bg-gradient-to-r from-[#f5a623]/10 to-transparent rounded-sm border border-[#f5a623]/20 mb-3">
+      <div className="flex items-center gap-2 mb-2">
+        <Target className="h-4 w-4 text-[#f5a623]" />
+        <span className="text-sm font-medium text-white">Préréglage par gibier</span>
+      </div>
+      
+      <Select value={selectedSpecies} onValueChange={handlePresetChange} disabled={disabled}>
+        <SelectTrigger className="bg-black/40 border-white/10 text-white h-9">
+          <SelectValue placeholder="Sélectionner une espèce..." />
+        </SelectTrigger>
+        <SelectContent className="bg-[#1a1a1a] border-white/10">
+          {Object.entries(SPECIES_PRESETS).map(([key, preset]) => (
+            <SelectItem key={key} value={key} className="text-white">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">{preset.icon}</span>
+                <span>{preset.name}</span>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      
+      {selectedSpecies && SPECIES_PRESETS[selectedSpecies] && (
+        <motion.div
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-2 text-xs text-gray-400"
+        >
+          <p>{SPECIES_PRESETS[selectedSpecies].description}</p>
+          <p className="mt-1 text-[#f5a623]">
+            {SPECIES_PRESETS[selectedSpecies].layers.length} couches activées
+          </p>
+        </motion.div>
+      )}
+    </div>
+  );
+};
+
+/**
  * Main WMS Layer Selector Component
  */
 const WMSLayerSelector = ({ 
