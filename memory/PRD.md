@@ -245,9 +245,10 @@ Voir `/app/FRONTPAGE_REPORT.md` pour le détail complet.
 - [x] ~~Modules BIONIC™ (Nutrition, Hydrology, Sentinel, SIGÉOM)~~ ✅ (v3.6)
 
 ### P1 - Important (EN COURS)
-- [ ] **Interface Territoire complète** - Carte interactive avec couches WMS
-- [ ] **Algorithmes de scoring territoire** - Intégration dans l'onglet Territoire
-- [ ] **Pipeline d'analyse combinée** - Nutrition + Hydro + Végétation + Géologie
+- [x] ~~Interface Territoire complète~~ ✅ (v3.6)
+- [x] ~~Algorithmes de scoring territoire~~ ✅ (v3.6)
+- [ ] **Pipeline d'analyse combinée backend** - Exposer /api/geospatial/analyze/combined
+- [ ] **Proxy WMS backend** - Contourner CORS des serveurs gouvernementaux
 - [ ] Connexion modules Blog/Community/Partners au backend
 - [ ] Export PDF des analyses
 
