@@ -485,10 +485,6 @@ const ProductsSection = ({ products, onAddToCart, onAffiliateClick }) => {
       <div className="max-w-7xl mx-auto">
         <h2 className="golden-text text-3xl md:text-4xl font-bold text-center mb-8 italic">
           {t('page_best_choices')} {brand.short}
-    <section className="section-padding px-4 sm:px-6 lg:px-8 bg-background">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="golden-text text-h2 font-bold text-center mb-6 sm:mb-8 italic">
-          Meilleurs choix SCENT SCIENCE™
         </h2>
         <FilterTabs activeFilter={activeFilter} onFilterChange={setActiveFilter} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
