@@ -564,28 +564,32 @@ const WMSLayerSelector = ({
   
   // Add layer to map
   const addLayerToMap = useCallback((layer) => {
-    if (!map || !mapLoaded) return;
+    if (!map || !mapLoaded || !layer?.sourceConfig) return;
     
-    // Check if source exists
-    if (!map.getSource(layer.layerConfig.source)) {
-      map.addSource(layer.layerConfig.source, layer.sourceConfig);
-    }
-    
-    // Add layer if not exists
-    if (!map.getLayer(layer.id)) {
-      map.addLayer({
-        ...layer.layerConfig,
-        layout: {
-          ...layer.layerConfig.layout,
-          visibility: 'visible'
-        },
-        paint: {
-          ...layer.layerConfig.paint,
-          'raster-opacity': layerOpacities[layer.id] || 0.7
-        }
-      });
-    } else {
-      map.setLayoutProperty(layer.id, 'visibility', 'visible');
+    try {
+      // Check if source exists
+      if (!map.getSource(layer.layerConfig.source)) {
+        map.addSource(layer.layerConfig.source, layer.sourceConfig);
+      }
+      
+      // Add layer if not exists
+      if (!map.getLayer(layer.id)) {
+        map.addLayer({
+          ...layer.layerConfig,
+          layout: {
+            ...layer.layerConfig.layout,
+            visibility: 'visible'
+          },
+          paint: {
+            ...layer.layerConfig.paint,
+            'raster-opacity': layerOpacities[layer.id] || 0.7
+          }
+        });
+      } else {
+        map.setLayoutProperty(layer.id, 'visibility', 'visible');
+      }
+    } catch (err) {
+      console.warn(`Failed to add layer ${layer.id}:`, err.message);
     }
   }, [map, mapLoaded, layerOpacities]);
   
@@ -593,8 +597,12 @@ const WMSLayerSelector = ({
   const removeLayerFromMap = useCallback((layerId) => {
     if (!map || !mapLoaded) return;
     
-    if (map.getLayer(layerId)) {
-      map.setLayoutProperty(layerId, 'visibility', 'none');
+    try {
+      if (map.getLayer(layerId)) {
+        map.setLayoutProperty(layerId, 'visibility', 'none');
+      }
+    } catch (err) {
+      console.warn(`Failed to hide layer ${layerId}:`, err.message);
     }
   }, [map, mapLoaded]);
   
