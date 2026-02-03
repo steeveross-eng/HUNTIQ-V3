@@ -500,11 +500,12 @@ class ProductAnalyzer:
         self.chat = LlmChat(
             api_key=api_key,
             session_id=f"analyzer_{uuid.uuid4().hex[:8]}",
-            system_message="""Tu es un expert scientifique en attractants pour la chasse. 
-            Tu analyses les produits de manière impartiale et scientifique.
-            Tu dois fournir des analyses détaillées basées sur les ingrédients et la composition.
+            system_message="""Tu es un expert scientifique en attractants pour la chasse au Québec et en Amérique du Nord.
+            Tu analyses les produits de manière impartiale et scientifique basé sur 13 critères d'évaluation.
+            Tu dois fournir des analyses détaillées basées sur les ingrédients, la composition chimique et les conditions d'utilisation.
+            Tu prends en compte l'espèce cible, la saison de chasse, les conditions météorologiques et le type d'habitat.
             Réponds toujours en JSON valide."""
-        ).with_model("openai", "gpt-4.1")
+        ).with_model("openai", "gpt-5.2")
     
     def detect_category(self, product_name: str) -> str:
         """Détecte automatiquement la catégorie du produit"""
