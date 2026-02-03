@@ -1359,3 +1359,191 @@ async def get_hunting_weather_score(
         },
         "timestamp": weather.get("timestamp")
     }
+
+
+
+# =============================================================================
+# WMS PROXY ENDPOINTS - BIONIC™ WMS Proxy
+# =============================================================================
+
+from fastapi.responses import Response
+from ..controllers.wms_proxy_controller import wms_proxy
+
+@geospatial_router.get("/wms/sources")
+async def list_wms_sources():
+    """
+    List all available WMS sources.
+    
+    Returns available WMS services with their layers.
+    """
+    return {
+        "status": "success",
+        "sources": wms_proxy.list_sources(),
+        "note": "Use /wms/tile/{source}/{layer} to fetch tiles"
+    }
+
+
+@geospatial_router.get("/wms/source/{source_id}")
+async def get_wms_source_info(source_id: str):
+    """
+    Get detailed information about a WMS source.
+    """
+    source = wms_proxy.get_source(source_id)
+    if not source:
+        raise HTTPException(status_code=404, detail=f"WMS source not found: {source_id}")
+    
+    return {
+        "status": "success",
+        "source_id": source_id,
+        "name": source["name"],
+        "base_url": source["base_url"],
+        "layers": source["layers"],
+        "srs": source["srs"],
+        "format": source["format"],
+        "version": source["version"],
+        "requires_key": source.get("requires_key", False)
+    }
+
+
+@geospatial_router.get("/wms/tile/{source_id}/{layer}")
+async def get_wms_tile(
+    source_id: str,
+    layer: str,
+    bbox: str = Query(..., description="Bounding box: minx,miny,maxx,maxy"),
+    width: int = Query(256, description="Tile width"),
+    height: int = Query(256, description="Tile height"),
+    transparent: bool = Query(True, description="Transparent background"),
+    use_cache: bool = Query(True, description="Use tile cache")
+):
+    """
+    Fetch a WMS tile through the proxy.
+    
+    This endpoint bypasses CORS restrictions by proxying WMS requests.
+    Tiles are cached for 24 hours to improve performance.
+    
+    **Example:**
+    ```
+    /api/geospatial/wms/tile/sigeom/bedrock?bbox=-8000000,5800000,-7900000,5900000
+    ```
+    """
+    result = await wms_proxy.get_tile(
+        source_id=source_id,
+        layer=layer,
+        bbox=bbox,
+        width=width,
+        height=height,
+        transparent=transparent,
+        use_cache=use_cache
+    )
+    
+    if "error" in result:
+        raise HTTPException(
+            status_code=400 if "Unknown" in result.get("error", "") else 502,
+            detail=result["error"]
+        )
+    
+    # Return the actual image data
+    return Response(
+        content=result["data"],
+        media_type=result.get("content_type", "image/png"),
+        headers={
+            "X-WMS-Source": result.get("source", "unknown"),
+            "X-Cache-Hit": "true" if result.get("cached") else "false",
+            "Cache-Control": "public, max-age=86400"  # 24 hours
+        }
+    )
+
+
+@geospatial_router.get("/wms/tile-url/{source_id}/{layer}")
+async def get_wms_tile_url_template(source_id: str, layer: str):
+    """
+    Get the tile URL template for MapLibre GL.
+    
+    Returns a URL with {bbox-epsg-3857} placeholder for use in MapLibre.
+    """
+    url = wms_proxy.build_tile_url(source_id, layer)
+    if not url:
+        raise HTTPException(status_code=404, detail=f"Could not build URL for {source_id}/{layer}")
+    
+    # Get the external URL for the proxy
+    return {
+        "status": "success",
+        "source_id": source_id,
+        "layer": layer,
+        "tile_url_template": url,
+        "usage_note": "Use this URL in MapLibre GL raster source with tiles array"
+    }
+
+
+@geospatial_router.post("/wms/cache/clear")
+async def clear_wms_cache(source_id: Optional[str] = None):
+    """
+    Clear WMS tile cache.
+    
+    If source_id is provided, only clears cache for that source.
+    Otherwise, clears all cached tiles.
+    """
+    result = wms_proxy.clear_cache(source_id)
+    return {
+        "status": "success",
+        "message": f"Cleared {result['cleared']} cached tiles",
+        "source_filter": source_id
+    }
+
+
+@geospatial_router.get("/wms/maplibre-config")
+async def get_maplibre_wms_config():
+    """
+    Get ready-to-use MapLibre GL configuration for all WMS sources.
+    
+    Returns sources and layers configuration that can be directly
+    merged into a MapLibre style document.
+    """
+    sources = {}
+    layers = []
+    
+    for source_info in wms_proxy.list_sources():
+        source_id = source_info["id"]
+        source = wms_proxy.get_source(source_id)
+        
+        if source.get("requires_key"):
+            continue  # Skip sources requiring API keys
+        
+        for layer_key in source_info["layers"]:
+            layer_id = f"wms-{source_id}-{layer_key}"
+            source_key = f"wms-{source_id}-{layer_key}"
+            
+            # Build proxy URL
+            base_url = "/api/geospatial/wms/tile"
+            tile_url = f"{base_url}/{source_id}/{layer_key}?bbox={{bbox-epsg-3857}}&width=256&height=256"
+            
+            sources[source_key] = {
+                "type": "raster",
+                "tiles": [tile_url],
+                "tileSize": 256,
+                "attribution": f"© {source['name']}"
+            }
+            
+            layers.append({
+                "id": layer_id,
+                "type": "raster",
+                "source": source_key,
+                "paint": {
+                    "raster-opacity": 0.7
+                },
+                "layout": {
+                    "visibility": "none"  # Hidden by default
+                },
+                "metadata": {
+                    "wms_source": source_id,
+                    "wms_layer": layer_key,
+                    "display_name": f"{source['name']} - {layer_key}"
+                }
+            })
+    
+    return {
+        "status": "success",
+        "sources": sources,
+        "layers": layers,
+        "usage_note": "Merge sources and layers into your MapLibre style"
+    }
