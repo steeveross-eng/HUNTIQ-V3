@@ -81,7 +81,7 @@ Fusionner HUNTIQ V1 et V2 + Intégrer l'IA GPT-5.2 pour l'analyse d'attractants 
 ### Nouvelles Dépendances Frontend
 - `framer-motion` - Animations
 - `embla-carousel-react` - Carrousel produits
-- `mapbox-gl` / `react-map-gl` - Cartes interactives (à configurer)
+- `maplibre-gl` - Cartes interactives (open-source, 100% gratuit)
 - `recharts` - Graphiques
 
 ---
