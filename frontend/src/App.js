@@ -681,51 +681,6 @@ const AnalyzePage = ({ products }) => (
 
 import TerritoryRankings from "@/components/TerritoryRankings";
 import GpsHotspots from "@/components/GpsHotspots";
-const AdminPage = ({ onProductsUpdate }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
-  
-  // Data states
-  const [stats, setStats] = useState({});
-  const [products, setProducts] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
-  const [orders, setOrders] = useState([]);
-  const [customers, setCustomers] = useState([]);
-  const [commissions, setCommissions] = useState([]);
-  const [alerts, setAlerts] = useState([]);
-  const [salesReport, setSalesReport] = useState({});
-  const [productsReport, setProductsReport] = useState({});
-  
-  // Maintenance mode state
-  const [maintenanceMode, setMaintenanceMode] = useState(false);
-  const [maintenanceSettings, setMaintenanceSettings] = useState({
-    maintenance_title: "Site en maintenance",
-    maintenance_message: "Nous effectuons actuellement des mises à jour. Veuillez revenir plus tard.",
-    estimated_return: ""
-  });
-  const [showMaintenanceDialog, setShowMaintenanceDialog] = useState(false);
-  const [togglingMaintenance, setTogglingMaintenance] = useState(false);
-  
-  // Edit states
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [editForm, setEditForm] = useState({});
-  const [showAddDialog, setShowAddDialog] = useState(false);
-  const [showAddSupplierDialog, setShowAddSupplierDialog] = useState(false);
-  const [newProduct, setNewProduct] = useState({
-    name: "", brand: "", price: 0, score: 0, cost_benefit_score: 0, rank: 1,
-    image_url: "", description: "", category: "attractant", animal_type: "", season: "",
-    sale_mode: "dropshipping", supplier_id: "", supplier_price: 0, affiliate_commission: 0,
-    affiliate_link: "", dropshipping_available: true
-  });
-  const [newSupplier, setNewSupplier] = useState({
-    name: "", contact_name: "", email: "", phone: "", address: "",
-    partnership_type: "dropshipping", shipping_delay: 3, partnership_conditions: ""
-  });
 
 const TerritoryPage = () => {
   const [userId, setUserId] = useState(null);
