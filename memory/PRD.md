@@ -249,6 +249,37 @@ hydroEngine/
 - `GET /api/bionic/hydro/species-preferences` - Préférences eau par espèce
 - `GET /api/bionic/hydro/wetland-types` - Types de milieux humides
 
+### 3.8 Sélecteur de Couches WMS BIONIC™ (NOUVEAU - v3.8) ✅
+
+**Composant:** `/app/frontend/src/components/geospatial/WMSLayerSelector.jsx`
+
+**Fonctionnalités:**
+- ✅ Affichage des 23 couches WMS disponibles
+- ✅ Organisation par source (SIGÉOM, LiDAR, GRHQ, MFFP, HydroSHEDS, OSM, CanVec, USGS, NOAA, NASA GIBS, Sentinel Hub)
+- ✅ Multi-sélection simultanée
+- ✅ Toggle individuel par couche
+- ✅ Affichage automatique sur la carte MapLibre GL
+- ✅ Gestion de l'ordre d'affichage (z-index)
+- ✅ Contrôle d'opacité par couche (slider 0-100%)
+- ✅ Recherche instantanée par nom ou source
+- ✅ Groupes collapsables
+- ✅ Badge de comptage des couches actives
+- ✅ Bouton "Tout effacer"
+- ✅ Configuration automatique via `/api/geospatial/wms/maplibre-config`
+
+**Sources WMS intégrées:**
+1. SIGÉOM (3 couches) - Géologie du socle, Dépôts de surface, Failles
+2. LiDAR Québec (3 couches) - DTM, DSM, CHM
+3. GRHQ (4 couches) - Cours d'eau, Lacs, Milieux humides, Bassins versants
+4. MFFP Forêt (3 couches) - Peuplements, Espèces, Âge
+5. HydroSHEDS (2 couches) - Bassins, Flow
+6. OpenStreetMap (1 couche) - Carte OSM
+7. CanVec/NRCan (3 couches) - Hydrographie, Transport, Limites admin
+8. USGS (1 couche) - Topographie
+9. NOAA (1 couche) - Radar météo
+10. NASA GIBS (2 couches) - MODIS Terra, VIIRS
+11. Sentinel Hub - Couleur réelle, NDVI (si clé API fournie)
+
 ---
 
 ## 4. APIs Développées
