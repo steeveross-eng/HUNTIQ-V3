@@ -308,7 +308,25 @@ const WMSLayerSelector = ({
         const response = await api.get('/api/geospatial/wms/maplibre-config');
         
         if (response.data?.sources && response.data?.layers) {
-          // Process the config
+          // Get backend URL for building absolute tile URLs
+          const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+          
+          // Process sources to use absolute URLs
+          const processedSources = {};
+          Object.entries(response.data.sources).forEach(([sourceKey, sourceConfig]) => {
+            processedSources[sourceKey] = {
+              ...sourceConfig,
+              tiles: sourceConfig.tiles?.map(tileUrl => {
+                // If URL is relative, prepend backend URL
+                if (tileUrl.startsWith('/')) {
+                  return `${backendUrl}${tileUrl}`;
+                }
+                return tileUrl;
+              })
+            };
+          });
+          
+          // Process the layers config
           const processedLayers = response.data.layers.map(layer => {
             const sourceId = layer.metadata?.wms_source || 'unknown';
             const layerKey = layer.metadata?.wms_layer || layer.id;
@@ -319,13 +337,13 @@ const WMSLayerSelector = ({
               layerKey,
               displayName: LAYER_DISPLAY_NAMES[layerKey] || layer.metadata?.display_name || layerKey,
               sourceName: SOURCE_NAMES[sourceId] || sourceId,
-              sourceConfig: response.data.sources[layer.source],
+              sourceConfig: processedSources[layer.source],
               layerConfig: layer
             };
           });
           
           setWmsConfig({
-            sources: response.data.sources,
+            sources: processedSources,
             layers: processedLayers
           });
         }
