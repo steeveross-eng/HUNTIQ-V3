@@ -826,6 +826,18 @@ const AnalyzerModule = () => {
     setActiveTab("categories");
   };
   
+  const handleStickyAnalyze = () => {
+    if (activeView === "results") {
+      resetAnalysis();
+    } else {
+      handleAnalyze();
+    }
+  };
+  
+  const handleStickyCompare = () => {
+    setShowCompareModal(true);
+  };
+  
   return (
     <main className="pt-20 min-h-screen bg-background relative pb-24 md:pb-8">
       {/* Sticky Sidebar Buttons */}
