@@ -100,8 +100,10 @@ import {
   Construction,
   Power,
   Mail,
-  Handshake,
+  Handshake
   XCircle,
+  Mail,
+  Power,
   Moon,
   Sun,
   Bot,
@@ -397,6 +399,49 @@ const HeroSection = () => {
     </section>
   );
 };
+const HeroSection = () => (
+  <section className="hero-bg min-h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8 pt-16" data-testid="hero-section">
+    <div className="golden-border rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 bg-black/60">
+      <Logo size="large" />
+    </div>
+    <h1 className="text-hero golden-text font-bold mb-6 sm:mb-8 max-w-4xl leading-tight">
+      Votre parcours guidé vers l'attractant parfait
+    </h1>
+    <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+      <Link to="/analyze">
+        <Button className="btn-golden text-black font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full flex items-center gap-2 text-sm sm:text-base">
+          <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" /> Analysez
+        </Button>
+      </Link>
+      <ChevronRight className="text-[#f5a623] h-5 w-5 sm:h-6 sm:w-6 hidden md:block" />
+      <Link to="/compare">
+        <Button className="btn-golden text-black font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full flex items-center gap-2 text-sm sm:text-base">
+          <GitCompare className="h-4 w-4 sm:h-5 sm:w-5" /> Comparez
+        </Button>
+      </Link>
+      <ChevronRight className="text-[#f5a623] h-5 w-5 sm:h-6 sm:w-6 hidden md:block" />
+      <Link to="/shop">
+        <Button className="btn-golden text-black font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full flex items-center gap-2 text-sm sm:text-base">
+          <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" /> Commandez
+        </Button>
+      </Link>
+    </div>
+    <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4 px-2">
+      <p className="text-gray-300 text-body">
+        Explorez et comparez vous-même les leurres, urines, gels et attractants avec la plateforme 
+        scientifique de SCENT SCIENCE™ Laboratory, basée exclusivement sur des données publiques, 
+        déclarées et vérifiables.
+      </p>
+      <p className="text-[#f5a623] font-medium text-body">
+        Identifiez gratuitement les plus performants et repérez instantanément les meilleures solutions et prix.
+      </p>
+      <p className="text-gray-400 italic text-small">Devenez le professionnel des leurres en quelques clics.</p>
+      <p className="text-[#f5a623] font-semibold text-h3 mt-4 sm:mt-6">
+        La science valide maintenant ce que le terrain confirme.
+      </p>
+    </div>
+  </section>
+);
 
 // Product Card Component
 const ProductCard = ({ product, onAddToCart, onAffiliateClick }) => {
@@ -485,6 +530,10 @@ const ProductsSection = ({ products, onAddToCart, onAffiliateClick }) => {
       <div className="max-w-7xl mx-auto">
         <h2 className="golden-text text-3xl md:text-4xl font-bold text-center mb-8 italic">
           {t('page_best_choices')} {brand.short}
+    <section className="section-padding px-4 sm:px-6 lg:px-8 bg-background">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="golden-text text-h2 font-bold text-center mb-6 sm:mb-8 italic">
+          Meilleurs choix SCENT SCIENCE™
         </h2>
         <FilterTabs activeFilter={activeFilter} onFilterChange={setActiveFilter} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
@@ -508,6 +557,7 @@ const FeaturesSection = () => {
   ];
   return (
     <section className="py-16 px-4 bg-black/50" data-testid="features-section">
+    <section className="section-padding px-4 sm:px-6 lg:px-8 bg-black/50">
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {features.map((feature, index) => (
@@ -517,6 +567,8 @@ const FeaturesSection = () => {
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">{t(feature.titleKey)}</h3>
               <p className="text-gray-400">{t(feature.descKey)}</p>
+              <h3 className="text-h3 font-semibold text-white mb-2">{feature.title}</h3>
+              <p className="text-gray-400 text-small">{feature.description}</p>
             </div>
           ))}
         </div>
@@ -643,9 +695,13 @@ const HomePage = ({ products, onAddToCart, onAffiliateClick }) => {
 // Analyze Page
 const AnalyzePage = ({ products }) => (
   <main className="pt-20 min-h-screen bg-background">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8">
       <h1 className="golden-text text-4xl font-bold mb-4">Analysez</h1>
-      <p className="text-gray-400 mb-8">Analysez en profondeur chaque attractant avec nos 13 critères scientifiques évalués par IA.</p>
+      <p className="text-gray-400 mb-8">Analysez en profondeur chaque produit avec nos 13 critères scientifiques évalués par IA.</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <h1 className="golden-text text-h1 font-bold mb-3 sm:mb-4">Analysez</h1>
+      <p className="text-gray-400 mb-6 sm:mb-8 text-body">Analysez en profondeur chaque attractant avec nos 13 critères scientifiques évalués par IA.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
         {products.map((product) => (
           <Card key={product.id} className="bg-card border-border p-4 sm:p-6">
@@ -675,12 +731,151 @@ const AnalyzePage = ({ products }) => (
   </main>
 );
 
+// Compare Page
+const ComparePage = ({ products }) => {
+  const navigate = useNavigate();
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const toggleProduct = (product) => {
+    if (selectedProducts.find(p => p.id === product.id)) {
+      setSelectedProducts(selectedProducts.filter(p => p.id !== product.id));
+    } else if (selectedProducts.length < 3) {
+      setSelectedProducts([...selectedProducts, product]);
+    }
+  };
+
+  return (
+    <main className="pt-20 min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Back Button */}
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/')}
+          className="mb-4 text-gray-400 hover:text-white hover:bg-gray-800/50"
+          data-testid="back-button-compare"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Retour à l'accueil
+        </Button>
+        
+        <h1 className="golden-text text-4xl font-bold mb-4">Comparez</h1>
+        <p className="text-gray-400 mb-8">Sélectionnez jusqu'à 3 produits pour les comparer côte à côte.</p>
+        {selectedProducts.length > 0 && (
+          <div className="mb-8 p-6 bg-card rounded-xl border border-border">
+            <h2 className="text-white text-xl font-semibold mb-4">Comparaison</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {selectedProducts.map((product) => (
+                <div key={product.id} className="text-center">
+                  <img src={product.image_url} alt={product.name} className="w-32 h-32 object-cover rounded-lg mx-auto mb-4" />
+                  <h3 className="text-white font-semibold">{product.name}</h3>
+                  <p className="text-[#f5a623] font-bold text-xl">${product.price}</p>
+                  <Badge className="bg-green-600 mt-2">Score: {product.score}</Badge>
+                  <div className="mt-2"><SaleModeBadge mode={product.sale_mode} /></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {products.map((product) => (
+            <button
+              key={product.id}
+              onClick={() => toggleProduct(product)}
+              className={`p-4 rounded-lg border transition-all ${
+                selectedProducts.find(p => p.id === product.id) ? "border-[#f5a623] bg-[#f5a623]/10" : "border-border hover:border-gray-500"
+              }`}
+            >
+              <img src={product.image_url} alt={product.name} className="w-full aspect-square object-cover rounded mb-2" />
+              <p className="text-white text-sm font-medium truncate">{product.name}</p>
+              <p className="text-[#f5a623]">${product.price}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+};
+
+// Shop Page
+const ShopPage = ({ products, onAddToCart, onAffiliateClick }) => {
+  const navigate = useNavigate();
+  
+  return (
+    <main className="pt-20 min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Back Button */}
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/')}
+          className="mb-4 text-gray-400 hover:text-white hover:bg-gray-800/50"
+          data-testid="back-button-shop"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Retour à l'accueil
+        </Button>
+        
+        <h1 className="golden-text text-4xl font-bold mb-4">Magasin</h1>
+        <p className="text-gray-400 mb-8">Découvrez notre sélection complète de produits premium.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} onAffiliateClick={onAffiliateClick} />
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+};
+
 // ============================================
 // TERRITORY PAGE - Map Interface
 // ============================================
 
 import TerritoryRankings from "@/components/TerritoryRankings";
 import GpsHotspots from "@/components/GpsHotspots";
+const AdminPage = ({ onProductsUpdate }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
+  
+  // Data states
+  const [stats, setStats] = useState({});
+  const [products, setProducts] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [commissions, setCommissions] = useState([]);
+  const [alerts, setAlerts] = useState([]);
+  const [salesReport, setSalesReport] = useState({});
+  const [productsReport, setProductsReport] = useState({});
+  
+  // Maintenance mode state
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [maintenanceSettings, setMaintenanceSettings] = useState({
+    maintenance_title: "Site en maintenance",
+    maintenance_message: "Nous effectuons actuellement des mises à jour. Veuillez revenir plus tard.",
+    estimated_return: ""
+  });
+  const [showMaintenanceDialog, setShowMaintenanceDialog] = useState(false);
+  const [togglingMaintenance, setTogglingMaintenance] = useState(false);
+  
+  // Edit states
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [editForm, setEditForm] = useState({});
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showAddSupplierDialog, setShowAddSupplierDialog] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    name: "", brand: "", price: 0, score: 0, cost_benefit_score: 0, rank: 1,
+    image_url: "", description: "", category: "attractant", animal_type: "", season: "",
+    sale_mode: "dropshipping", supplier_id: "", supplier_price: 0, affiliate_commission: 0,
+    affiliate_link: "", dropshipping_available: true
+  });
+  const [newSupplier, setNewSupplier] = useState({
+    name: "", contact_name: "", email: "", phone: "", address: "",
+    partnership_type: "dropshipping", shipping_delay: 3, partnership_conditions: ""
+  });
 
 const TerritoryPage = () => {
   const [userId, setUserId] = useState(null);
