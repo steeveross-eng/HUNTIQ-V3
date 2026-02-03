@@ -100,10 +100,8 @@ import {
   Construction,
   Power,
   Mail,
-  Handshake
+  Handshake,
   XCircle,
-  Mail,
-  Power,
   Moon,
   Sun,
   Bot,
