@@ -1102,3 +1102,187 @@ async def get_osm_buildings(
         "max_lon": max_lon
     }
     return await osm_controller.get_buildings(bbox)
+
+
+# =============================================================================
+# NUTRITION MODULE ENDPOINTS - BIONIC™ Nutrition Engine
+# =============================================================================
+
+from ..controllers.nutrition_controller import nutrition_engine
+
+@geospatial_router.get("/nutrition/species")
+async def list_nutrition_species():
+    """
+    List all supported species for nutrition analysis.
+    
+    Returns species profiles with nutritional needs.
+    """
+    return {
+        "status": "success",
+        "species": nutrition_engine.list_species(),
+        "module": "NutritionEngine",
+        "version": nutrition_engine.VERSION
+    }
+
+
+@geospatial_router.get("/nutrition/species/{species_key}")
+async def get_species_nutrition_profile(species_key: str):
+    """
+    Get nutritional needs profile for a specific species.
+    
+    Supported species: cerf, orignal, ours_noir (or English: deer, moose, bear)
+    """
+    profile = nutrition_engine.get_species_profile(species_key)
+    
+    if not profile:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Espèce non supportée: {species_key}. Espèces valides: cerf, orignal, ours_noir"
+        )
+    
+    return {
+        "status": "success",
+        "species_key": species_key,
+        "profile": profile
+    }
+
+
+@geospatial_router.get("/nutrition/landcover-types")
+async def list_landcover_types():
+    """
+    List supported landcover types for nutrition classification.
+    
+    Each landcover type has associated nutritional values.
+    """
+    return {
+        "status": "success",
+        "landcover_types": nutrition_engine.list_landcover_types(),
+        "note": "Chaque type de couverture terrestre possède un profil nutritionnel associé"
+    }
+
+
+@geospatial_router.post("/nutrition/analyze")
+async def analyze_territory_nutrition(
+    species_key: str = Query(..., description="Species key (cerf, orignal, ours_noir, deer, moose, bear)"),
+    landcover_data: list = []
+):
+    """
+    Analyze territory nutrition potential for a species.
+    
+    Performs deficiency detection and generates recommendations.
+    
+    **Example landcover_data:**
+    ```json
+    [
+        {"type": "feuillus", "area": 5000},
+        {"type": "coniferes", "area": 3000},
+        {"type": "milieu_humide", "area": 1000}
+    ]
+    ```
+    """
+    try:
+        result = await nutrition_engine.run(species_key, landcover_data)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+from pydantic import BaseModel
+from typing import List, Optional
+
+class LandcoverZone(BaseModel):
+    type: str
+    area: Optional[float] = None
+    name: Optional[str] = None
+
+class NutritionAnalysisRequest(BaseModel):
+    species_key: str
+    landcover_data: List[LandcoverZone]
+
+@geospatial_router.post("/nutrition/full-analysis")
+async def full_nutrition_analysis(request: NutritionAnalysisRequest):
+    """
+    Run complete nutrition analysis for a territory.
+    
+    **Request body:**
+    - species_key: Species identifier (cerf, orignal, ours_noir)
+    - landcover_data: Array of zones with type and area
+    
+    **Returns:**
+    - Species profile
+    - Classified resources with nutrition values
+    - Deficiency report
+    - Recommendations
+    """
+    try:
+        landcover_dicts = [zone.dict() for zone in request.landcover_data]
+        result = await nutrition_engine.run(request.species_key, landcover_dicts)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@geospatial_router.get("/modules")
+async def list_bionic_modules():
+    """
+    List all available BIONIC™ modules.
+    
+    Returns module information and status.
+    """
+    return {
+        "status": "success",
+        "modules": [
+            {
+                "id": "nutrition",
+                "name": "Nutrition Engine",
+                "version": "0.1.0",
+                "status": "active",
+                "description": "Analyse nutritionnelle des territoires de chasse",
+                "endpoints": [
+                    "/api/geospatial/nutrition/species",
+                    "/api/geospatial/nutrition/analyze",
+                    "/api/geospatial/nutrition/full-analysis"
+                ]
+            },
+            {
+                "id": "lidar",
+                "name": "LiDAR Module",
+                "version": "1.0.0",
+                "status": "active",
+                "description": "Données d'élévation LiDAR Québec"
+            },
+            {
+                "id": "hydro",
+                "name": "Hydrology Module",
+                "version": "1.0.0",
+                "status": "active",
+                "description": "Hydrographie GRHQ"
+            },
+            {
+                "id": "forest",
+                "name": "Forest Module",
+                "version": "1.0.0",
+                "status": "active",
+                "description": "Inventaire forestier MFFP"
+            },
+            {
+                "id": "sigeom",
+                "name": "Geology Module",
+                "version": "1.0.0",
+                "status": "active",
+                "description": "Données géologiques SIGÉOM"
+            },
+            {
+                "id": "potential",
+                "name": "Hunting Potential",
+                "version": "1.0.0",
+                "status": "active",
+                "description": "Calcul du potentiel de chasse"
+            }
+        ],
+        "upcoming": [
+            {"id": "hydrologie_avancee", "name": "Hydrologie Avancée", "status": "planned"},
+            {"id": "sigeom_v2", "name": "SIGÉOM V2", "status": "planned"},
+            {"id": "prediction_ia", "name": "Prédiction IA", "status": "in_development"}
+        ]
+    }
