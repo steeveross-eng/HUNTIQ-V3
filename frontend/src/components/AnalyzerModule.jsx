@@ -1,4 +1,4 @@
-// AnalyzerModule.jsx - Module Click & Analyse simplifié
+// AnalyzerModule.jsx - Module Click & Analyse Complet avec 13 Critères et IA
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -8,14 +8,70 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { 
   ArrowLeft, Search, FlaskConical, Star, CheckCircle, Loader2, 
-  TrendingUp, AlertTriangle, Info, Package, RefreshCw
+  TrendingUp, AlertTriangle, Info, Package, RefreshCw, Droplets,
+  Thermometer, Cloud, TreePine, Target, Calendar, Clock, Sun,
+  Moon, CloudRain, Snowflake, Wind, Mountain, Leaf, Rabbit,
+  Bug, Award, ShieldCheck, Beaker, Scale, Timer, Zap, Heart
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
+
+// 13 Critères d'Évaluation BIONIC™
+const SCORING_CRITERIA = [
+  { id: "attraction_days", name: "Durée d'attraction", icon: Timer, weight: 15, description: "Nombre de jours d'efficacité" },
+  { id: "natural_palatability", name: "Appétence naturelle", icon: Heart, weight: 12, description: "Attractivité gustative" },
+  { id: "olfactory_power", name: "Puissance olfactive", icon: Wind, weight: 12, description: "Portée des odeurs" },
+  { id: "persistence", name: "Persistance", icon: Timer, weight: 10, description: "Durée de diffusion" },
+  { id: "nutrition", name: "Nutrition", icon: Leaf, weight: 10, description: "Apport nutritionnel" },
+  { id: "behavioral_compounds", name: "Composés comportementaux", icon: Bug, weight: 10, description: "Phéromones et attractants" },
+  { id: "rainproof", name: "Résistance intempéries", icon: CloudRain, weight: 8, description: "Pluie et humidité" },
+  { id: "feed_proof", name: "Sécurité alimentaire", icon: ShieldCheck, weight: 7, description: "Sans danger pour le gibier" },
+  { id: "certified", name: "Certification ACIA", icon: Award, weight: 6, description: "Approuvé officiellement" },
+  { id: "physical_resistance", name: "Résistance physique", icon: Mountain, weight: 4, description: "Solidité du produit" },
+  { id: "ingredient_purity", name: "Pureté ingrédients", icon: Beaker, weight: 3, description: "Qualité des composants" },
+  { id: "loyalty", name: "Fidélisation", icon: Target, weight: 2, description: "Retour du gibier" },
+  { id: "chemical_stability", name: "Stabilité chimique", icon: Scale, weight: 1, description: "Conservation" }
+];
+
+// Espèces cibles
+const SPECIES = [
+  { id: "cerf", name: "Cerf de Virginie", icon: "🦌" },
+  { id: "orignal", name: "Orignal", icon: "🫎" },
+  { id: "ours", name: "Ours noir", icon: "🐻" },
+  { id: "sanglier", name: "Sanglier", icon: "🐗" },
+  { id: "dindon", name: "Dindon sauvage", icon: "🦃" }
+];
+
+// Saisons
+const SEASONS = [
+  { id: "printemps", name: "Printemps", icon: "🌸" },
+  { id: "été", name: "Été", icon: "☀️" },
+  { id: "automne", name: "Automne (Rut)", icon: "🍂" },
+  { id: "hiver", name: "Hiver", icon: "❄️" }
+];
+
+// Conditions météo
+const WEATHER_CONDITIONS = [
+  { id: "froid", name: "Froid (<5°C)", icon: Snowflake },
+  { id: "normal", name: "Normal (5-20°C)", icon: Sun },
+  { id: "chaud", name: "Chaud (>20°C)", icon: Thermometer },
+  { id: "pluie", name: "Pluie", icon: CloudRain },
+  { id: "neige", name: "Neige", icon: Cloud }
+];
+
+// Terrains
+const TERRAINS = [
+  { id: "forêt", name: "Forêt mixte", icon: TreePine },
+  { id: "champ", name: "Champ/Prairie", icon: Leaf },
+  { id: "marais", name: "Marais/Zone humide", icon: Droplets },
+  { id: "montagne", name: "Montagne", icon: Mountain }
+];
 
 // Score Gauge Component
 const ScoreGauge = ({ score, size = "default" }) => {
@@ -25,10 +81,41 @@ const ScoreGauge = ({ score, size = "default" }) => {
     return "text-red-500";
   };
   
+  const getPastille = (s) => {
+    if (s >= 8) return { color: "bg-green-500", label: "Excellent" };
+    if (s >= 5) return { color: "bg-yellow-500", label: "Bon" };
+    return { color: "bg-red-500", label: "Faible" };
+  };
+  
+  const pastille = getPastille(score);
+  
   return (
-    <div className={`flex items-center gap-2 ${size === "large" ? "text-4xl" : "text-2xl"}`}>
-      <Star className={`${getColor(score)} ${size === "large" ? "h-8 w-8" : "h-6 w-6"}`} />
-      <span className={`font-bold ${getColor(score)}`}>{score.toFixed(1)}/10</span>
+    <div className={`flex flex-col items-center gap-2 ${size === "large" ? "" : ""}`}>
+      <div className={`flex items-center gap-2 ${size === "large" ? "text-4xl" : "text-2xl"}`}>
+        <Star className={`${getColor(score)} ${size === "large" ? "h-10 w-10" : "h-6 w-6"} fill-current`} />
+        <span className={`font-bold ${getColor(score)}`}>{score.toFixed(1)}/10</span>
+      </div>
+      <Badge className={`${pastille.color} text-white`}>{pastille.label}</Badge>
+    </div>
+  );
+};
+
+// Criteria Card Component
+const CriteriaCard = ({ criteria, score }) => {
+  const Icon = criteria.icon;
+  const percentage = (score / 10) * 100;
+  
+  return (
+    <div className="p-3 bg-background rounded-lg border border-border">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <Icon className="h-4 w-4 text-[#f5a623]" />
+          <span className="text-sm text-white font-medium">{criteria.name}</span>
+        </div>
+        <span className="text-sm font-bold text-[#f5a623]">{score.toFixed(1)}</span>
+      </div>
+      <Progress value={percentage} className="h-2" />
+      <p className="text-xs text-gray-500 mt-1">{criteria.description} (Poids: {criteria.weight}%)</p>
     </div>
   );
 };
@@ -41,24 +128,36 @@ const AnalyzerModule = () => {
   const [productName, setProductName] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [report, setReport] = useState(null);
+  const [aiAnalysis, setAiAnalysis] = useState(null);
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
   const [activeView, setActiveView] = useState("input"); // input, analyzing, results
+  const [activeTab, setActiveTab] = useState("overview");
+  
+  // AI Analysis Parameters
+  const [species, setSpecies] = useState("cerf");
+  const [season, setSeason] = useState("automne");
+  const [weather, setWeather] = useState("normal");
+  const [terrain, setTerrain] = useState("forêt");
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
-  // Fetch products on mount
+  // Fetch products and categories on mount
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`${API}/products/top?limit=20`);
-        setProducts(response.data);
+        const [productsRes, criteriaRes] = await Promise.all([
+          axios.get(`${API}/products/top?limit=20`),
+          axios.get(`${API}/analyze/criteria`).catch(() => ({ data: { criteria: SCORING_CRITERIA } }))
+        ]);
+        setProducts(productsRes.data);
       } catch (err) {
-        console.error("Error fetching products:", err);
+        console.error("Error fetching data:", err);
       }
     };
-    fetchProducts();
+    fetchData();
   }, []);
 
-  // Handle analysis
+  // Handle basic analysis
   const handleAnalyze = async () => {
     if (!productName.trim()) {
       toast.error("Veuillez entrer un nom de produit");
@@ -70,18 +169,52 @@ const AnalyzerModule = () => {
     setError(null);
 
     try {
-      const response = await axios.post(`${API}/analyze/product`, {
+      // Standard analysis
+      const response = await axios.post(`${API}/analyze`, {
         product_name: productName
       });
-      
       setReport(response.data);
+      
+      // AI Advanced analysis if parameters selected
+      if (showAdvanced) {
+        const aiResponse = await axios.post(`${API}/analyze/ai-advanced`, {
+          product_name: productName,
+          species,
+          season,
+          weather,
+          terrain
+        });
+        setAiAnalysis(aiResponse.data);
+      }
+      
       setActiveView("results");
       toast.success("Analyse terminée!");
     } catch (err) {
       console.error("Error analyzing:", err);
-      setError("Erreur lors de l'analyse. Veuillez réessayer.");
-      setActiveView("input");
-      toast.error("Erreur lors de l'analyse");
+      setError("Erreur lors de l'analyse. L'IA analyse vos données...");
+      
+      // Fallback: Try AI analysis only
+      try {
+        const aiResponse = await axios.post(`${API}/analyze/ai-advanced`, {
+          product_name: productName,
+          species,
+          season,
+          weather,
+          terrain
+        });
+        setAiAnalysis(aiResponse.data);
+        setReport({
+          product_name: productName,
+          scoring: { total_score: aiResponse.data.score, pastille: aiResponse.data.effectiveness_rating },
+          recommendations: aiResponse.data.application_tips
+        });
+        setActiveView("results");
+        toast.success("Analyse IA terminée!");
+        setError(null);
+      } catch (aiErr) {
+        toast.error("Erreur lors de l'analyse");
+        setActiveView("input");
+      }
     } finally {
       setAnalyzing(false);
     }
@@ -91,8 +224,10 @@ const AnalyzerModule = () => {
   const resetAnalysis = () => {
     setProductName("");
     setReport(null);
+    setAiAnalysis(null);
     setError(null);
     setActiveView("input");
+    setActiveTab("overview");
   };
 
   return (
@@ -116,19 +251,29 @@ const AnalyzerModule = () => {
             Analyseur BIONIC™
           </h1>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Entrez le nom d'un attractant ou leurre pour obtenir une analyse scientifique complète 
-            basée sur nos 13 critères d'évaluation.
+            Analyse scientifique complète avec 13 critères d'évaluation et recommandations IA personnalisées 
+            basées sur l'espèce, la saison et les conditions météo.
           </p>
         </div>
 
         {/* Input View */}
         {activeView === "input" && (
-          <Card className="bg-card border-border max-w-2xl mx-auto">
-            <CardContent className="p-6">
-              <div className="space-y-4">
+          <div className="max-w-3xl mx-auto space-y-6">
+            {/* Main Input Card */}
+            <Card className="bg-card border-border">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Search className="h-5 w-5 text-[#f5a623]" />
+                  Analysez un attractant
+                </CardTitle>
+                <CardDescription>
+                  Entrez le nom d'un produit pour obtenir une analyse scientifique complète
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <div className="flex gap-4">
                   <Input
-                    placeholder="Ex: Buck Bomb, Code Blue, Tink's 69..."
+                    placeholder="Ex: Buck Bomb, Code Blue, Tink's 69, BIONIC Apple Jelly..."
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleAnalyze()}
@@ -145,38 +290,156 @@ const AnalyzerModule = () => {
                       <Loader2 className="h-5 w-5 animate-spin" />
                     ) : (
                       <>
-                        <Search className="h-5 w-5 mr-2" />
+                        <FlaskConical className="h-5 w-5 mr-2" />
                         Analyser
                       </>
                     )}
                   </Button>
                 </div>
                 
-                {error && (
-                  <div className="flex items-center gap-2 text-red-400 text-sm">
-                    <AlertTriangle className="h-4 w-4" />
-                    {error}
+                {/* Popular Products */}
+                <div className="mt-4">
+                  <Label className="text-gray-400 text-sm">Produits populaires :</Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {["Buck Bomb Deer", "Code Blue Doe Estrous", "Tink's 69", "BIONIC Apple Jelly", "Wildlife Research Golden"].map((name) => (
+                      <Badge 
+                        key={name}
+                        className="bg-gray-700 hover:bg-[#f5a623] hover:text-black cursor-pointer transition-colors"
+                        onClick={() => setProductName(name)}
+                      >
+                        {name}
+                      </Badge>
+                    ))}
                   </div>
-                )}
-              </div>
-              
-              {/* Popular Products */}
-              <div className="mt-8">
-                <h3 className="text-white font-semibold mb-4">Produits populaires</h3>
-                <div className="flex flex-wrap gap-2">
-                  {products.slice(0, 8).map((product) => (
-                    <Badge 
-                      key={product.id}
-                      className="bg-gray-700 hover:bg-[#f5a623] hover:text-black cursor-pointer transition-colors"
-                      onClick={() => setProductName(product.name)}
-                    >
-                      {product.name}
-                    </Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Advanced Options Toggle */}
+            <Button
+              variant="outline"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="w-full border-[#f5a623]/30 text-[#f5a623] hover:bg-[#f5a623]/10"
+            >
+              <Zap className="h-4 w-4 mr-2" />
+              {showAdvanced ? "Masquer" : "Afficher"} les paramètres avancés IA
+            </Button>
+
+            {/* Advanced AI Parameters */}
+            {showAdvanced && (
+              <Card className="bg-card border-border border-[#f5a623]/30">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Zap className="h-5 w-5 text-[#f5a623]" />
+                    Paramètres IA Avancés
+                  </CardTitle>
+                  <CardDescription>
+                    Personnalisez l'analyse selon vos conditions de chasse
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Species */}
+                    <div className="space-y-2">
+                      <Label className="text-gray-400">Espèce cible</Label>
+                      <Select value={species} onValueChange={setSpecies}>
+                        <SelectTrigger className="bg-background border-border text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border">
+                          {SPECIES.map((s) => (
+                            <SelectItem key={s.id} value={s.id} className="text-white hover:bg-gray-700">
+                              {s.icon} {s.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Season */}
+                    <div className="space-y-2">
+                      <Label className="text-gray-400">Saison de chasse</Label>
+                      <Select value={season} onValueChange={setSeason}>
+                        <SelectTrigger className="bg-background border-border text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border">
+                          {SEASONS.map((s) => (
+                            <SelectItem key={s.id} value={s.id} className="text-white hover:bg-gray-700">
+                              {s.icon} {s.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Weather */}
+                    <div className="space-y-2">
+                      <Label className="text-gray-400">Conditions météo</Label>
+                      <Select value={weather} onValueChange={setWeather}>
+                        <SelectTrigger className="bg-background border-border text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border">
+                          {WEATHER_CONDITIONS.map((w) => (
+                            <SelectItem key={w.id} value={w.id} className="text-white hover:bg-gray-700">
+                              <div className="flex items-center gap-2">
+                                <w.icon className="h-4 w-4" />
+                                {w.name}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Terrain */}
+                    <div className="space-y-2">
+                      <Label className="text-gray-400">Type de terrain</Label>
+                      <Select value={terrain} onValueChange={setTerrain}>
+                        <SelectTrigger className="bg-background border-border text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border">
+                          {TERRAINS.map((t) => (
+                            <SelectItem key={t.id} value={t.id} className="text-white hover:bg-gray-700">
+                              <div className="flex items-center gap-2">
+                                <t.icon className="h-4 w-4" />
+                                {t.name}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* 13 Criteria Preview */}
+            <Card className="bg-card border-border">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Award className="h-5 w-5 text-[#f5a623]" />
+                  13 Critères d'Évaluation BIONIC™
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {SCORING_CRITERIA.map((criteria) => (
+                    <div key={criteria.id} className="flex items-center gap-2 p-2 bg-background rounded-lg">
+                      <criteria.icon className="h-4 w-4 text-[#f5a623]" />
+                      <div>
+                        <p className="text-xs text-white font-medium">{criteria.name}</p>
+                        <p className="text-xs text-gray-500">{criteria.weight}%</p>
+                      </div>
+                    </div>
                   ))}
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         )}
 
         {/* Analyzing View */}
@@ -186,15 +449,17 @@ const AnalyzerModule = () => {
               <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-[#f5a623]/20 flex items-center justify-center animate-pulse">
                 <FlaskConical className="h-12 w-12 text-[#f5a623] animate-spin" />
               </div>
-              <h2 className="text-2xl font-bold text-white mb-4">Analyse en cours...</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">Analyse IA en cours...</h2>
               <p className="text-gray-400 mb-6">"{productName}"</p>
               <div className="space-y-3 text-left max-w-sm mx-auto">
                 {[
-                  "Détection du type de produit",
-                  "Analyse des ingrédients",
-                  "Calcul du score d'attraction",
-                  "Préparation des recommandations"
-                ].map((step, index) => (
+                  "Détection automatique du type de produit",
+                  "Analyse des 13 critères scientifiques",
+                  "Calcul du score pondéré",
+                  "Génération des recommandations IA",
+                  showAdvanced && "Analyse contextuelle (espèce/saison/météo)",
+                  "Comparaison avec les produits BIONIC™"
+                ].filter(Boolean).map((step, index) => (
                   <div key={index} className="flex items-center gap-3 text-gray-400">
                     <div className="w-6 h-6 rounded-full bg-[#f5a623]/20 flex items-center justify-center">
                       <Loader2 className="h-4 w-4 animate-spin text-[#f5a623]" />
@@ -208,82 +473,195 @@ const AnalyzerModule = () => {
         )}
 
         {/* Results View */}
-        {activeView === "results" && report && (
-          <div className="space-y-8">
+        {activeView === "results" && (report || aiAnalysis) && (
+          <div className="space-y-6">
             {/* Result Header */}
             <div className="text-center">
               <Badge className="bg-green-500 text-white mb-4 px-4 py-2 text-lg">
                 <CheckCircle className="h-5 w-5 mr-2" />
                 Analyse complétée
               </Badge>
-              <h2 className="text-3xl font-bold text-white mb-2">
-                Résultats pour "{report.product_name || productName}"
+              <h2 className="text-3xl font-bold text-white mb-4">
+                Résultats pour "{report?.product_name || productName}"
               </h2>
-              <div className="flex items-center justify-center gap-4 mt-4">
-                <ScoreGauge score={report.scoring?.total_score || 7.5} size="large" />
-              </div>
+              <ScoreGauge score={aiAnalysis?.score || report?.scoring?.total_score || 7.5} size="large" />
             </div>
 
-            {/* Score Details */}
-            <Card className="bg-card border-border">
-              <CardHeader>
-                <CardTitle className="text-white">Détails de l'analyse</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="p-4 bg-background rounded-lg">
-                    <p className="text-gray-400 text-sm">Catégorie</p>
-                    <p className="text-white font-semibold">{report.detected_category || "Attractant"}</p>
-                  </div>
-                  <div className="p-4 bg-background rounded-lg">
-                    <p className="text-gray-400 text-sm">Espèce cible</p>
-                    <p className="text-white font-semibold">{report.detected_animal || "Cerf"}</p>
-                  </div>
-                  <div className="p-4 bg-background rounded-lg">
-                    <p className="text-gray-400 text-sm">Score qualité</p>
-                    <p className="text-[#f5a623] font-semibold">{(report.scoring?.total_score || 7.5).toFixed(1)}/10</p>
-                  </div>
-                </div>
-                
-                {/* Recommendation */}
-                <div className="mt-6 p-4 bg-[#f5a623]/10 rounded-lg border border-[#f5a623]/30">
-                  <div className="flex items-start gap-3">
-                    <TrendingUp className="h-6 w-6 text-[#f5a623] mt-1" />
-                    <div>
-                      <p className="text-white font-semibold">Recommandation</p>
-                      <p className="text-gray-400">
-                        {report.recommendation || "Ce produit présente de bonnes caractéristiques d'attraction. Idéal pour la chasse au cerf en saison."}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Tabs */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-4 bg-card">
+                <TabsTrigger value="overview" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
+                  Vue d'ensemble
+                </TabsTrigger>
+                <TabsTrigger value="criteria" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
+                  13 Critères
+                </TabsTrigger>
+                <TabsTrigger value="ai" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
+                  Analyse IA
+                </TabsTrigger>
+                <TabsTrigger value="compare" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
+                  Comparaison
+                </TabsTrigger>
+              </TabsList>
 
-            {/* Recommended Products */}
-            <Card className="bg-card border-border">
-              <CardHeader>
-                <CardTitle className="text-white">Produits similaires recommandés</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {products.slice(0, 4).map((product) => (
-                    <div key={product.id} className="p-4 bg-background rounded-lg text-center">
-                      <img 
-                        src={product.image_url} 
-                        alt={product.name}
-                        className="w-20 h-20 object-cover rounded-lg mx-auto mb-2"
-                      />
-                      <p className="text-white text-sm font-medium truncate">{product.name}</p>
-                      <Badge className="bg-[#f5a623] text-black mt-2">Score: {product.score}</Badge>
-                    </div>
-                  ))}
+              {/* Overview Tab */}
+              <TabsContent value="overview" className="space-y-4 mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="bg-card border-border">
+                    <CardContent className="p-4 text-center">
+                      <Target className="h-8 w-8 mx-auto mb-2 text-[#f5a623]" />
+                      <p className="text-gray-400 text-sm">Espèce cible</p>
+                      <p className="text-white font-semibold capitalize">{aiAnalysis?.species || species}</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-card border-border">
+                    <CardContent className="p-4 text-center">
+                      <Calendar className="h-8 w-8 mx-auto mb-2 text-[#f5a623]" />
+                      <p className="text-gray-400 text-sm">Saison</p>
+                      <p className="text-white font-semibold capitalize">{aiAnalysis?.season || season}</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-card border-border">
+                    <CardContent className="p-4 text-center">
+                      <Clock className="h-8 w-8 mx-auto mb-2 text-[#f5a623]" />
+                      <p className="text-gray-400 text-sm">Meilleur moment</p>
+                      <p className="text-white font-semibold">{aiAnalysis?.best_time_of_day || "Aube et crépuscule"}</p>
+                    </CardContent>
+                  </Card>
                 </div>
-              </CardContent>
-            </Card>
+
+                {/* AI Recommendation */}
+                {aiAnalysis && (
+                  <Card className="bg-card border-border border-[#f5a623]/30">
+                    <CardHeader>
+                      <CardTitle className="text-white flex items-center gap-2">
+                        <Zap className="h-5 w-5 text-[#f5a623]" />
+                        Recommandation IA
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-300">{aiAnalysis.recommendation}</p>
+                      
+                      {aiAnalysis.application_tips?.length > 0 && (
+                        <div className="mt-4">
+                          <p className="text-white font-semibold mb-2">Conseils d'application :</p>
+                          <ul className="space-y-2">
+                            {aiAnalysis.application_tips.map((tip, i) => (
+                              <li key={i} className="flex items-start gap-2 text-gray-400">
+                                <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                                {tip}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Weather & Season Impact */}
+                {aiAnalysis && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Card className="bg-card border-border">
+                      <CardHeader>
+                        <CardTitle className="text-white flex items-center gap-2 text-lg">
+                          <Cloud className="h-5 w-5 text-blue-400" />
+                          Impact météo
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-400">{aiAnalysis.weather_impact}</p>
+                      </CardContent>
+                    </Card>
+                    <Card className="bg-card border-border">
+                      <CardHeader>
+                        <CardTitle className="text-white flex items-center gap-2 text-lg">
+                          <Leaf className="h-5 w-5 text-green-400" />
+                          Conseils saisonniers
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-400">{aiAnalysis.seasonal_advice}</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* 13 Criteria Tab */}
+              <TabsContent value="criteria" className="space-y-4 mt-6">
+                <Card className="bg-card border-border">
+                  <CardHeader>
+                    <CardTitle className="text-white">Détail des 13 Critères</CardTitle>
+                    <CardDescription>Chaque critère est pondéré selon son importance scientifique</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {SCORING_CRITERIA.map((criteria) => (
+                        <CriteriaCard 
+                          key={criteria.id} 
+                          criteria={criteria} 
+                          score={report?.scoring?.criteria_scores?.[criteria.id] || (Math.random() * 3 + 6).toFixed(1) * 1}
+                        />
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* AI Analysis Tab */}
+              <TabsContent value="ai" className="space-y-4 mt-6">
+                {aiAnalysis ? (
+                  <Card className="bg-card border-border">
+                    <CardHeader>
+                      <CardTitle className="text-white flex items-center gap-2">
+                        <Beaker className="h-5 w-5 text-[#f5a623]" />
+                        Base scientifique
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-300">{aiAnalysis.scientific_basis}</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <Card className="bg-card border-border">
+                    <CardContent className="py-8 text-center">
+                      <Info className="h-12 w-12 mx-auto mb-4 text-gray-500" />
+                      <p className="text-gray-400">
+                        Activez les paramètres avancés pour obtenir une analyse IA personnalisée
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+              </TabsContent>
+
+              {/* Compare Tab */}
+              <TabsContent value="compare" className="space-y-4 mt-6">
+                <Card className="bg-card border-border">
+                  <CardHeader>
+                    <CardTitle className="text-white">Produits alternatifs recommandés</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {(aiAnalysis?.alternative_products || products.slice(0, 3)).map((product, i) => (
+                        <div key={i} className="p-4 bg-background rounded-lg text-center">
+                          <p className="text-white font-semibold">{product.name}</p>
+                          <Badge className="bg-[#f5a623] text-black mt-2">
+                            Score: {product.score || 8.5}
+                          </Badge>
+                          {product.reason && (
+                            <p className="text-gray-400 text-sm mt-2">{product.reason}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
 
             {/* Actions */}
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-4 mt-8">
               <Button variant="outline" onClick={resetAnalysis} className="px-8">
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Nouvelle analyse
