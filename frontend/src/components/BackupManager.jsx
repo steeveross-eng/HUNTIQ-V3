@@ -217,11 +217,28 @@ const BackupManager = () => {
     setScanning(false);
   };
 
+  // Load Development Plan
+  const loadDevPlan = async () => {
+    setDevPlanLoading(true);
+    try {
+      const response = await axios.get(`${API}/api/backup/development-plan`);
+      if (response.data.success) {
+        setDevPlan(response.data.content);
+        setDevPlanMetadata(response.data.metadata);
+      }
+    } catch (error) {
+      console.error("Error loading development plan:", error);
+      toast.error("Erreur lors du chargement du plan");
+    }
+    setDevPlanLoading(false);
+  };
+
   // Effects - after function declarations
   useEffect(() => {
     loadStats();
     loadCodeFiles();
     loadPromptVersions();
+    loadDevPlan();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
