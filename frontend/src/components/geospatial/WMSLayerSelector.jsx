@@ -680,33 +680,47 @@ const WMSLayerSelector = ({
       removeLayerFromMap(layerId);
     });
     
-    // Find and activate preset layers
-    const newActiveLayers = [];
-    const newOpacities = { ...layerOpacities };
-    
-    preset.layers.forEach(presetLayerId => {
-      const layer = wmsConfig.layers.find(l => l.id === presetLayerId);
-      if (layer) {
-        addLayerToMap(layer);
-        newActiveLayers.push(layer.id);
-        // Apply preset opacity
-        if (preset.opacities && preset.opacities[presetLayerId]) {
-          newOpacities[layer.id] = preset.opacities[presetLayerId];
-          if (map && map.getLayer(layer.id)) {
-            map.setPaintProperty(layer.id, 'raster-opacity', preset.opacities[presetLayerId]);
+    // Small delay to let map update before adding new layers
+    setTimeout(() => {
+      // Find and activate preset layers
+      const newActiveLayers = [];
+      const newOpacities = { ...layerOpacities };
+      
+      preset.layers.forEach(presetLayerId => {
+        const layer = wmsConfig.layers.find(l => l.id === presetLayerId);
+        if (layer) {
+          try {
+            addLayerToMap(layer);
+            newActiveLayers.push(layer.id);
+            // Apply preset opacity
+            if (preset.opacities && preset.opacities[presetLayerId]) {
+              newOpacities[layer.id] = preset.opacities[presetLayerId];
+              // Delay opacity setting to ensure layer is added
+              setTimeout(() => {
+                try {
+                  if (map && map.getLayer(layer.id)) {
+                    map.setPaintProperty(layer.id, 'raster-opacity', preset.opacities[presetLayerId]);
+                  }
+                } catch (e) {
+                  console.warn('Opacity set error:', e.message);
+                }
+              }, 100);
+            }
+          } catch (e) {
+            console.warn(`Preset layer ${presetLayerId} error:`, e.message);
           }
         }
+      });
+      
+      setActiveLayers(newActiveLayers);
+      setLayerOpacities(newOpacities);
+      setCurrentPreset(speciesKey);
+      
+      // Notify parent
+      if (onLayerChange) {
+        onLayerChange('preset', speciesKey);
       }
-    });
-    
-    setActiveLayers(newActiveLayers);
-    setLayerOpacities(newOpacities);
-    setCurrentPreset(speciesKey);
-    
-    // Notify parent
-    if (onLayerChange) {
-      onLayerChange('preset', speciesKey);
-    }
+    }, 50);
   }, [wmsConfig, activeLayers, layerOpacities, addLayerToMap, removeLayerFromMap, map, onLayerChange]);
   
   // Panel position styles
