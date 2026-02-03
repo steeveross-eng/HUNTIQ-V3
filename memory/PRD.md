@@ -348,14 +348,15 @@ hydroEngine/
 - [x] ~~MapLibre GL (remplacement Mapbox)~~ ✅ (v3.6)
 - [x] ~~Modules BIONIC™ (Nutrition, Hydrology, Sentinel, SIGÉOM)~~ ✅ (v3.6)
 
-### P1 - Important (EN COURS)
+### P1 - Important (COMPLÉTÉS)
 - [x] ~~Interface Territoire complète~~ ✅ (v3.6)
 - [x] ~~Algorithmes de scoring territoire~~ ✅ (v3.6)
 - [x] ~~Proxy WMS backend~~ ✅ (v3.7) - Contourne CORS, cache 24h, 11 sources
 - [x] ~~HydroEngine Python~~ ✅ (v3.7) - Extraction, analyse, réseau hydrographique
-- [ ] **SentinelEngine Python** - Traitement images Sentinel-2
-- [ ] **SigeomEngine Python** - Données géologiques SIGÉOM
-- [ ] **EnvironmentEngine Python** - Analyse combinée multi-moteurs
+- [x] ~~SentinelEngine Python~~ ✅ (v3.10) - NDVI, EVI, SAVI, classification végétation
+- [x] ~~SigeomEngine Python~~ ✅ (v3.10) - Géologie, dépôts surface, provinces géologiques
+- [x] ~~Préréglages couches par espèce~~ ✅ (v3.9) - 6 espèces configurées
+- [x] ~~Connexion HydroEngine au frontend~~ ✅ (v3.10) - Panel d'analyse dans l'onglet Score
 - [ ] Pipeline d'analyse combinée backend - Exposer /api/geospatial/analyze/combined
 - [ ] Connexion modules Blog/Community/Partners au backend
 - [ ] Export PDF des analyses
