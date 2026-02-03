@@ -430,10 +430,30 @@ REACT_APP_BACKEND_URL="https://xxx.emergent.sh"
 - ✅ Affichage des métadonnées (date, lignes, taille)
 - ✅ Le plan de développement est accessible via Admin > Backup > Plan BIONIC™
 
-**Fichiers modifiés:**
-- `/app/backend/backup_manager.py` - Nouvel endpoint
-- `/app/frontend/src/components/BackupManager.jsx` - Nouvel onglet avec rendu Markdown
-- `/app/memory/BIONIC_DEVELOPMENT_PLAN.md` - Document source (565 lignes)
+### 2026-02-03 - EnvironmentEngine (Moteur d'Analyse Combinée)
+- ✅ Créé `/app/bionic/engines/environmentEngine/` avec structure complète
+- ✅ **core/combiner.py** : Fusion des données multi-moteurs (hydro, sentinel, sigeom, weather, nutrition)
+- ✅ **core/scorer.py** : Calcul du score global pondéré avec classificateur et recommandations
+- ✅ **api/endpoints.py** : 10+ endpoints FastAPI
+- ✅ Pondération par espèce (deer: 35% végétation, moose: 35% hydrologie, bear: 30% nutrition)
+- ✅ Modificateurs saisonniers (fall boost pour rut, winter penalty pour ours)
+- ✅ Intégré dans `server.py`
+
+**Endpoints EnvironmentEngine:**
+- `GET /api/bionic/environment/status` - Statut du moteur
+- `GET /api/bionic/environment/weights?species=X` - Poids par espèce
+- `POST /api/bionic/environment/analyze/territory` - Analyse territoriale complète
+- `POST /api/bionic/environment/analyze/point` - Analyse ponctuelle
+- `POST /api/bionic/environment/compare/zones` - Comparaison multi-zones
+- `GET /api/bionic/environment/quick-score` - Score rapide estimé
+
+**Fichiers créés:**
+- `/app/bionic/engines/environmentEngine/__init__.py`
+- `/app/bionic/engines/environmentEngine/core/__init__.py`
+- `/app/bionic/engines/environmentEngine/core/combiner.py`
+- `/app/bionic/engines/environmentEngine/core/scorer.py`
+- `/app/bionic/engines/environmentEngine/api/__init__.py`
+- `/app/bionic/engines/environmentEngine/api/endpoints.py`
 
 ---
 
