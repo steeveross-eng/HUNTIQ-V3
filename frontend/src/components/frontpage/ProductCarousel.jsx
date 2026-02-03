@@ -5,12 +5,11 @@ import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, ShoppingCart, Star, TrendingUp, Flame } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useEmblaCarousel from 'embla-carousel-react';
-import axios from 'axios';
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+import { ProductsService } from '@/services';
 
 const ProductCarousel = ({ onAddToCart }) => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true, 
     align: 'start',
@@ -21,11 +20,14 @@ const ProductCarousel = ({ onAddToCart }) => {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       try {
-        const res = await axios.get(`${BACKEND_URL}/api/products/top?limit=10`);
-        setProducts(res.data);
+        const data = await ProductsService.getTop(10);
+        setProducts(data);
       } catch (err) {
         console.error('Error fetching products:', err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProducts();
