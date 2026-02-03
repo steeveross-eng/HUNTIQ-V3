@@ -471,6 +471,7 @@ const WMSLayerSelector = ({
   const [error, setError] = useState(null);
   const [wmsConfig, setWmsConfig] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPreset, setCurrentPreset] = useState('');
   
   // Active layers (order matters for z-index)
   const [activeLayers, setActiveLayers] = useState([]);
