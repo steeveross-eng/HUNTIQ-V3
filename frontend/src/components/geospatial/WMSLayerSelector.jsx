@@ -6,6 +6,7 @@
  * - Multi-sélection avec toggle individuel
  * - Gestion de l'opacité par couche
  * - Organisation par catégorie de source
+ * - Préréglages par espèce de gibier
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -16,14 +17,133 @@ import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Layers, ChevronDown, ChevronUp, Search, Eye, EyeOff,
   Mountain, Droplets, Trees, Map, Satellite, Globe,
   CloudRain, Compass, Database, Loader2, AlertCircle,
-  GripVertical, Minus, Plus, RefreshCw, X, Check
+  GripVertical, Minus, Plus, RefreshCw, X, Check, Target
 } from 'lucide-react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { api } from '@/services/api.client';
+
+// ============================================================================
+// SPECIES LAYER PRESETS - Préréglages de couches par espèce de gibier
+// ============================================================================
+const SPECIES_PRESETS = {
+  moose: {
+    name: 'Orignal',
+    icon: '🫎',
+    description: 'Hydrologie + Forêt + Terrain - Habitat idéal de l\'orignal',
+    layers: [
+      'wms-grhq-rivers',     // Cours d'eau
+      'wms-grhq-lakes',      // Lacs
+      'wms-grhq-wetlands',   // Milieux humides
+      'wms-forest-stands',   // Peuplements forestiers
+      'wms-lidar-dtm',       // Terrain (élévation)
+    ],
+    opacities: {
+      'wms-grhq-rivers': 0.8,
+      'wms-grhq-lakes': 0.7,
+      'wms-grhq-wetlands': 0.8,
+      'wms-forest-stands': 0.6,
+      'wms-lidar-dtm': 0.5,
+    }
+  },
+  deer: {
+    name: 'Cerf de Virginie',
+    icon: '🦌',
+    description: 'Forêt mixte + Terrain + Routes - Zones de ravage',
+    layers: [
+      'wms-forest-stands',   // Peuplements forestiers
+      'wms-forest-species',  // Espèces d'arbres
+      'wms-lidar-dtm',       // Terrain
+      'wms-grhq-rivers',     // Cours d'eau (abreuvement)
+      'wms-osm-osm',         // Routes et sentiers
+    ],
+    opacities: {
+      'wms-forest-stands': 0.7,
+      'wms-forest-species': 0.6,
+      'wms-lidar-dtm': 0.5,
+      'wms-grhq-rivers': 0.7,
+      'wms-osm-osm': 0.4,
+    }
+  },
+  bear: {
+    name: 'Ours noir',
+    icon: '🐻',
+    description: 'Forêt + Hydrologie + Terrain accidenté',
+    layers: [
+      'wms-forest-stands',   // Peuplements forestiers
+      'wms-grhq-rivers',     // Cours d'eau
+      'wms-grhq-wetlands',   // Milieux humides
+      'wms-lidar-dtm',       // Terrain
+      'wms-nasa_gibs-modis_terra', // Vue satellite
+    ],
+    opacities: {
+      'wms-forest-stands': 0.7,
+      'wms-grhq-rivers': 0.7,
+      'wms-grhq-wetlands': 0.6,
+      'wms-lidar-dtm': 0.5,
+      'wms-nasa_gibs-modis_terra': 0.4,
+    }
+  },
+  waterfowl: {
+    name: 'Sauvagine',
+    icon: '🦆',
+    description: 'Milieux humides + Lacs + Bassins versants',
+    layers: [
+      'wms-grhq-wetlands',   // Milieux humides (priorité)
+      'wms-grhq-lakes',      // Lacs
+      'wms-grhq-rivers',     // Cours d'eau
+      'wms-hydrosheds-basins', // Bassins versants
+      'wms-nasa_gibs-modis_terra', // Vue satellite
+    ],
+    opacities: {
+      'wms-grhq-wetlands': 0.9,
+      'wms-grhq-lakes': 0.8,
+      'wms-grhq-rivers': 0.7,
+      'wms-hydrosheds-basins': 0.5,
+      'wms-nasa_gibs-modis_terra': 0.3,
+    }
+  },
+  turkey: {
+    name: 'Dindon sauvage',
+    icon: '🦃',
+    description: 'Forêt mixte + Terrain + Agriculture',
+    layers: [
+      'wms-forest-stands',   // Peuplements
+      'wms-forest-species',  // Espèces
+      'wms-lidar-dtm',       // Terrain
+      'wms-osm-osm',         // Routes/champs
+      'wms-nasa_gibs-modis_terra', // Vue satellite
+    ],
+    opacities: {
+      'wms-forest-stands': 0.6,
+      'wms-forest-species': 0.6,
+      'wms-lidar-dtm': 0.5,
+      'wms-osm-osm': 0.5,
+      'wms-nasa_gibs-modis_terra': 0.4,
+    }
+  },
+  smallgame: {
+    name: 'Petit gibier',
+    icon: '🐰',
+    description: 'Forêt dense + Milieux humides',
+    layers: [
+      'wms-forest-stands',   // Peuplements
+      'wms-grhq-wetlands',   // Milieux humides
+      'wms-grhq-rivers',     // Cours d'eau
+      'wms-lidar-chm',       // Canopée (couvert)
+    ],
+    opacities: {
+      'wms-forest-stands': 0.7,
+      'wms-grhq-wetlands': 0.7,
+      'wms-grhq-rivers': 0.6,
+      'wms-lidar-chm': 0.5,
+    }
+  }
+};
 
 // Icon mapping by source type
 const SOURCE_ICONS = {
