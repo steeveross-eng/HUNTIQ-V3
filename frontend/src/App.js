@@ -643,13 +643,9 @@ const HomePage = ({ products, onAddToCart, onAffiliateClick }) => {
 // Analyze Page
 const AnalyzePage = ({ products }) => (
   <main className="pt-20 min-h-screen bg-background">
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="golden-text text-4xl font-bold mb-4">Analysez</h1>
-      <p className="text-gray-400 mb-8">Analysez en profondeur chaque produit avec nos 13 critères scientifiques évalués par IA.</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-      <h1 className="golden-text text-h1 font-bold mb-3 sm:mb-4">Analysez</h1>
-      <p className="text-gray-400 mb-6 sm:mb-8 text-body">Analysez en profondeur chaque attractant avec nos 13 critères scientifiques évalués par IA.</p>
+      <h1 className="golden-text text-4xl font-bold mb-4">Analysez</h1>
+      <p className="text-gray-400 mb-8">Analysez en profondeur chaque attractant avec nos 13 critères scientifiques évalués par IA.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
         {products.map((product) => (
           <Card key={product.id} className="bg-card border-border p-4 sm:p-6">
