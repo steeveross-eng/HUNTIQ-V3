@@ -54,12 +54,14 @@ import {
 import { toast } from "sonner";
 import { useLanguage } from '@/contexts/LanguageContext';
 import PromptManager from "./PromptManager";
+import ReactMarkdown from "react-markdown";
+import { Map, Rocket, Calendar, CheckSquare, Users, Layers } from "lucide-react";
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
 const BackupManager = () => {
   const { t } = useLanguage();
-  const [activeSubTab, setActiveSubTab] = useState("prompts");
+  const [activeSubTab, setActiveSubTab] = useState("plan");
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   
