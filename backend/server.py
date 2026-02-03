@@ -4584,7 +4584,7 @@ except ImportError as e:
 try:
     import sys
     sys.path.insert(0, '/app/bionic/engines')
-    from hydroEngine.api import hydro_engine_router
+    from hydroEngine.api.endpoints import hydro_engine_router
     app.include_router(hydro_engine_router)
     print("BIONIC™ Hydrology Engine loaded - Water analysis active")
 except ImportError as e:
