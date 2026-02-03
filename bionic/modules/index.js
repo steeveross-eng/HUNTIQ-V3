@@ -5,10 +5,16 @@
 
 // Module imports
 import * as nutritionModule from "./nutrition/index.js";
+import * as hydrologyModule from "./hydrology/index.js";
+import * as sentinelModule from "./sentinel/index.js";
+import * as sigeomModule from "./sigeom/index.js";
 
 // Registry of all available modules
 export const modules = {
-  nutrition: nutritionModule
+  nutrition: nutritionModule,
+  hydrology: hydrologyModule,
+  sentinel: sentinelModule,
+  sigeom: sigeomModule
 };
 
 // Get module by ID
