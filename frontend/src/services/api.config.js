@@ -107,6 +107,28 @@ export const API_ENDPOINTS = {
   
   // Seed
   SEED: '/api/seed',
+  
+  // Geospatial Engine
+  GEOSPATIAL_STATUS: '/api/geospatial/status',
+  GEOSPATIAL_DATA_SOURCES: '/api/geospatial/data-sources',
+  GEOSPATIAL_LIDAR_QUERY: '/api/geospatial/lidar/query',
+  GEOSPATIAL_LIDAR_COVERAGE: '/api/geospatial/lidar/coverage',
+  GEOSPATIAL_SENTINEL_QUERY: '/api/geospatial/sentinel/query',
+  GEOSPATIAL_SENTINEL_SCENES: '/api/geospatial/sentinel/scenes',
+  GEOSPATIAL_SIGEOM_QUERY: '/api/geospatial/sigeom/query',
+  GEOSPATIAL_HYDRO_QUERY: '/api/geospatial/hydro/query',
+  GEOSPATIAL_HYDRO_RIVERS: '/api/geospatial/hydro/rivers',
+  GEOSPATIAL_HYDRO_LAKES: '/api/geospatial/hydro/lakes',
+  GEOSPATIAL_HYDRO_WETLANDS: '/api/geospatial/hydro/wetlands',
+  GEOSPATIAL_FOREST_QUERY: '/api/geospatial/forest/query',
+  GEOSPATIAL_FOREST_SPECIES: '/api/geospatial/forest/species',
+  GEOSPATIAL_GEOMORPH_ANALYZE: '/api/geospatial/geomorph/analyze',
+  GEOSPATIAL_AI_PREDICT: '/api/geospatial/ai/predict',
+  GEOSPATIAL_AI_CORRIDORS: '/api/geospatial/ai/corridors',
+  GEOSPATIAL_POTENTIAL_CALCULATE: '/api/geospatial/potential/calculate',
+  GEOSPATIAL_POTENTIAL_HOTSPOTS: '/api/geospatial/potential/hotspots',
+  GEOSPATIAL_POTENTIAL_STAND_LOCATIONS: '/api/geospatial/potential/stand-locations',
+  GEOSPATIAL_POTENTIAL_COMPONENTS: '/api/geospatial/potential/components',
 };
 
 export default API_CONFIG;
