@@ -4606,6 +4606,14 @@ try:
 except ImportError as e:
     print(f"SIGÉOM Engine not available: {e}")
 
+# Include BIONIC™ Environment Engine (Combined Analysis)
+try:
+    from environmentEngine.api.endpoints import environment_engine_router
+    app.include_router(environment_engine_router)
+    print("BIONIC™ Environment Engine loaded - Combined analysis active")
+except ImportError as e:
+    print(f"Environment Engine not available: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
