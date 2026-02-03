@@ -741,6 +741,13 @@ const WMSLayerSelector = ({
             transition={{ duration: 0.2 }}
           >
             <CardContent className="pt-2">
+              {/* Species Preset Selector */}
+              <SpeciesPresetSelector
+                onApplyPreset={handleApplyPreset}
+                currentPreset={currentPreset}
+                disabled={loading}
+              />
+              
               {/* Search */}
               <div className="relative mb-3">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -764,7 +771,14 @@ const WMSLayerSelector = ({
               {activeLayers.length > 0 && (
                 <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/5">
                   <span className="text-xs text-gray-400">
-                    {activeLayers.length} couche{activeLayers.length > 1 ? 's' : ''} active{activeLayers.length > 1 ? 's' : ''}
+                    {currentPreset && SPECIES_PRESETS[currentPreset] ? (
+                      <span className="flex items-center gap-1">
+                        <span>{SPECIES_PRESETS[currentPreset].icon}</span>
+                        <span>{SPECIES_PRESETS[currentPreset].name}</span>
+                      </span>
+                    ) : (
+                      `${activeLayers.length} couche${activeLayers.length > 1 ? 's' : ''} active${activeLayers.length > 1 ? 's' : ''}`
+                    )}
                   </span>
                   <Button
                     size="sm"
