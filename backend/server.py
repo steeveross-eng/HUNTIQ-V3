@@ -2138,7 +2138,7 @@ async def ai_advanced_analysis(request: AIAnalysisRequest):
             "recommendation": "Recommandation globale..."
         }}"""
         
-        response = await chat.send_message(UserMessage(content=prompt))
+        response = await chat.send_message(UserMessage(text=prompt))
         
         # Parse JSON response
         import json
