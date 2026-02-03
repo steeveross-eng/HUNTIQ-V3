@@ -397,6 +397,49 @@ const HeroSection = () => {
     </section>
   );
 };
+const HeroSection = () => (
+  <section className="hero-bg min-h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8 pt-16" data-testid="hero-section">
+    <div className="golden-border rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 bg-black/60">
+      <Logo size="large" />
+    </div>
+    <h1 className="text-hero golden-text font-bold mb-6 sm:mb-8 max-w-4xl leading-tight">
+      Votre parcours guidé vers l'attractant parfait
+    </h1>
+    <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+      <Link to="/analyze">
+        <Button className="btn-golden text-black font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full flex items-center gap-2 text-sm sm:text-base">
+          <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5" /> Analysez
+        </Button>
+      </Link>
+      <ChevronRight className="text-[#f5a623] h-5 w-5 sm:h-6 sm:w-6 hidden md:block" />
+      <Link to="/compare">
+        <Button className="btn-golden text-black font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full flex items-center gap-2 text-sm sm:text-base">
+          <GitCompare className="h-4 w-4 sm:h-5 sm:w-5" /> Comparez
+        </Button>
+      </Link>
+      <ChevronRight className="text-[#f5a623] h-5 w-5 sm:h-6 sm:w-6 hidden md:block" />
+      <Link to="/shop">
+        <Button className="btn-golden text-black font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full flex items-center gap-2 text-sm sm:text-base">
+          <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" /> Commandez
+        </Button>
+      </Link>
+    </div>
+    <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4 px-2">
+      <p className="text-gray-300 text-body">
+        Explorez et comparez vous-même les leurres, urines, gels et attractants avec la plateforme 
+        scientifique de SCENT SCIENCE™ Laboratory, basée exclusivement sur des données publiques, 
+        déclarées et vérifiables.
+      </p>
+      <p className="text-[#f5a623] font-medium text-body">
+        Identifiez gratuitement les plus performants et repérez instantanément les meilleures solutions et prix.
+      </p>
+      <p className="text-gray-400 italic text-small">Devenez le professionnel des leurres en quelques clics.</p>
+      <p className="text-[#f5a623] font-semibold text-h3 mt-4 sm:mt-6">
+        La science valide maintenant ce que le terrain confirme.
+      </p>
+    </div>
+  </section>
+);
 
 // Product Card Component
 const ProductCard = ({ product, onAddToCart, onAffiliateClick }) => {
@@ -485,6 +528,10 @@ const ProductsSection = ({ products, onAddToCart, onAffiliateClick }) => {
       <div className="max-w-7xl mx-auto">
         <h2 className="golden-text text-3xl md:text-4xl font-bold text-center mb-8 italic">
           {t('page_best_choices')} {brand.short}
+    <section className="section-padding px-4 sm:px-6 lg:px-8 bg-background">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="golden-text text-h2 font-bold text-center mb-6 sm:mb-8 italic">
+          Meilleurs choix SCENT SCIENCE™
         </h2>
         <FilterTabs activeFilter={activeFilter} onFilterChange={setActiveFilter} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
@@ -508,6 +555,7 @@ const FeaturesSection = () => {
   ];
   return (
     <section className="py-16 px-4 bg-black/50" data-testid="features-section">
+    <section className="section-padding px-4 sm:px-6 lg:px-8 bg-black/50">
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {features.map((feature, index) => (
@@ -517,6 +565,8 @@ const FeaturesSection = () => {
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">{t(feature.titleKey)}</h3>
               <p className="text-gray-400">{t(feature.descKey)}</p>
+              <h3 className="text-h3 font-semibold text-white mb-2">{feature.title}</h3>
+              <p className="text-gray-400 text-small">{feature.description}</p>
             </div>
           ))}
         </div>
@@ -643,9 +693,13 @@ const HomePage = ({ products, onAddToCart, onAffiliateClick }) => {
 // Analyze Page
 const AnalyzePage = ({ products }) => (
   <main className="pt-20 min-h-screen bg-background">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8">
       <h1 className="golden-text text-4xl font-bold mb-4">Analysez</h1>
-      <p className="text-gray-400 mb-8">Analysez en profondeur chaque attractant avec nos 13 critères scientifiques évalués par IA.</p>
+      <p className="text-gray-400 mb-8">Analysez en profondeur chaque produit avec nos 13 critères scientifiques évalués par IA.</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <h1 className="golden-text text-h1 font-bold mb-3 sm:mb-4">Analysez</h1>
+      <p className="text-gray-400 mb-6 sm:mb-8 text-body">Analysez en profondeur chaque attractant avec nos 13 critères scientifiques évalués par IA.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
         {products.map((product) => (
           <Card key={product.id} className="bg-card border-border p-4 sm:p-6">
@@ -675,12 +729,151 @@ const AnalyzePage = ({ products }) => (
   </main>
 );
 
+// Compare Page
+const ComparePage = ({ products }) => {
+  const navigate = useNavigate();
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const toggleProduct = (product) => {
+    if (selectedProducts.find(p => p.id === product.id)) {
+      setSelectedProducts(selectedProducts.filter(p => p.id !== product.id));
+    } else if (selectedProducts.length < 3) {
+      setSelectedProducts([...selectedProducts, product]);
+    }
+  };
+
+  return (
+    <main className="pt-20 min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Back Button */}
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/')}
+          className="mb-4 text-gray-400 hover:text-white hover:bg-gray-800/50"
+          data-testid="back-button-compare"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Retour à l'accueil
+        </Button>
+        
+        <h1 className="golden-text text-4xl font-bold mb-4">Comparez</h1>
+        <p className="text-gray-400 mb-8">Sélectionnez jusqu'à 3 produits pour les comparer côte à côte.</p>
+        {selectedProducts.length > 0 && (
+          <div className="mb-8 p-6 bg-card rounded-xl border border-border">
+            <h2 className="text-white text-xl font-semibold mb-4">Comparaison</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {selectedProducts.map((product) => (
+                <div key={product.id} className="text-center">
+                  <img src={product.image_url} alt={product.name} className="w-32 h-32 object-cover rounded-lg mx-auto mb-4" />
+                  <h3 className="text-white font-semibold">{product.name}</h3>
+                  <p className="text-[#f5a623] font-bold text-xl">${product.price}</p>
+                  <Badge className="bg-green-600 mt-2">Score: {product.score}</Badge>
+                  <div className="mt-2"><SaleModeBadge mode={product.sale_mode} /></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {products.map((product) => (
+            <button
+              key={product.id}
+              onClick={() => toggleProduct(product)}
+              className={`p-4 rounded-lg border transition-all ${
+                selectedProducts.find(p => p.id === product.id) ? "border-[#f5a623] bg-[#f5a623]/10" : "border-border hover:border-gray-500"
+              }`}
+            >
+              <img src={product.image_url} alt={product.name} className="w-full aspect-square object-cover rounded mb-2" />
+              <p className="text-white text-sm font-medium truncate">{product.name}</p>
+              <p className="text-[#f5a623]">${product.price}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+};
+
+// Shop Page
+const ShopPage = ({ products, onAddToCart, onAffiliateClick }) => {
+  const navigate = useNavigate();
+  
+  return (
+    <main className="pt-20 min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Back Button */}
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/')}
+          className="mb-4 text-gray-400 hover:text-white hover:bg-gray-800/50"
+          data-testid="back-button-shop"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Retour à l'accueil
+        </Button>
+        
+        <h1 className="golden-text text-4xl font-bold mb-4">Magasin</h1>
+        <p className="text-gray-400 mb-8">Découvrez notre sélection complète de produits premium.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} onAffiliateClick={onAffiliateClick} />
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+};
+
 // ============================================
 // TERRITORY PAGE - Map Interface
 // ============================================
 
 import TerritoryRankings from "@/components/TerritoryRankings";
 import GpsHotspots from "@/components/GpsHotspots";
+const AdminPage = ({ onProductsUpdate }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
+  
+  // Data states
+  const [stats, setStats] = useState({});
+  const [products, setProducts] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [commissions, setCommissions] = useState([]);
+  const [alerts, setAlerts] = useState([]);
+  const [salesReport, setSalesReport] = useState({});
+  const [productsReport, setProductsReport] = useState({});
+  
+  // Maintenance mode state
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [maintenanceSettings, setMaintenanceSettings] = useState({
+    maintenance_title: "Site en maintenance",
+    maintenance_message: "Nous effectuons actuellement des mises à jour. Veuillez revenir plus tard.",
+    estimated_return: ""
+  });
+  const [showMaintenanceDialog, setShowMaintenanceDialog] = useState(false);
+  const [togglingMaintenance, setTogglingMaintenance] = useState(false);
+  
+  // Edit states
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [editForm, setEditForm] = useState({});
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showAddSupplierDialog, setShowAddSupplierDialog] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    name: "", brand: "", price: 0, score: 0, cost_benefit_score: 0, rank: 1,
+    image_url: "", description: "", category: "attractant", animal_type: "", season: "",
+    sale_mode: "dropshipping", supplier_id: "", supplier_price: 0, affiliate_commission: 0,
+    affiliate_link: "", dropshipping_available: true
+  });
+  const [newSupplier, setNewSupplier] = useState({
+    name: "", contact_name: "", email: "", phone: "", address: "",
+    partnership_type: "dropshipping", shipping_delay: 3, partnership_conditions: ""
+  });
 
 const TerritoryPage = () => {
   const [userId, setUserId] = useState(null);
@@ -775,6 +968,151 @@ const TerritoryPage = () => {
       </main>
     );
   }
+    const checkAuth = async () => {
+      const auth = localStorage.getItem('admin_authenticated');
+      if (auth === 'true') {
+        setIsAuthenticated(true);
+        return;
+      }
+      
+      // Try auto-login with saved password
+      const savedPassword = localStorage.getItem('admin_saved_password');
+      const savedRememberMe = localStorage.getItem('admin_remember_me') === 'true';
+      
+      if (savedPassword && savedRememberMe && !autoLoginAttempted) {
+        setAutoLoginAttempted(true);
+        setPassword(savedPassword);
+        setRememberMe(true);
+        // Auto-login
+        try {
+          setLoading(true);
+          await axios.post(`${API}/admin/login`, { password: savedPassword });
+          localStorage.setItem('admin_authenticated', 'true');
+          setIsAuthenticated(true);
+          toast.success("Reconnexion automatique réussie!");
+        } catch (error) {
+          // Clear saved credentials on failed auto-login
+          localStorage.removeItem('admin_saved_password');
+          localStorage.removeItem('admin_remember_me');
+          setPassword("");
+          setRememberMe(false);
+          toast.error("Session expirée - veuillez vous reconnecter");
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    
+    checkAuth();
+  }, [autoLoginAttempted]);
+
+  useEffect(() => {
+    if (isAuthenticated) loadAllData();
+  }, [isAuthenticated]);
+
+  const loadAllData = async () => {
+    try {
+      const [statsRes, productsRes, suppliersRes, ordersRes, customersRes, commissionsRes, alertsRes, salesRes, productsReportRes, siteSettingsRes] = await Promise.all([
+        axios.get(`${API}/admin/stats`),
+        axios.get(`${API}/admin/products`),
+        axios.get(`${API}/suppliers`),
+        axios.get(`${API}/orders`),
+        axios.get(`${API}/customers`),
+        axios.get(`${API}/commissions`),
+        axios.get(`${API}/admin/alerts`),
+        axios.get(`${API}/admin/reports/sales?period=month`),
+        axios.get(`${API}/admin/reports/products`),
+        axios.get(`${API}/admin/site-settings`)
+      ]);
+      setStats(statsRes.data);
+      setProducts(productsRes.data);
+      setSuppliers(suppliersRes.data);
+      setOrders(ordersRes.data);
+      setCustomers(customersRes.data);
+      setCommissions(commissionsRes.data);
+      setAlerts(alertsRes.data);
+      setSalesReport(salesRes.data);
+      setProductsReport(productsReportRes.data);
+      
+      // Load site settings
+      const settings = siteSettingsRes.data;
+      setMaintenanceMode(settings.maintenance_mode || false);
+      setMaintenanceSettings({
+        maintenance_title: settings.maintenance_title || "Site en maintenance",
+        maintenance_message: settings.maintenance_message || "Nous effectuons actuellement des mises à jour.",
+        estimated_return: settings.estimated_return || ""
+      });
+    } catch (error) {
+      console.error("Error loading admin data:", error);
+    }
+  };
+
+  // Toggle maintenance mode
+  const handleToggleMaintenance = async (enable) => {
+    setTogglingMaintenance(true);
+    try {
+      const response = await axios.put(`${API}/admin/site-settings/maintenance`, {
+        maintenance_mode: enable,
+        maintenance_title: maintenanceSettings.maintenance_title,
+        maintenance_message: maintenanceSettings.maintenance_message,
+        estimated_return: maintenanceSettings.estimated_return
+      });
+      
+      setMaintenanceMode(enable);
+      setShowMaintenanceDialog(false);
+      
+      if (enable) {
+        toast.success("🌙 Mode veille activé - Le site est maintenant inaccessible au public");
+      } else {
+        toast.success("☀️ Site réactivé - Le site est maintenant accessible au public");
+      }
+    } catch (error) {
+      toast.error("Erreur lors du changement de mode");
+    }
+    setTogglingMaintenance(false);
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await axios.post(`${API}/admin/login`, { password });
+      localStorage.setItem('admin_authenticated', 'true');
+      
+      // Save password if "Remember me" is checked
+      if (rememberMe) {
+        localStorage.setItem('admin_saved_password', password);
+        localStorage.setItem('admin_remember_me', 'true');
+      } else {
+        localStorage.removeItem('admin_saved_password');
+        localStorage.removeItem('admin_remember_me');
+      }
+      
+      setIsAuthenticated(true);
+      toast.success("Connexion réussie!");
+    } catch (error) {
+      toast.error("Mot de passe incorrect");
+    }
+    setLoading(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_authenticated');
+    // Keep saved password for next auto-login if remember me was enabled
+    setIsAuthenticated(false);
+    navigate("/");
+  };
+  
+  const handleFullLogout = () => {
+    localStorage.removeItem('admin_authenticated');
+    localStorage.removeItem('admin_saved_password');
+    localStorage.removeItem('admin_remember_me');
+    setIsAuthenticated(false);
+    setPassword("");
+    setRememberMe(false);
+    navigate("/");
+    toast.success("Déconnexion complète - mot de passe oublié");
+  };
 
   return (
     <div className="pt-16 min-h-screen bg-background">
@@ -987,6 +1325,111 @@ const FormationsPage = () => {
       features: ['Accès restreint', 'Espèces protégées', 'Permis spéciaux']
     }
   ];
+  // Annulation de commande avec email
+  const [cancellingOrder, setCancellingOrder] = useState(null);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [cancelReason, setCancelReason] = useState("Produits non disponibles");
+
+  const handleCancelOrder = async (order) => {
+    setCancellingOrder(order);
+    setCancelReason("Produits non disponibles");
+    setShowCancelDialog(true);
+  };
+
+  const confirmCancelOrder = async () => {
+    if (!cancellingOrder) return;
+    
+    try {
+      const response = await axios.post(`${API}/orders/${cancellingOrder.id}/cancel`, {
+        reason: cancelReason,
+        send_email: true
+      });
+      
+      if (response.data.email_notification?.status === "sent") {
+        toast.success("Commande annulée et email envoyé au client!");
+      } else if (response.data.email_notification?.status === "simulated") {
+        toast.success("Commande annulée! (Email simulé - service non configuré)");
+      } else {
+        toast.success("Commande annulée! (Pas d'email client disponible)");
+      }
+      
+      setShowCancelDialog(false);
+      setCancellingOrder(null);
+      loadAllData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Erreur lors de l'annulation");
+    }
+  };
+
+  // Login form
+  if (!isAuthenticated) {
+    return (
+      <main className="pt-20 min-h-screen bg-background flex items-center justify-center">
+        <Card className="w-full max-w-md bg-card border-border">
+          <CardHeader className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f5a623]/20 flex items-center justify-center">
+              <Lock className="h-8 w-8 text-[#f5a623]" />
+            </div>
+            <CardTitle className="text-2xl text-white">Administration</CardTitle>
+            <CardDescription>Entrez le mot de passe administrateur</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleLogin} className="space-y-4">
+              {/* Password Input with Eye Toggle */}
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-background border-border text-white pr-10"
+                  placeholder="••••••••"
+                  data-testid="admin-password-input"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  data-testid="toggle-password-visibility"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              
+              {/* Remember Me Checkbox */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="remember-me"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded border-border bg-background text-[#f5a623] focus:ring-[#f5a623] cursor-pointer"
+                  data-testid="remember-me-checkbox"
+                />
+                <label htmlFor="remember-me" className="text-gray-400 text-sm cursor-pointer select-none">
+                  Se souvenir de moi (connexion automatique)
+                </label>
+              </div>
+              
+              <Button type="submit" className="w-full btn-golden text-black font-semibold" disabled={loading} data-testid="admin-login-btn">
+                {loading ? "Connexion..." : "Se connecter"}
+              </Button>
+              
+              {/* Info about auto-login */}
+              {rememberMe && (
+                <p className="text-xs text-gray-500 text-center">
+                  Votre mot de passe sera sauvegardé localement pour une connexion automatique
+                </p>
+              )}
+            </form>
+          </CardContent>
+        </Card>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-background pt-20 pb-16">
@@ -1010,14 +1453,239 @@ const FormationsPage = () => {
               Centre de Formations
             </h1>
             <p className="text-gray-400">FédéCP & BIONIC™ - Devenez un chasseur expert</p>
+            <h1 className="golden-text text-4xl font-bold">Administration</h1>
+            <p className="text-gray-400 mt-2">Système Hybride Dropshipping + Affiliation</p>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Maintenance Mode Indicator & Button */}
+            <Button 
+              variant="outline" 
+              className={maintenanceMode 
+                ? "border-yellow-500 text-yellow-500 hover:bg-yellow-500/10 animate-pulse" 
+                : "border-[#f5a623] text-[#f5a623] hover:bg-[#f5a623]/10"
+              }
+              onClick={() => setShowMaintenanceDialog(true)}
+              title={maintenanceMode ? "Site en veille - Cliquer pour réactiver" : "Site actif - Cliquer pour mettre en veille"}
+            >
+              {maintenanceMode ? (
+                <>
+                  <Moon className="h-4 w-4 mr-2" />
+                  En veille
+                </>
+              ) : (
+                <>
+                  <Sun className="h-4 w-4 mr-2" />
+                  Site actif
+                </>
+              )}
+            </Button>
+            
+            <Button variant="outline" onClick={loadAllData}><RefreshCw className="h-4 w-4 mr-2" />Actualiser</Button>
+            <Button variant="outline" className="border-orange-500 text-orange-500 hover:bg-orange-500/10" onClick={handleLogout}>
+              <LogOut className="h-4 w-4 mr-2" />Déconnexion
+            </Button>
+            <Button variant="outline" className="border-red-500 text-red-500 hover:bg-red-500/10" onClick={handleFullLogout} title="Déconnexion et oubli du mot de passe">
+              <XCircle className="h-4 w-4 mr-2" />Oublier
+            </Button>
           </div>
         </div>
+        
+        {/* Maintenance Mode Banner */}
+        {maintenanceMode && (
+          <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-lg p-4 mb-6 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Moon className="h-6 w-6 text-yellow-500" />
+              <div>
+                <p className="text-yellow-500 font-semibold">Mode veille activé</p>
+                <p className="text-yellow-500/70 text-sm">Le site est actuellement inaccessible au public</p>
+              </div>
+            </div>
+            <Button 
+              className="bg-[#f5a623] hover:bg-[#d4850e] text-white"
+              onClick={() => handleToggleMaintenance(false)}
+              disabled={togglingMaintenance}
+            >
+              <Sun className="h-4 w-4 mr-2" />
+              Réactiver le site
+            </Button>
+          </div>
+        )}
+
+        {/* Maintenance Mode Dialog */}
+        <Dialog open={showMaintenanceDialog} onOpenChange={setShowMaintenanceDialog}>
+          <DialogContent className="bg-card border-border text-white max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                {maintenanceMode ? (
+                  <Sun className="h-5 w-5 text-[#f5a623]" />
+                ) : (
+                  <Moon className="h-5 w-5 text-yellow-500" />
+                )}
+                {maintenanceMode ? "Réactiver le site" : "Mettre en veille"}
+              </DialogTitle>
+              <DialogDescription>
+                {maintenanceMode 
+                  ? "Le site redeviendra accessible à tous les visiteurs."
+                  : "Les visiteurs verront une page de maintenance. Vous garderez l'accès admin."
+                }
+              </DialogDescription>
+            </DialogHeader>
+            
+            {!maintenanceMode && (
+              <div className="space-y-4 py-4">
+                <div>
+                  <Label>Titre de la page de maintenance</Label>
+                  <Input
+                    value={maintenanceSettings.maintenance_title}
+                    onChange={(e) => setMaintenanceSettings({...maintenanceSettings, maintenance_title: e.target.value})}
+                    className="bg-background border-border mt-2"
+                    placeholder="Site en maintenance"
+                  />
+                </div>
+                <div>
+                  <Label>Message pour les visiteurs</Label>
+                  <Input
+                    value={maintenanceSettings.maintenance_message}
+                    onChange={(e) => setMaintenanceSettings({...maintenanceSettings, maintenance_message: e.target.value})}
+                    className="bg-background border-border mt-2"
+                    placeholder="Nous effectuons des mises à jour..."
+                  />
+                </div>
+                <div>
+                  <Label>Retour estimé (optionnel)</Label>
+                  <Input
+                    value={maintenanceSettings.estimated_return}
+                    onChange={(e) => setMaintenanceSettings({...maintenanceSettings, estimated_return: e.target.value})}
+                    className="bg-background border-border mt-2"
+                    placeholder="ex: Dans quelques heures, Demain matin..."
+                  />
+                </div>
+              </div>
+            )}
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowMaintenanceDialog(false)}>
+                Annuler
+              </Button>
+              <Button 
+                className={maintenanceMode 
+                  ? "bg-[#f5a623] hover:bg-[#d4850e] text-white"
+                  : "bg-yellow-600 hover:bg-yellow-700 text-white"
+                }
+                onClick={() => handleToggleMaintenance(!maintenanceMode)}
+                disabled={togglingMaintenance}
+              >
+                {togglingMaintenance ? (
+                  "Chargement..."
+                ) : maintenanceMode ? (
+                  <>
+                    <Sun className="h-4 w-4 mr-2" />
+                    Réactiver
+                  </>
+                ) : (
+                  <>
+                    <Moon className="h-4 w-4 mr-2" />
+                    Activer la veille
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         {/* FédéCP Section */}
         <section className="mb-12">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-blue-500/20 rounded-lg">
               <BookOpen className="h-6 w-6 text-blue-400" />
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="bg-card border border-border flex-wrap h-auto p-1">
+            <TabsTrigger value="dashboard" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
+              <BarChart3 className="h-4 w-4 mr-2" />Tableau de bord
+            </TabsTrigger>
+            <TabsTrigger value="sales" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
+              <TrendingUp className="h-4 w-4 mr-2" />Ventes
+            </TabsTrigger>
+            <TabsTrigger value="products" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
+              <Package className="h-4 w-4 mr-2" />Produits
+            </TabsTrigger>
+            <TabsTrigger value="suppliers" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
+              <Store className="h-4 w-4 mr-2" />Partenaires
+            </TabsTrigger>
+            <TabsTrigger value="customers" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
+              <Users className="h-4 w-4 mr-2" />Clients
+            </TabsTrigger>
+            <TabsTrigger value="commissions" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
+              <Percent className="h-4 w-4 mr-2" />Commissions
+            </TabsTrigger>
+            <TabsTrigger value="referral" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
+              <Gift className="h-4 w-4 mr-2" />Parrainage
+            </TabsTrigger>
+            <TabsTrigger value="discovery" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
+              <Bot className="h-4 w-4 mr-2" />Découverte IA
+            </TabsTrigger>
+            <TabsTrigger value="performance" className="data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
+              <Award className="h-4 w-4 mr-2" />Performances
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Dashboard Tab */}
+          <TabsContent value="dashboard" className="space-y-6">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Card className="bg-card border-border">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[#f5a623]/20 flex items-center justify-center">
+                      <Package className="h-5 w-5 text-[#f5a623]" />
+                    </div>
+                    <div>
+                      <p className="text-gray-400 text-xs">Produits</p>
+                      <p className="text-xl font-bold text-white">{stats.products_count || 0}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-card border-border">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[#f5a623]/20 flex items-center justify-center">
+                      <ShoppingCart className="h-5 w-5 text-[#f5a623]" />
+                    </div>
+                    <div>
+                      <p className="text-gray-400 text-xs">Commandes</p>
+                      <p className="text-xl font-bold text-white">{stats.orders_count || 0}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-card border-border">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                      <DollarSign className="h-5 w-5 text-blue-500" />
+                    </div>
+                    <div>
+                      <p className="text-gray-400 text-xs">Ventes totales</p>
+                      <p className="text-xl font-bold text-white">${stats.total_sales || 0}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-card border-border">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                      <TrendingUp className="h-5 w-5 text-purple-500" />
+                    </div>
+                    <div>
+                      <p className="text-gray-400 text-xs">Marges nettes</p>
+                      <p className="text-xl font-bold text-white">${stats.total_margins || 0}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
             <div>
               <h2 className="text-xl font-bold text-white">Formations FédéCP</h2>
@@ -1072,11 +1740,11 @@ const FormationsPage = () => {
           </div>
         </section>
 
-        {/* BIONIC Section */}
+        {/* BIONIC™ Section */}
         <section className="mb-12">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-[#f5a623]/20 rounded-lg">
-              <Brain className="h-6 w-6 text-[#f5a623]" />
+              <Target className="h-6 w-6 text-[#f5a623]" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-white">Formations BIONIC™</h2>
@@ -1092,6 +1760,27 @@ const FormationsPage = () => {
                   <div className="flex items-start justify-between">
                     <span className="text-3xl">{formation.icon}</span>
                     <Badge className="bg-[#f5a623]/20 text-[#f5a623]">{formation.type}</Badge>
+            {/* Commissions Overview */}
+            <Card className="bg-card border-border">
+              <CardHeader>
+                <CardTitle className="text-white">Commissions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-background rounded-lg">
+                    <Clock className="h-6 w-6 text-yellow-500 mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-yellow-500">${stats.pending_commissions || 0}</p>
+                    <p className="text-gray-400 text-sm">En attente</p>
+                  </div>
+                  <div className="text-center p-4 bg-background rounded-lg">
+                    <CheckCircle className="h-6 w-6 text-[#f5a623] mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-[#f5a623]">${stats.confirmed_commissions || 0}</p>
+                    <p className="text-gray-400 text-sm">Confirmées</p>
+                  </div>
+                  <div className="text-center p-4 bg-background rounded-lg">
+                    <DollarSign className="h-6 w-6 text-blue-500 mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-blue-500">${stats.paid_commissions || 0}</p>
+                    <p className="text-gray-400 text-sm">Payées</p>
                   </div>
                   <CardTitle className="text-white text-lg">{formation.title}</CardTitle>
                   <CardDescription className="text-xs">{formation.description}</CardDescription>
@@ -1112,36 +1801,635 @@ const FormationsPage = () => {
                   <Button size="sm" className="w-full btn-golden text-black">
                     Commencer
                   </Button>
+                  <div className="space-y-2">
+                    {alerts.slice(0, 5).map((alert) => (
+                      <div key={alert.id} className={`p-3 rounded-lg flex items-center gap-3 ${alert.is_read ? 'bg-background' : 'bg-yellow-500/10'}`}>
+                        <AlertTriangle className="h-5 w-5 text-yellow-500 flex-shrink-0" />
+                        <div className="flex-1">
+                          <p className="text-white font-medium">{alert.title}</p>
+                          <p className="text-gray-400 text-sm">{alert.message}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* Sales Tab */}
+          <TabsContent value="sales" className="space-y-6">
+            <Card className="bg-card border-border">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-white">Suivi des Ventes</CardTitle>
+                <Badge className="bg-[#f5a623] text-black">{orders.length} commandes</Badge>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-gray-400">ID</TableHead>
+                      <TableHead className="text-gray-400">Date</TableHead>
+                      <TableHead className="text-gray-400">Client</TableHead>
+                      <TableHead className="text-gray-400">Email</TableHead>
+                      <TableHead className="text-gray-400">Produit</TableHead>
+                      <TableHead className="text-gray-400">Mode</TableHead>
+                      <TableHead className="text-gray-400">Prix</TableHead>
+                      <TableHead className="text-gray-400">Marge</TableHead>
+                      <TableHead className="text-gray-400">Statut</TableHead>
+                      <TableHead className="text-gray-400">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {orders.map((order) => (
+                      <TableRow key={order.id} className={order.status === "cancelled" ? "opacity-50" : ""}>
+                        <TableCell className="text-white font-mono text-xs">{order.id.slice(0, 8)}...</TableCell>
+                        <TableCell className="text-gray-300">{new Date(order.created_at).toLocaleDateString()}</TableCell>
+                        <TableCell className="text-gray-300">{order.customer_name || "Anonyme"}</TableCell>
+                        <TableCell className="text-gray-400 text-xs">{order.customer_email || "-"}</TableCell>
+                        <TableCell className="text-white">{order.product_name}</TableCell>
+                        <TableCell><SaleModeBadge mode={order.sale_mode} /></TableCell>
+                        <TableCell className="text-[#f5a623]">${order.sale_price}</TableCell>
+                        <TableCell className="text-[#f5a623]">${order.net_margin?.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Badge className={
+                            order.status === "delivered" ? "bg-[#f5a623]" :
+                            order.status === "shipped" ? "bg-blue-600" :
+                            order.status === "processing" ? "bg-yellow-600" :
+                            order.status === "cancelled" ? "bg-red-600" : "bg-gray-600"
+                          }>{order.status}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Select value={order.status} onValueChange={(value) => handleUpdateOrderStatus(order.id, value)}>
+                              <SelectTrigger className="w-28 h-8 text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="pending">En attente</SelectItem>
+                                <SelectItem value="processing">En cours</SelectItem>
+                                <SelectItem value="shipped">Expédié</SelectItem>
+                                <SelectItem value="delivered">Livré</SelectItem>
+                                <SelectItem value="cancelled">Annulé</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            {order.status !== "cancelled" && (
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="border-red-500 text-red-500 hover:bg-red-500/10 h-8 px-2"
+                                onClick={() => handleCancelOrder(order)}
+                                data-testid={`cancel-order-${order.id}`}
+                              >
+                                <XCircle className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            {/* Cancel Order Dialog */}
+            <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+              <DialogContent className="bg-card border-border text-white max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-red-500">
+                    <XCircle className="h-5 w-5" />
+                    Annuler la commande
+                  </DialogTitle>
+                  <DialogDescription>
+                    Un email d'annulation sera automatiquement envoyé au client.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                {cancellingOrder && (
+                  <div className="space-y-4 py-4">
+                    <div className="bg-background p-4 rounded-lg space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Client:</span>
+                        <span className="text-white">{cancellingOrder.customer_name || "Anonyme"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Email:</span>
+                        <span className="text-white">{cancellingOrder.customer_email || "Non renseigné"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Produit:</span>
+                        <span className="text-white">{cancellingOrder.product_name}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Montant:</span>
+                        <span className="text-[#f5a623]">${cancellingOrder.sale_price}</span>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label>Raison de l'annulation (optionnel)</Label>
+                      <Input
+                        value={cancelReason}
+                        onChange={(e) => setCancelReason(e.target.value)}
+                        className="bg-background border-border mt-2"
+                        placeholder="Produits non disponibles"
+                      />
+                    </div>
+                    
+                    {!cancellingOrder.customer_email && (
+                      <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
+                        <p className="text-yellow-500 text-sm flex items-center gap-2">
+                          <AlertTriangle className="h-4 w-4" />
+                          Aucun email client - l'email ne sera pas envoyé
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setShowCancelDialog(false)}>
+                    Retour
+                  </Button>
+                  <Button 
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                    onClick={confirmCancelOrder}
+                  >
+                    <Mail className="h-4 w-4 mr-2" />
+                    Annuler et notifier
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </TabsContent>
+
+          {/* Products Tab */}
+          <TabsContent value="products" className="space-y-6">
+            <Card className="bg-card border-border">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-white">Gestion des Produits</CardTitle>
+                <Button className="btn-golden text-black" onClick={() => setShowAddDialog(true)}>
+                  <Plus className="h-4 w-4 mr-2" />Ajouter
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {products.map((product) => (
+                    <div key={product.id} className="flex items-center gap-4 p-4 bg-background rounded-lg">
+                      <img src={product.image_url} alt={product.name} className="w-16 h-16 object-cover rounded" />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge className="rank-badge text-white">#{product.rank}</Badge>
+                          <span className="text-[#f5a623] text-sm">{product.brand}</span>
+                          <SaleModeBadge mode={product.sale_mode} />
+                        </div>
+                        <h4 className="text-white font-medium">{product.name}</h4>
+                        <div className="flex items-center gap-4 mt-1 text-sm">
+                          <span className="text-[#f5a623]">${product.price}</span>
+                          <span className="text-gray-400">Fournisseur: ${product.supplier_price || 0}</span>
+                          <span className="text-[#f5a623]">Marge: ${(product.price - (product.supplier_price || 0)).toFixed(2)}</span>
+                          {product.affiliate_commission > 0 && (
+                            <span className="text-purple-500">Commission: {product.affiliate_commission}%</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="icon" variant="outline" className="border-[#f5a623] text-[#f5a623]" onClick={() => {
+                          setEditingProduct(product.id);
+                          setEditForm(product);
+                        }}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button size="icon" variant="outline" className="border-red-500 text-red-500" onClick={() => handleDeleteProduct(product.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Edit Product Dialog */}
+            <Dialog open={editingProduct !== null} onOpenChange={() => setEditingProduct(null)}>
+              <DialogContent className="bg-card border-border text-white max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Modifier le produit</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Nom</Label>
+                      <Input value={editForm.name || ""} onChange={(e) => setEditForm({...editForm, name: e.target.value})} className="bg-background" />
+                    </div>
+                    <div>
+                      <Label>Marque</Label>
+                      <Input value={editForm.brand || ""} onChange={(e) => setEditForm({...editForm, brand: e.target.value})} className="bg-background" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label>Prix de vente ($)</Label>
+                      <Input type="number" value={editForm.price || 0} onChange={(e) => setEditForm({...editForm, price: parseFloat(e.target.value)})} className="bg-background" />
+                    </div>
+                    <div>
+                      <Label>Prix fournisseur ($)</Label>
+                      <Input type="number" value={editForm.supplier_price || 0} onChange={(e) => setEditForm({...editForm, supplier_price: parseFloat(e.target.value)})} className="bg-background" />
+                    </div>
+                    <div>
+                      <Label>Commission affiliée (%)</Label>
+                      <Input type="number" value={editForm.affiliate_commission || 0} onChange={(e) => setEditForm({...editForm, affiliate_commission: parseFloat(e.target.value)})} className="bg-background" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Mode de vente</Label>
+                      <Select value={editForm.sale_mode || "dropshipping"} onValueChange={(value) => setEditForm({...editForm, sale_mode: value})}>
+                        <SelectTrigger className="bg-background">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="dropshipping">Dropshipping</SelectItem>
+                          <SelectItem value="affiliation">Affiliation</SelectItem>
+                          <SelectItem value="hybrid">Hybride</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Fournisseur</Label>
+                      <Select value={editForm.supplier_id || ""} onValueChange={(value) => setEditForm({...editForm, supplier_id: value})}>
+                        <SelectTrigger className="bg-background">
+                          <SelectValue placeholder="Sélectionner" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {suppliers.map(s => (
+                            <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Lien affilié</Label>
+                    <Input value={editForm.affiliate_link || ""} onChange={(e) => setEditForm({...editForm, affiliate_link: e.target.value})} className="bg-background" placeholder="https://..." />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch checked={editForm.dropshipping_available} onCheckedChange={(checked) => setEditForm({...editForm, dropshipping_available: checked})} />
+                    <Label>Dropshipping disponible</Label>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setEditingProduct(null)}>Annuler</Button>
+                  <Button className="btn-golden text-black" onClick={() => handleSaveProduct(editingProduct)}>Sauvegarder</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* Add Product Dialog */}
+            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+              <DialogContent className="bg-card border-border text-white max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Ajouter un produit</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Nom</Label>
+                      <Input value={newProduct.name} onChange={(e) => setNewProduct({...newProduct, name: e.target.value})} className="bg-background" />
+                    </div>
+                    <div>
+                      <Label>Marque</Label>
+                      <Input value={newProduct.brand} onChange={(e) => setNewProduct({...newProduct, brand: e.target.value})} className="bg-background" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-4 gap-4">
+                    <div>
+                      <Label>Prix ($)</Label>
+                      <Input type="number" value={newProduct.price} onChange={(e) => setNewProduct({...newProduct, price: parseFloat(e.target.value)})} className="bg-background" />
+                    </div>
+                    <div>
+                      <Label>Score</Label>
+                      <Input type="number" value={newProduct.score} onChange={(e) => setNewProduct({...newProduct, score: parseInt(e.target.value)})} className="bg-background" />
+                    </div>
+                    <div>
+                      <Label>Rang</Label>
+                      <Input type="number" value={newProduct.rank} onChange={(e) => setNewProduct({...newProduct, rank: parseInt(e.target.value)})} className="bg-background" />
+                    </div>
+                    <div>
+                      <Label>Prix fournisseur</Label>
+                      <Input type="number" value={newProduct.supplier_price} onChange={(e) => setNewProduct({...newProduct, supplier_price: parseFloat(e.target.value)})} className="bg-background" />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>URL Image</Label>
+                    <Input value={newProduct.image_url} onChange={(e) => setNewProduct({...newProduct, image_url: e.target.value})} className="bg-background" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Mode de vente</Label>
+                      <Select value={newProduct.sale_mode} onValueChange={(value) => setNewProduct({...newProduct, sale_mode: value})}>
+                        <SelectTrigger className="bg-background">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="dropshipping">Dropshipping</SelectItem>
+                          <SelectItem value="affiliation">Affiliation</SelectItem>
+                          <SelectItem value="hybrid">Hybride</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Commission affiliée (%)</Label>
+                      <Input type="number" value={newProduct.affiliate_commission} onChange={(e) => setNewProduct({...newProduct, affiliate_commission: parseFloat(e.target.value)})} className="bg-background" />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Lien affilié</Label>
+                    <Input value={newProduct.affiliate_link} onChange={(e) => setNewProduct({...newProduct, affiliate_link: e.target.value})} className="bg-background" />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setShowAddDialog(false)}>Annuler</Button>
+                  <Button className="btn-golden text-black" onClick={handleAddProduct}>Ajouter</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </TabsContent>
+
+          {/* Suppliers Tab */}
+          <TabsContent value="suppliers" className="space-y-6">
+            <Card className="bg-card border-border">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-white">Magasins Partenaires</CardTitle>
+                <Button className="btn-golden text-black" onClick={() => setShowAddSupplierDialog(true)}>
+                  <Plus className="h-4 w-4 mr-2" />Ajouter
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {suppliers.map((supplier) => (
+                    <div key={supplier.id} className="p-4 bg-background rounded-lg">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-[#f5a623]/20 flex items-center justify-center">
+                            <Store className="h-6 w-6 text-[#f5a623]" />
+                          </div>
+                          <div>
+                            <h4 className="text-white font-semibold">{supplier.name}</h4>
+                            <p className="text-gray-400 text-sm">{supplier.email}</p>
+                          </div>
+                        </div>
+                        <SaleModeBadge mode={supplier.partnership_type} />
+                      </div>
+                      <div className="grid grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <p className="text-gray-400">Commandes</p>
+                          <p className="text-white font-semibold">{supplier.total_orders || 0}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400">Revenus fournisseur</p>
+                          <p className="text-blue-500 font-semibold">${supplier.total_revenue_supplier?.toFixed(2) || 0}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400">Revenus SCENT SCIENCE™</p>
+                          <p className="text-[#f5a623] font-semibold">${supplier.total_revenue_scent?.toFixed(2) || 0}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400">Délai d'expédition</p>
+                          <p className="text-white font-semibold">{supplier.shipping_delay} jours</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Add Supplier Dialog */}
+            <Dialog open={showAddSupplierDialog} onOpenChange={setShowAddSupplierDialog}>
+              <DialogContent className="bg-card border-border text-white">
+                <DialogHeader>
+                  <DialogTitle>Ajouter un partenaire</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Nom du magasin</Label>
+                      <Input value={newSupplier.name} onChange={(e) => setNewSupplier({...newSupplier, name: e.target.value})} className="bg-background" />
+                    </div>
+                    <div>
+                      <Label>Contact</Label>
+                      <Input value={newSupplier.contact_name} onChange={(e) => setNewSupplier({...newSupplier, contact_name: e.target.value})} className="bg-background" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Email</Label>
+                      <Input value={newSupplier.email} onChange={(e) => setNewSupplier({...newSupplier, email: e.target.value})} className="bg-background" />
+                    </div>
+                    <div>
+                      <Label>Téléphone</Label>
+                      <Input value={newSupplier.phone} onChange={(e) => setNewSupplier({...newSupplier, phone: e.target.value})} className="bg-background" />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Type de partenariat</Label>
+                    <Select value={newSupplier.partnership_type} onValueChange={(value) => setNewSupplier({...newSupplier, partnership_type: value})}>
+                      <SelectTrigger className="bg-background">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="dropshipping">Dropshipping</SelectItem>
+                        <SelectItem value="affiliation">Affiliation</SelectItem>
+                        <SelectItem value="hybrid">Hybride</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Délai d'expédition (jours)</Label>
+                    <Input type="number" value={newSupplier.shipping_delay} onChange={(e) => setNewSupplier({...newSupplier, shipping_delay: parseInt(e.target.value)})} className="bg-background" />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setShowAddSupplierDialog(false)}>Annuler</Button>
+                  <Button className="btn-golden text-black" onClick={handleAddSupplier}>Ajouter</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </TabsContent>
+
+          {/* Customers Tab */}
+          <TabsContent value="customers" className="space-y-6">
+            <Card className="bg-card border-border">
+              <CardHeader>
+                <CardTitle className="text-white">Suivi des Clients</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-gray-400">Client</TableHead>
+                      <TableHead className="text-gray-400">Email</TableHead>
+                      <TableHead className="text-gray-400">Commandes</TableHead>
+                      <TableHead className="text-gray-400">Analysés</TableHead>
+                      <TableHead className="text-gray-400">Comparés</TableHead>
+                      <TableHead className="text-gray-400">LTV</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {customers.map((customer) => (
+                      <TableRow key={customer.id}>
+                        <TableCell className="text-white">{customer.name || "Anonyme"}</TableCell>
+                        <TableCell className="text-gray-300">{customer.email || "-"}</TableCell>
+                        <TableCell className="text-white">{customer.total_orders || 0}</TableCell>
+                        <TableCell className="text-gray-300">{customer.products_analyzed?.length || 0}</TableCell>
+                        <TableCell className="text-gray-300">{customer.products_compared?.length || 0}</TableCell>
+                        <TableCell className="text-[#f5a623] font-semibold">${customer.total_spent?.toFixed(2) || 0}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Commissions Tab */}
+          <TabsContent value="commissions" className="space-y-6">
+            <Card className="bg-card border-border">
+              <CardHeader>
+                <CardTitle className="text-white">Suivi des Commissions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-gray-400">Type</TableHead>
+                      <TableHead className="text-gray-400">Produit</TableHead>
+                      <TableHead className="text-gray-400">Fournisseur</TableHead>
+                      <TableHead className="text-gray-400">Montant</TableHead>
+                      <TableHead className="text-gray-400">Statut</TableHead>
+                      <TableHead className="text-gray-400">Date</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {commissions.map((commission) => (
+                      <TableRow key={commission.id}>
+                        <TableCell>
+                          <Badge className={commission.commission_type === "affiliate" ? "bg-purple-600" : "bg-blue-600"}>
+                            {commission.commission_type === "affiliate" ? "Affiliation" : "Marge"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-white">{commission.product_name}</TableCell>
+                        <TableCell className="text-gray-300">{commission.supplier_name || "-"}</TableCell>
+                        <TableCell className="text-[#f5a623] font-semibold">${commission.amount?.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Badge className={
+                            commission.status === "paid" ? "bg-[#f5a623]" :
+                            commission.status === "confirmed" ? "bg-blue-600" : "bg-yellow-600"
+                          }>{commission.status}</Badge>
+                        </TableCell>
+                        <TableCell className="text-gray-300">{new Date(commission.created_at).toLocaleDateString()}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Referral Tab - Parrainage */}
+          <TabsContent value="referral" className="space-y-6">
+            <ReferralAdminPanel />
+          </TabsContent>
+
+          {/* Discovery Tab - Découverte IA */}
+          <TabsContent value="discovery" className="space-y-6">
+            <ProductDiscoveryAdmin />
+          </TabsContent>
+
+          {/* Performance Tab */}
+          <TabsContent value="performance" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="bg-card border-border">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Eye className="h-5 w-5 text-blue-500" /> Plus vus
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {productsReport.most_viewed?.slice(0, 5).map((product, index) => (
+                    <div key={product.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                      <span className="text-white">{index + 1}. {product.name}</span>
+                      <span className="text-gray-400">{product.views} vues</span>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+              <Card className="bg-card border-border">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <ShoppingCart className="h-5 w-5 text-[#f5a623]" /> Plus commandés
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {productsReport.most_ordered?.slice(0, 5).map((product, index) => (
+                    <div key={product.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                      <span className="text-white">{index + 1}. {product.name}</span>
+                      <span className="text-gray-400">{product.orders} commandes</span>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+              <Card className="bg-card border-border">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-[#f5a623]" /> Meilleure conversion
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {productsReport.best_conversion?.slice(0, 5).map((product, index) => (
+                    <div key={product.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                      <span className="text-white">{index + 1}. {product.name}</span>
+                      <span className="text-[#f5a623]">{product.overall_conversion_rate}%</span>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
             ))}
           </div>
         </section>
 
-        {/* Territoire Types Section */}
+        {/* Types de Territoires - FédéCP Data */}
         <section>
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-green-500/20 rounded-lg">
               <Map className="h-6 w-6 text-green-400" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white">Types de Territoires</h2>
-              <p className="text-gray-400 text-sm">Connaissez les différentes zones de chasse au Québec</p>
+              <h2 className="text-xl font-bold text-white">Types de Territoires au Québec</h2>
+              <p className="text-gray-400 text-sm">Source: FédéCP - Où chasser?</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {territoireTypes.map((territoire) => (
-              <Card key={territoire.type} className="bg-card border-border" style={{ borderLeftColor: territoire.color, borderLeftWidth: '4px' }}>
+              <Card 
+                key={territoire.type} 
+                className="bg-card border-border hover:scale-105 transition-all"
+                style={{ borderLeftColor: territoire.color, borderLeftWidth: '4px' }}
+              >
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-white text-lg" style={{ color: territoire.color }}>{territoire.type}</CardTitle>
+                  <CardTitle className="text-white text-base" style={{ color: territoire.color }}>
+                    {territoire.type}
+                  </CardTitle>
                   <CardDescription className="text-xs">{territoire.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-1">
                     {territoire.features.map((feature, idx) => (
-                      <li key={idx} className="text-xs text-gray-300 flex items-center gap-1">
-                        <CheckCircle className="h-3 w-3" style={{ color: territoire.color }} />
+                      <li key={idx} className="text-xs text-gray-400 flex items-center gap-1">
+                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: territoire.color }}></div>
                         {feature}
                       </li>
                     ))}
@@ -1154,8 +2442,7 @@ const FormationsPage = () => {
       </div>
     </main>
   );
-};
-
+}
 
 // Main App
 function App() {
@@ -1273,6 +2560,21 @@ function App() {
       }
     };
     checkSiteStatus();
+  const [siteStatus, setSiteStatus] = useState({ maintenance_mode: false });
+  const [checkingStatus, setCheckingStatus] = useState(true);
+
+  const sessionId = getSessionId();
+
+  // Check site maintenance status
+  const checkSiteStatus = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/site/status`);
+      setSiteStatus(response.data);
+    } catch (error) {
+      console.error("Error checking site status:", error);
+      setSiteStatus({ maintenance_mode: false });
+    }
+    setCheckingStatus(false);
   }, []);
 
   const fetchProducts = useCallback(async () => {
@@ -1509,6 +2811,23 @@ function App() {
         </div>
       </AuthProvider>
     </LanguageProvider>
+    <div className="App min-h-screen bg-background">
+      <BrowserRouter>
+        <Navigation cartCount={cartCount} onCartOpen={() => setIsCartOpen(true)} />
+        <CartSheet isOpen={isCartOpen} onOpenChange={setIsCartOpen} cartItems={cartItems} onUpdateQuantity={handleUpdateQuantity} onRemoveItem={handleRemoveItem} />
+        <Routes>
+          <Route path="/" element={<HomePage products={products} onAddToCart={handleAddToCart} onAffiliateClick={handleAffiliateClick} />} />
+          <Route path="/analyze" element={<AnalyzerModule />} />
+          <Route path="/compare" element={<ComparePage products={products} />} />
+          <Route path="/shop" element={<ShopPage products={products} onAddToCart={handleAddToCart} onAffiliateClick={handleAffiliateClick} />} />
+          <Route path="/referral" element={<ReferralModule />} />
+          <Route path="/admin" element={<AdminPage onProductsUpdate={fetchProducts} />} />
+        </Routes>
+        <DynamicReferralWidget />
+        <Footer />
+        <Toaster position="bottom-right" richColors />
+      </BrowserRouter>
+    </div>
   );
 }
 
