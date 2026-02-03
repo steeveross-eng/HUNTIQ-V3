@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 3.4 (Moteur Géospatial BIONIC™)
+## Version: 3.6 (Modules BIONIC™ Complets)
 ## Dernière mise à jour: 2026-02-03
 
 ---
