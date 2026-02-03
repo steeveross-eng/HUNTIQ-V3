@@ -220,22 +220,35 @@ Voir `/app/FRONTPAGE_REPORT.md` pour le détail complet.
 ### Endpoint Admin
 - `POST /api/admin/login` - Authentification admin
 
+### Endpoints Météo (NOUVEAU - v3.6) ✅
+- `GET /api/geospatial/weather/current` - Météo temps réel
+- `GET /api/geospatial/weather/forecast` - Prévisions 5 jours
+- `GET /api/geospatial/weather/hunting-score` - Score de chasse météo
+
+### Endpoints Nutrition (NOUVEAU - v3.6) ✅
+- `GET /api/geospatial/nutrition/species` - Liste espèces
+- `GET /api/geospatial/nutrition/species/{key}` - Profil nutritionnel
+- `POST /api/geospatial/nutrition/full-analysis` - Analyse complète
+
 ---
 
 ## 5. Backlog Restant
 
-### P0 - Critique
+### P0 - Critique ✅ COMPLÉTÉ
 - [x] ~~Fusion V1 + V2~~ ✅
 - [x] ~~Module Admin accessible~~ ✅
 - [x] ~~Sécuriser mot de passe admin~~ ✅
 - [x] ~~Reconstruction Frontpage BIONIC™~~ ✅
 - [x] ~~Moteur Géospatial BIONIC™~~ ✅ (v3.4)
+- [x] ~~OpenWeatherMap Integration~~ ✅ (v3.6)
+- [x] ~~MapLibre GL (remplacement Mapbox)~~ ✅ (v3.6)
+- [x] ~~Modules BIONIC™ (Nutrition, Hydrology, Sentinel, SIGÉOM)~~ ✅ (v3.6)
 
-### P1 - Important
-- [ ] **Mapbox Integration** - Carte vectorielle interactive (clé API disponible)
-- [ ] **OpenWeatherMap Integration** - Données météo temps réel (clé API disponible)
+### P1 - Important (EN COURS)
+- [ ] **Interface Territoire complète** - Carte interactive avec couches WMS
+- [ ] **Algorithmes de scoring territoire** - Intégration dans l'onglet Territoire
+- [ ] **Pipeline d'analyse combinée** - Nutrition + Hydro + Végétation + Géologie
 - [ ] Connexion modules Blog/Community/Partners au backend
-- [ ] Optimiser temps de réponse IA (caching)
 - [ ] Export PDF des analyses
 
 ### P2 - Souhaitable
