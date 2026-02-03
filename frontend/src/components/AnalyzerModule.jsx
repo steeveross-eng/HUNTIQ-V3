@@ -1,6 +1,8 @@
+// AnalyzerModule.jsx - Module Click & Analyse complet
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 // AnalyzerModule.jsx - Module Click & Analyse Intelligent avec boutons sticky
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -849,14 +851,25 @@ const AnalyzerModule = () => {
           <h1 className="golden-text text-2xl md:text-3xl font-bold mb-2">Analysez votre Pourvoyeur et Produits</h1>
           <p className="text-gray-400 text-sm max-w-xl mx-auto">
             Notre IA analysera la composition, l'efficacité et comparera aux meilleurs produits du marché.
-          </p>
-        </div>
-      </section>
-    </main>
-  );
-};
-
-export default AnalyzerModule;
+    setSmartDetection(null);
+    setActiveView("input");
+  };
+  
+  const handleStickyAnalyze = () => {
+    if (activeView === "results") {
+      resetAnalysis();
+    } else {
+      handleAnalyze();
+    }
+  };
+  
+  const handleStickyCompare = () => {
+    setShowCompareModal(true);
+  };
+  
+  return (
+    <main className="pt-20 min-h-screen bg-background relative pb-24 md:pb-8">
+      {/* Sticky Sidebar Buttons */}
       <StickySidebarButtons
         onAnalyzeClick={handleStickyAnalyze}
         onCompareClick={handleStickyCompare}
