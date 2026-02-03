@@ -26,6 +26,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import TerritoryMap from '@/components/geospatial/TerritoryMap';
 import WeatherPanel from '@/components/geospatial/WeatherPanel';
+import HydroAnalysisPanel from '@/components/geospatial/HydroAnalysisPanel';
 import { HuntingPotentialAnalysis } from '@/components/geospatial';
 import { api } from '@/services/api.client';
 
