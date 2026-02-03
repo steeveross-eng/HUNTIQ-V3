@@ -13,7 +13,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://bionic-geo-hunter.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://terra-analysis-2.preview.emergentagent.com')
 
 class TestTerritoryGeoJSON:
     """Test GeoJSON API for map integration"""
