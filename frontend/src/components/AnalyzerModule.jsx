@@ -1203,7 +1203,7 @@ const AnalyzerModule = () => {
                 <ScanLine className="h-12 w-12 text-[#f5a623] animate-spin" />
               </div>
               <h2 className="text-2xl font-bold text-white mb-4">Analyse intelligente en cours...</h2>
-              <p className="text-gray-400 mb-6">&quot;{productName}&quot;</p>
+              <p className="text-gray-400 mb-6">"{productName}"</p>
               <div className="space-y-3 text-left max-w-sm mx-auto">
                 {[
                   "Détection du type de produit",
@@ -1222,12 +1222,11 @@ const AnalyzerModule = () => {
                 ))}
               </div>
             </CardContent>
-            </Card>
-          </TabsContent>
+          </Card>
+        )}
           
-          {/* Report Tab */}
-          <TabsContent value="report" className="space-y-6">
-            {report && (
+        {/* Report Tab */}
+        {activeView === "results" && report && (
               <>
                 {/* Document Header */}
                 <Card className="bg-gradient-to-r from-[#f5a623]/20 to-transparent border-[#f5a623] border-2">
