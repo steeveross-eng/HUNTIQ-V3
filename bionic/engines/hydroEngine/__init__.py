@@ -16,10 +16,21 @@ Fonctionnalités:
 - Génération de couches pour MapLibre GL
 """
 
-from .core.extractor import HydroExtractor
-from .core.analyzer import HydroAnalyzer
-from .core.network import StreamNetworkAnalyzer
-from .api.endpoints import hydro_engine_router
-
 __version__ = "0.1.0"
-__all__ = ["HydroExtractor", "HydroAnalyzer", "StreamNetworkAnalyzer", "hydro_engine_router"]
+
+# Lazy imports to avoid circular dependencies
+def get_extractor():
+    from .core.extractor import HydroExtractor
+    return HydroExtractor
+
+def get_analyzer():
+    from .core.analyzer import HydroAnalyzer
+    return HydroAnalyzer
+
+def get_network_analyzer():
+    from .core.network import StreamNetworkAnalyzer
+    return StreamNetworkAnalyzer
+
+def get_router():
+    from .api.endpoints import hydro_engine_router
+    return hydro_engine_router
