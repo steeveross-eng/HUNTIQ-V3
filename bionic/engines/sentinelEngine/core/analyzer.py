@@ -128,6 +128,8 @@ class SentinelAnalyzer:
         self._cache_namespace = "vegetation"
         self._cache_hits = 0
         self._cache_misses = 0
+        # Standardized output formatter
+        self._formatter = get_formatter("SentinelEngine", "2.0.0", "vegetation") if get_formatter else None
     
     async def analyze_point_async(
         self,
