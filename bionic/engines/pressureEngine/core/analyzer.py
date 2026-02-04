@@ -153,23 +153,61 @@ class PressureAnalyzer:
         # Determine pressure level
         pressure_level = self._determine_pressure_level(metrics.get("pressure_index", 50))
         
-        result = {
-            "location": {"lat": lat, "lon": lon},
-            "radius_km": radius_km,
-            "analyzed_at": datetime.now(timezone.utc).isoformat(),
-            "data_source": osm_features.get("source", "BIONIC Pressure Model"),
-            "confidence": 0.70,
+        # Calculate overall score
+        overall_score_calc = self._calculate_overall_score(metrics, remoteness)
+        
+        # Assess hunting impact
+        hunting_impact = self._assess_hunting_impact(pressure_level)
+        
+        # Build raw data for standardized output
+        raw_data = {
             "osm_features": osm_features,
             "pressure_metrics": metrics,
             "road_analysis": road_analysis,
             "building_analysis": building_analysis,
             "remoteness": remoteness,
             "pressure_level": pressure_level,
-            "hunting_impact": self._assess_hunting_impact(pressure_level),
-            "overall_score": self._calculate_overall_score(metrics, remoteness),
-            "recommendations": self._generate_recommendations(pressure_level, remoteness),
-            "from_cache": False
+            "hunting_impact": hunting_impact
         }
+        
+        # Build recommendations
+        recommendations = self._generate_recommendations(pressure_level, remoteness)
+        
+        # Use standardized formatter if available
+        if self._formatter:
+            result = self._formatter.format_output(
+                lat=lat,
+                lon=lon,
+                score=overall_score_calc["score"],
+                components=overall_score_calc.get("components", {}),
+                interpretation=overall_score_calc.get("interpretation", ""),
+                raw_data=raw_data,
+                recommendations=recommendations,
+                confidence=0.70,
+                data_source=osm_features.get("source", "BIONIC Pressure Model"),
+                data_source_type="real_api" if "OpenStreetMap" in osm_features.get("source", "") else "modeled",
+                from_cache=False,
+                extra_fields={"radius_km": radius_km}
+            )
+        else:
+            # Fallback to legacy format
+            result = {
+                "location": {"lat": lat, "lon": lon},
+                "radius_km": radius_km,
+                "analyzed_at": datetime.now(timezone.utc).isoformat(),
+                "data_source": osm_features.get("source", "BIONIC Pressure Model"),
+                "confidence": 0.70,
+                "osm_features": osm_features,
+                "pressure_metrics": metrics,
+                "road_analysis": road_analysis,
+                "building_analysis": building_analysis,
+                "remoteness": remoteness,
+                "pressure_level": pressure_level,
+                "hunting_impact": hunting_impact,
+                "overall_score": overall_score_calc,
+                "recommendations": recommendations,
+                "from_cache": False
+            }
         
         # Store in cache
         if use_cache and CACHE_AVAILABLE and cache_manager and cache_key:
