@@ -15,3 +15,6 @@ export { default as CommunitySection } from './CommunitySection';
 export { default as MobileAppSection } from './MobileAppSection';
 export { default as NewsletterSection } from './NewsletterSection';
 export { default as FooterSection } from './FooterSection';
+
+// Stats Engine Components
+export { StatsPanel, StatBlock, CompactStatsBar } from './StatsEngine';
