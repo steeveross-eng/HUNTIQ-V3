@@ -89,10 +89,11 @@ class TerrainAnalyzer:
         """
         Analyze terrain at a specific point (async version).
         """
-        cache_key = cache_manager.make_geo_key(lat, lon)
+        cache_key = None
         
         # Check cache first
-        if use_cache:
+        if use_cache and CACHE_AVAILABLE and cache_manager:
+            cache_key = cache_manager.make_geo_key(lat, lon)
             cached = cache_manager.get(self._cache_namespace, cache_key)
             if cached:
                 self._cache_hits += 1
@@ -102,7 +103,7 @@ class TerrainAnalyzer:
         
         # Fetch real terrain data
         terrain_data = None
-        if use_real_data:
+        if use_real_data and CACHE_AVAILABLE and real_data_fetcher:
             try:
                 terrain_data = await real_data_fetcher.fetch_terrain_analysis(lat, lon)
             except Exception as e:
