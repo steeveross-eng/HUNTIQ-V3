@@ -416,12 +416,14 @@ class SentinelAnalyzer:
     def get_cache_stats(self) -> Dict[str, Any]:
         """Get analyzer cache statistics."""
         total = self._cache_hits + self._cache_misses
-        return {
+        stats = {
             "hits": self._cache_hits,
             "misses": self._cache_misses,
-            "hit_rate": self._cache_hits / total if total > 0 else 0,
-            "cache_manager_stats": cache_manager.stats()
+            "hit_rate": self._cache_hits / total if total > 0 else 0
         }
+        if CACHE_AVAILABLE and cache_manager:
+            stats["cache_manager_stats"] = cache_manager.stats()
+        return stats
     
     def analyze_territory(
         self,
