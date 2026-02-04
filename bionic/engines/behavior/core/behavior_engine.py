@@ -3,13 +3,13 @@ BIONIC™ Behavior Engine
 =========================
 Moteur d'analyse comportementale globale pour la faune.
 
-Version: 1.0 - P0 Étape 1 (Fondations)
+Version: 2.0 - P0-2 (Données Réelles)
 
-TODO Phase P0-2:
-- Implémenter les modèles ML de comportement
-- Intégrer les données météo temps réel
-- Ajouter les patterns circadiens par espèce
-- Connecter avec les données de tracking historiques
+Intègre:
+- Météo temps réel (Open-Meteo)
+- Phase lunaire précise (algorithme astronomique)
+- Pression barométrique et tendance
+- Photopériode (lever/coucher du soleil)
 """
 
 import logging
@@ -17,6 +17,7 @@ import uuid
 from typing import Dict, Any, Optional, List
 from datetime import datetime, timezone, timedelta
 import sys
+import math
 
 # Add path for imports
 if '/app/bionic/engines' not in sys.path:
@@ -29,6 +30,14 @@ from behavior.models.schemas import (
     ActivityLevel,
     TimeWindow
 )
+
+# Import weather fetcher
+try:
+    from behavior.core.weather_fetcher import behavior_weather_fetcher
+    WEATHER_FETCHER_AVAILABLE = True
+except ImportError:
+    WEATHER_FETCHER_AVAILABLE = False
+    behavior_weather_fetcher = None
 
 logger = logging.getLogger(__name__)
 
