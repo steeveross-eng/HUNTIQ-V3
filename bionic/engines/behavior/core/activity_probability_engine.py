@@ -423,7 +423,7 @@ class ActivityProbabilityEngine:
         species: SpeciesCode,
         factors: Dict[str, Dict[str, Any]]
     ) -> Dict[str, float]:
-        """Calcule les probabilités horaires."""
+        """Calcule les probabilités horaires avec facteurs réels."""
         base_profile = self.CIRCADIAN_PROFILES.get(
             species, 
             self.CIRCADIAN_PROFILES[SpeciesCode.DEER]
@@ -433,8 +433,9 @@ class ActivityProbabilityEngine:
         weather_mod = factors.get("weather", {}).get("modifier", 1.0)
         lunar_mod = factors.get("lunar", {}).get("modifier", 1.0)
         seasonal_mod = factors.get("seasonal", {}).get("modifier", 1.0)
+        pressure_mod = factors.get("pressure", {}).get("modifier", 1.0)
         
-        overall_mod = weather_mod * lunar_mod * seasonal_mod
+        overall_mod = weather_mod * lunar_mod * seasonal_mod * pressure_mod
         
         hourly = {}
         for hour, base_prob in base_profile.items():
