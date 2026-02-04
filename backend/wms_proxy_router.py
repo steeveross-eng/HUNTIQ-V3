@@ -318,7 +318,7 @@ async def proxy_wms_tile(
             status_code=502,
             content={
                 "error": "wms_fetch_failed",
-                "message": f"Impossible de récupérer la tuile après plusieurs tentatives",
+                "message": "Impossible de récupérer la tuile après plusieurs tentatives",
                 "details": error_message,
                 "host": host,
                 "layer": layers
