@@ -135,24 +135,87 @@ class BehaviorEngine:
         input_data: BehaviorAnalysisInput
     ) -> Dict[str, Any]:
         """
-        Charge les données environnementales.
+        Charge les données environnementales depuis les sources temps réel.
         
-        TODO P0-2: 
-        - Intégrer fetch météo temps réel
-        - Calculer phase lunaire
-        - Récupérer données pression barométrique
+        Utilise:
+        - Open-Meteo pour la météo
+        - Algorithme astronomique pour la phase lunaire
+        - Calcul de photopériode
         """
-        env_data = {
+        env_data = {}
+        
+        # Fetch real-time data if available
+        if WEATHER_FETCHER_AVAILABLE and behavior_weather_fetcher:
+            try:
+                all_data = await behavior_weather_fetcher.get_all_environmental_data(
+                    input_data.latitude, 
+                    input_data.longitude,
+                    use_cache=True
+                )
+                
+                weather = all_data.get("weather", {})
+                lunar = all_data.get("lunar", {})
+                photoperiod = all_data.get("photoperiod", {})
+                pressure_trend = all_data.get("pressure_trend", {})
+                
+                env_data = {
+                    "temperature_c": input_data.temperature_c or weather.get("temperature_c", 15.0),
+                    "precipitation_mm": input_data.precipitation_mm or weather.get("precipitation_mm", 0.0),
+                    "wind_speed_kmh": input_data.wind_speed_kmh or weather.get("wind_speed_kmh", 10.0),
+                    "cloud_cover_percent": weather.get("cloud_cover_percent", 50),
+                    "humidity_percent": weather.get("humidity_percent", 60),
+                    "weather_description": weather.get("weather_description", ""),
+                    "moon_phase": input_data.moon_phase or lunar.get("phase", 0.5),
+                    "moon_illumination": lunar.get("illumination", 0.5),
+                    "moon_phase_name": lunar.get("phase_name_fr", ""),
+                    "lunar_hunting_impact": lunar.get("hunting_impact", {}),
+                    "barometric_pressure_hpa": input_data.barometric_pressure_hpa or weather.get("pressure_hpa", 1013.0),
+                    "pressure_trend": pressure_trend.get("trend", "stable"),
+                    "pressure_change_6h": pressure_trend.get("change_6h", 0.0),
+                    "sunrise": photoperiod.get("sunrise", "06:00"),
+                    "sunset": photoperiod.get("sunset", "18:00"),
+                    "daylight_hours": photoperiod.get("daylight_hours", 12),
+                    "golden_hour_morning": photoperiod.get("golden_hour_morning", "06:30"),
+                    "golden_hour_evening": photoperiod.get("golden_hour_evening", "17:30"),
+                    "day_of_year": (input_data.analysis_date or datetime.now().date()).timetuple().tm_yday,
+                    "hour_of_day": datetime.now().hour,
+                    "data_source": "real_time",
+                    "weather_source": weather.get("source", "Unknown"),
+                    "lunar_source": lunar.get("source", "Unknown")
+                }
+                
+                logger.info(f"Loaded real-time environmental data: temp={env_data['temperature_c']}°C, moon={env_data['moon_phase_name']}, pressure={env_data['barometric_pressure_hpa']}hPa")
+                
+            except Exception as e:
+                logger.warning(f"Error fetching real-time data: {e}, using fallback")
+                env_data = self._get_fallback_env_data(input_data)
+        else:
+            logger.info("Weather fetcher not available, using fallback estimates")
+            env_data = self._get_fallback_env_data(input_data)
+        
+        return env_data
+    
+    def _get_fallback_env_data(self, input_data: BehaviorAnalysisInput) -> Dict[str, Any]:
+        """Données environnementales de secours si le fetcher n'est pas disponible."""
+        return {
             "temperature_c": input_data.temperature_c or 15.0,
             "precipitation_mm": input_data.precipitation_mm or 0.0,
             "wind_speed_kmh": input_data.wind_speed_kmh or 10.0,
+            "cloud_cover_percent": 50,
             "moon_phase": input_data.moon_phase or self._estimate_moon_phase(),
+            "moon_illumination": 0.5,
+            "moon_phase_name": "",
+            "lunar_hunting_impact": {},
             "barometric_pressure_hpa": input_data.barometric_pressure_hpa or 1013.0,
+            "pressure_trend": "stable",
+            "pressure_change_6h": 0.0,
+            "sunrise": "06:00",
+            "sunset": "18:00",
+            "daylight_hours": 12,
             "day_of_year": (input_data.analysis_date or datetime.now().date()).timetuple().tm_yday,
-            "hour_of_day": datetime.now().hour
+            "hour_of_day": datetime.now().hour,
+            "data_source": "estimated"
         }
-        
-        return env_data
     
     def preprocess(
         self,
