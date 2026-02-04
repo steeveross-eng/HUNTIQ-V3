@@ -126,20 +126,52 @@ class TerrainAnalyzer:
         aspect_analysis = self._analyze_aspect(metrics.get("aspect", "S"))
         tpi_analysis = self._analyze_tpi(metrics.get("tpi", 0))
         
-        result = {
-            "location": {"lat": lat, "lon": lon},
-            "analyzed_at": datetime.now(timezone.utc).isoformat(),
-            "data_source": terrain_data.get("source", "BIONIC Terrain Model") if terrain_data else "BIONIC Terrain Model",
-            "confidence": 0.75,
+        # Calculate overall score
+        overall_score_calc = self._calculate_overall_score(slope_analysis, aspect_analysis, tpi_analysis)
+        
+        # Build raw data for standardized output
+        raw_data = {
             "metrics": metrics,
             "slope_analysis": slope_analysis,
             "aspect_analysis": aspect_analysis,
             "tpi_analysis": tpi_analysis,
-            "hunting_assessment": assessment,
-            "overall_score": self._calculate_overall_score(slope_analysis, aspect_analysis, tpi_analysis),
-            "recommendations": self._generate_recommendations(metrics),
-            "from_cache": False
+            "hunting_assessment": assessment
         }
+        
+        # Build recommendations
+        recommendations = self._generate_recommendations(metrics)
+        
+        # Use standardized formatter if available
+        if self._formatter:
+            result = self._formatter.format_output(
+                lat=lat,
+                lon=lon,
+                score=overall_score_calc["score"],
+                components=overall_score_calc.get("components", {}),
+                interpretation=f"Terrain {overall_score_calc.get('level', 'modéré')} pour la chasse",
+                raw_data=raw_data,
+                recommendations=recommendations,
+                confidence=0.75,
+                data_source=terrain_data.get("source", "BIONIC Terrain Model") if terrain_data else "BIONIC Terrain Model",
+                data_source_type="real_api" if terrain_data else "modeled",
+                from_cache=False
+            )
+        else:
+            # Fallback to legacy format
+            result = {
+                "location": {"lat": lat, "lon": lon},
+                "analyzed_at": datetime.now(timezone.utc).isoformat(),
+                "data_source": terrain_data.get("source", "BIONIC Terrain Model") if terrain_data else "BIONIC Terrain Model",
+                "confidence": 0.75,
+                "metrics": metrics,
+                "slope_analysis": slope_analysis,
+                "aspect_analysis": aspect_analysis,
+                "tpi_analysis": tpi_analysis,
+                "hunting_assessment": assessment,
+                "overall_score": overall_score_calc,
+                "recommendations": recommendations,
+                "from_cache": False
+            }
         
         # Store in cache
         if use_cache and CACHE_AVAILABLE and cache_manager and cache_key:
