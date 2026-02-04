@@ -68,7 +68,7 @@ def get_host_from_url(url: str) -> str:
         from urllib.parse import urlparse
         parsed = urlparse(url)
         return parsed.netloc or "unknown"
-    except:
+    except Exception:
         return "unknown"
 
 
