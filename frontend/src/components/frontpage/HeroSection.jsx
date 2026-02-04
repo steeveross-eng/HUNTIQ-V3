@@ -111,7 +111,7 @@ const HeroSection = () => {
           </Link>
         </motion.div>
 
-        {/* Stats Bar */}
+        {/* Stats Bar - Connected to BIONIC™ Stats Engine */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -119,10 +119,10 @@ const HeroSection = () => {
           className="flex flex-wrap items-center justify-center gap-8 md:gap-12"
         >
           {[
-            { value: '2,547+', label: 'Territoires analysés' },
+            { value: stats.displayedTerritories, label: 'Territoires analysés' },
             { value: '850+', label: 'Attractants testés' },
-            { value: '29', label: 'Zones de chasse' },
-            { value: '98%', label: 'Satisfaction' },
+            { value: stats.displayedZones, label: 'Zones de chasse' },
+            { value: `${stats.satisfaction}%`, label: 'Satisfaction' },
           ].map((stat, i) => (
             <div key={i} className="text-center">
               <div className="font-barlow text-3xl md:text-4xl font-bold text-[#f5a623]">{stat.value}</div>
