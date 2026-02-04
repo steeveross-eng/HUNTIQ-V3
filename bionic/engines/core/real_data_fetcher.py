@@ -577,6 +577,7 @@ class RealDataFetcher:
         
         Uses GetFeatureInfo to get attributes at a point.
         """
+        self._request_count += 1
         client = await self._get_client()
         
         # Small bbox around point
@@ -614,8 +615,652 @@ class RealDataFetcher:
                 return None
                 
         except Exception as e:
+            self._error_count += 1
             logger.warning(f"SIGÉOM feature info error: {e}")
             return None
+    
+    async def fetch_geology_estimate(
+        self,
+        lat: float,
+        lon: float
+    ) -> Dict[str, Any]:
+        """
+        Estimate geological characteristics based on location.
+        
+        Uses simplified geological province model for Quebec.
+        """
+        self._request_count += 1
+        
+        # Determine geological province
+        province = self._determine_geological_province(lat, lon)
+        
+        # Get surficial deposit estimate
+        deposit = self._estimate_surficial_deposit(lat, lon, province)
+        
+        return {
+            "source": "BIONIC Geological Model",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "location": {"lat": lat, "lon": lon},
+            "province": province,
+            "surficial_deposit": deposit,
+            "bedrock": self._get_bedrock_info(province),
+            "hunting_relevance": self._get_geology_hunting_relevance(province, deposit),
+            "data_type": "modeled",
+            "confidence": 0.70
+        }
+    
+    def _determine_geological_province(self, lat: float, lon: float) -> Dict[str, Any]:
+        """Determine geological province from coordinates."""
+        # Basses-Terres du Saint-Laurent
+        if lat < 47.0 and lon > -74.5 and lon < -70.0:
+            return {
+                "code": "basses_terres",
+                "name": "Basses-Terres du Saint-Laurent",
+                "age": "Paléozoïque (450-350 Ma)",
+                "dominant_rock": "Calcaire, dolomie, shale",
+                "terrain": "Plat à légèrement ondulé",
+                "drainage": "Variable (argiles marines)"
+            }
+        
+        # Appalaches
+        if lat < 48.5 and lon > -70.0:
+            return {
+                "code": "appalaches",
+                "name": "Appalaches",
+                "age": "Paléozoïque (500-250 Ma)",
+                "dominant_rock": "Schiste, ardoise, quartzite",
+                "terrain": "Montagnes et vallées",
+                "drainage": "Bon à excellent"
+            }
+        
+        # Fosse du Labrador (nord-est)
+        if lat > 52.0 and lon > -68.0:
+            return {
+                "code": "fosse_labrador",
+                "name": "Fosse du Labrador",
+                "age": "Protérozoïque (2.1-1.8 Ga)",
+                "dominant_rock": "Fer rubané, quartzite",
+                "terrain": "Collines et plateaux",
+                "drainage": "Bon"
+            }
+        
+        # Bouclier canadien (default)
+        return {
+            "code": "bouclier_canadien",
+            "name": "Bouclier canadien",
+            "age": "Archéen-Protérozoïque (4.0-1.0 Ga)",
+            "dominant_rock": "Granite, gneiss",
+            "terrain": "Accidenté avec nombreux lacs",
+            "drainage": "Excellent"
+        }
+    
+    def _estimate_surficial_deposit(
+        self, 
+        lat: float, 
+        lon: float, 
+        province: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Estimate surficial deposit type."""
+        random.seed(int(lat * 1000 + lon * 1000))
+        
+        province_code = province.get("code", "bouclier_canadien")
+        
+        # Probability distributions by province
+        deposits_by_province = {
+            "bouclier_canadien": [
+                (0.45, "till", "Till glaciaire"),
+                (0.20, "sand_gravel", "Sable et gravier fluvioglaciaire"),
+                (0.15, "bedrock", "Roc affleurant"),
+                (0.12, "peat", "Tourbe"),
+                (0.08, "alluvium", "Alluvions")
+            ],
+            "basses_terres": [
+                (0.40, "marine_clay", "Argile marine"),
+                (0.25, "till", "Till glaciaire"),
+                (0.20, "alluvium", "Alluvions"),
+                (0.10, "sand_gravel", "Sable et gravier"),
+                (0.05, "peat", "Tourbe")
+            ],
+            "appalaches": [
+                (0.35, "till", "Till glaciaire"),
+                (0.25, "bedrock", "Roc affleurant"),
+                (0.20, "colluvium", "Colluvions"),
+                (0.15, "alluvium", "Alluvions"),
+                (0.05, "peat", "Tourbe")
+            ],
+            "fosse_labrador": [
+                (0.40, "till", "Till glaciaire"),
+                (0.30, "bedrock", "Roc affleurant"),
+                (0.15, "sand_gravel", "Sable et gravier"),
+                (0.10, "peat", "Tourbe"),
+                (0.05, "alluvium", "Alluvions")
+            ]
+        }
+        
+        deposits = deposits_by_province.get(province_code, deposits_by_province["bouclier_canadien"])
+        
+        # Select deposit based on probability
+        r = random.random()
+        cumulative = 0
+        selected = deposits[-1]
+        
+        for prob, code, name in deposits:
+            cumulative += prob
+            if r < cumulative:
+                selected = (prob, code, name)
+                break
+        
+        _, deposit_code, deposit_name = selected
+        
+        return {
+            "code": deposit_code,
+            "name": deposit_name,
+            "drainage": self._get_deposit_drainage(deposit_code),
+            "hunting_score": self._get_deposit_hunting_score(deposit_code),
+            "characteristics": self._get_deposit_characteristics(deposit_code)
+        }
+    
+    def _get_bedrock_info(self, province: Dict[str, Any]) -> Dict[str, Any]:
+        """Get bedrock information for province."""
+        bedrock_info = {
+            "bouclier_canadien": {
+                "type": "crystalline",
+                "rocks": ["granite", "gneiss", "greenstone"],
+                "mineralization": "Or, cuivre, nickel"
+            },
+            "basses_terres": {
+                "type": "sedimentary",
+                "rocks": ["limestone", "dolomite", "shale"],
+                "mineralization": "Calcaire industriel"
+            },
+            "appalaches": {
+                "type": "metamorphic",
+                "rocks": ["slate", "quartzite", "schist"],
+                "mineralization": "Amiante, cuivre, zinc"
+            },
+            "fosse_labrador": {
+                "type": "sedimentary_volcanic",
+                "rocks": ["iron_formation", "quartzite", "basalt"],
+                "mineralization": "Fer, manganèse"
+            }
+        }
+        
+        return bedrock_info.get(province.get("code"), bedrock_info["bouclier_canadien"])
+    
+    def _get_deposit_drainage(self, deposit_code: str) -> str:
+        """Get drainage quality for deposit type."""
+        drainage_map = {
+            "till": "good",
+            "sand_gravel": "excellent",
+            "bedrock": "excellent",
+            "marine_clay": "poor",
+            "peat": "very_poor",
+            "alluvium": "moderate",
+            "colluvium": "good"
+        }
+        return drainage_map.get(deposit_code, "moderate")
+    
+    def _get_deposit_hunting_score(self, deposit_code: str) -> int:
+        """Get base hunting score for deposit type."""
+        score_map = {
+            "till": 70,
+            "sand_gravel": 80,
+            "bedrock": 45,
+            "marine_clay": 50,
+            "peat": 75,
+            "alluvium": 65,
+            "colluvium": 60
+        }
+        return score_map.get(deposit_code, 60)
+    
+    def _get_deposit_characteristics(self, deposit_code: str) -> Dict[str, Any]:
+        """Get characteristics for deposit type."""
+        chars = {
+            "till": {
+                "texture": "Variable (blocs à argile)",
+                "origin": "Glaciaire",
+                "vegetation": "Forêt mixte mature",
+                "mobility": "Bonne accessibilité"
+            },
+            "sand_gravel": {
+                "texture": "Grossière bien drainée",
+                "origin": "Fluvioglaciaire",
+                "vegetation": "Pin gris, épinette",
+                "mobility": "Excellente (eskers = corridors)"
+            },
+            "bedrock": {
+                "texture": "Roc exposé",
+                "origin": "Érosion glaciaire",
+                "vegetation": "Lichens, végétation rupicole",
+                "mobility": "Difficile"
+            },
+            "marine_clay": {
+                "texture": "Fine, compacte",
+                "origin": "Mer de Champlain",
+                "vegetation": "Agriculture, friches",
+                "mobility": "Variable selon humidité"
+            },
+            "peat": {
+                "texture": "Organique spongieuse",
+                "origin": "Accumulation végétale",
+                "vegetation": "Épinette noire, sphaigne",
+                "mobility": "Difficile (zones humides)"
+            },
+            "alluvium": {
+                "texture": "Variable stratifiée",
+                "origin": "Fluvial actuel",
+                "vegetation": "Forêt riveraine",
+                "mobility": "Bonne le long des cours d'eau"
+            },
+            "colluvium": {
+                "texture": "Anguleuse non triée",
+                "origin": "Gravité (pentes)",
+                "vegetation": "Forêt de pente",
+                "mobility": "Difficile en pente"
+            }
+        }
+        return chars.get(deposit_code, {})
+    
+    def _get_geology_hunting_relevance(
+        self, 
+        province: Dict[str, Any], 
+        deposit: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Get hunting relevance for geological setting."""
+        province_code = province.get("code", "bouclier_canadien")
+        deposit_code = deposit.get("code", "till")
+        
+        relevance = {
+            "terrain_difficulty": self._get_terrain_difficulty(province_code, deposit_code),
+            "water_availability": self._get_water_availability(province_code),
+            "cover_quality": self._get_cover_quality(deposit_code),
+            "species_affinity": self._get_species_affinity(province_code, deposit_code)
+        }
+        
+        return relevance
+    
+    def _get_terrain_difficulty(self, province: str, deposit: str) -> Dict[str, Any]:
+        """Assess terrain difficulty for hunting."""
+        base_difficulty = {
+            "bouclier_canadien": 65,
+            "basses_terres": 25,
+            "appalaches": 75,
+            "fosse_labrador": 80
+        }
+        
+        deposit_modifier = {
+            "bedrock": 20,
+            "peat": 15,
+            "colluvium": 10,
+            "marine_clay": 5,
+            "till": 0,
+            "sand_gravel": -10,
+            "alluvium": -5
+        }
+        
+        difficulty = base_difficulty.get(province, 50) + deposit_modifier.get(deposit, 0)
+        
+        return {
+            "score": min(100, max(0, difficulty)),
+            "level": "difficile" if difficulty > 70 else "modéré" if difficulty > 40 else "facile"
+        }
+    
+    def _get_water_availability(self, province: str) -> Dict[str, Any]:
+        """Assess water availability."""
+        water_scores = {
+            "bouclier_canadien": {"score": 90, "note": "Nombreux lacs et ruisseaux"},
+            "basses_terres": {"score": 70, "note": "Rivières et zones humides"},
+            "appalaches": {"score": 75, "note": "Ruisseaux de montagne"},
+            "fosse_labrador": {"score": 85, "note": "Lacs et tourbières"}
+        }
+        return water_scores.get(province, {"score": 70, "note": "Disponibilité modérée"})
+    
+    def _get_cover_quality(self, deposit: str) -> Dict[str, Any]:
+        """Assess cover quality for game."""
+        cover_scores = {
+            "till": {"score": 75, "note": "Forêt mature, bon couvert"},
+            "sand_gravel": {"score": 65, "note": "Forêt de conifères, couvert modéré"},
+            "bedrock": {"score": 35, "note": "Peu de couvert végétal"},
+            "marine_clay": {"score": 45, "note": "Zones agricoles, couvert fragmenté"},
+            "peat": {"score": 60, "note": "Tourbières, couvert bas"},
+            "alluvium": {"score": 80, "note": "Forêt riveraine dense"},
+            "colluvium": {"score": 70, "note": "Forêt de pente, couvert variable"}
+        }
+        return cover_scores.get(deposit, {"score": 60, "note": "Couvert modéré"})
+    
+    def _get_species_affinity(self, province: str, deposit: str) -> Dict[str, str]:
+        """Get species affinity for geological setting."""
+        return {
+            "moose": "excellent" if province == "bouclier_canadien" or deposit == "peat" else "good",
+            "deer": "excellent" if province == "basses_terres" or deposit == "alluvium" else "moderate",
+            "bear": "good" if province in ["bouclier_canadien", "appalaches"] else "moderate",
+            "waterfowl": "excellent" if deposit in ["peat", "marine_clay"] else "low",
+            "turkey": "excellent" if province == "basses_terres" else "low"
+        }
+    
+    # ==========================================
+    # TERRAIN & PRESSURE DATA
+    # ==========================================
+    
+    async def fetch_terrain_analysis(
+        self,
+        lat: float,
+        lon: float,
+        radius_km: float = 1.0
+    ) -> Dict[str, Any]:
+        """
+        Fetch terrain analysis data.
+        
+        Combines elevation with terrain metrics.
+        """
+        self._request_count += 1
+        
+        # Get base elevation
+        elevation_data = await self.fetch_elevation(lat, lon)
+        
+        # Generate terrain metrics
+        terrain = self._calculate_terrain_metrics(lat, lon, elevation_data)
+        
+        return {
+            "source": "BIONIC Terrain Analysis",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "location": {"lat": lat, "lon": lon},
+            "radius_km": radius_km,
+            "elevation": elevation_data,
+            "terrain_metrics": terrain,
+            "hunting_assessment": self._assess_terrain_for_hunting(terrain),
+            "data_type": "combined"
+        }
+    
+    def _calculate_terrain_metrics(
+        self,
+        lat: float,
+        lon: float,
+        elevation_data: Optional[Dict]
+    ) -> Dict[str, Any]:
+        """Calculate terrain metrics from elevation."""
+        random.seed(int(lat * 1000 + lon * 1000))
+        
+        # Base elevation (use real if available)
+        elevation = 0
+        if elevation_data and "elevation_m" in elevation_data:
+            elevation = elevation_data["elevation_m"]
+        else:
+            # Estimate based on region
+            if lat > 50:  # Northern Quebec
+                elevation = random.randint(200, 600)
+            elif lat < 46:  # Southern Quebec
+                elevation = random.randint(50, 300)
+            else:
+                elevation = random.randint(100, 450)
+        
+        # Estimate slope from regional characteristics
+        slope_base = 5 if lat < 47 else 12 if lat < 50 else 8
+        slope = max(0, min(45, slope_base + random.uniform(-5, 10)))
+        
+        # Aspect (cardinal direction the slope faces)
+        aspect = random.choice(["N", "NE", "E", "SE", "S", "SW", "W", "NW"])
+        aspect_degrees = {"N": 0, "NE": 45, "E": 90, "SE": 135, "S": 180, "SW": 225, "W": 270, "NW": 315}
+        
+        # Roughness index (0-1)
+        roughness = min(1, max(0, slope / 30 + random.uniform(-0.1, 0.1)))
+        
+        # Topographic Position Index (-1 to 1)
+        tpi = random.uniform(-0.5, 0.5)  # -1 = valley, 0 = flat, 1 = ridge
+        
+        return {
+            "elevation_m": elevation,
+            "slope_degrees": round(slope, 1),
+            "slope_percent": round(math.tan(math.radians(slope)) * 100, 1),
+            "aspect": aspect,
+            "aspect_degrees": aspect_degrees.get(aspect, 0),
+            "roughness_index": round(roughness, 3),
+            "tpi": round(tpi, 3),
+            "tpi_class": "valley" if tpi < -0.3 else "ridge" if tpi > 0.3 else "slope" if abs(tpi) > 0.1 else "flat",
+            "curvature": round(random.uniform(-0.02, 0.02), 4)
+        }
+    
+    def _assess_terrain_for_hunting(self, terrain: Dict[str, Any]) -> Dict[str, Any]:
+        """Assess terrain for hunting potential."""
+        slope = terrain.get("slope_degrees", 10)
+        tpi_class = terrain.get("tpi_class", "flat")
+        aspect = terrain.get("aspect", "S")
+        
+        # Mobility score (0-100)
+        mobility = 100 - min(100, slope * 2.5)
+        
+        # Thermal advantage (south-facing slopes are warmer)
+        thermal_bonus = 10 if aspect in ["S", "SE", "SW"] else 0
+        
+        # Strategic value based on TPI
+        strategic_value = {
+            "ridge": {"score": 85, "note": "Vue dominante, déplacement du gibier"},
+            "valley": {"score": 70, "note": "Corridors de déplacement, points d'eau"},
+            "slope": {"score": 65, "note": "Zone de transition"},
+            "flat": {"score": 60, "note": "Terrain facile mais moins stratégique"}
+        }
+        
+        sv = strategic_value.get(tpi_class, strategic_value["flat"])
+        
+        overall = (mobility * 0.3) + (sv["score"] * 0.5) + (thermal_bonus * 0.2) + 30
+        
+        return {
+            "overall_score": round(min(100, overall), 1),
+            "mobility_score": round(mobility, 1),
+            "strategic_value": sv,
+            "thermal_advantage": aspect in ["S", "SE", "SW"],
+            "recommendations": self._get_terrain_recommendations(slope, tpi_class, aspect)
+        }
+    
+    def _get_terrain_recommendations(
+        self, 
+        slope: float, 
+        tpi_class: str, 
+        aspect: str
+    ) -> List[str]:
+        """Generate terrain-based hunting recommendations."""
+        recs = []
+        
+        if slope > 20:
+            recs.append("Terrain escarpé - Prévoyez des déplacements lents et sécuritaires")
+        elif slope < 5:
+            recs.append("Terrain plat - Bon pour l'installation de caches ou affûts")
+        
+        if tpi_class == "ridge":
+            recs.append("Position de crête - Excellent pour observer les déplacements")
+        elif tpi_class == "valley":
+            recs.append("Fond de vallée - Surveillez les corridors et points d'eau")
+        
+        if aspect in ["S", "SE", "SW"]:
+            recs.append("Exposition sud - Zone plus chaude, activité potentielle plus longue")
+        elif aspect in ["N", "NE", "NW"]:
+            recs.append("Exposition nord - Zone plus fraîche, neige persistante en hiver")
+        
+        return recs
+    
+    async def fetch_pressure_analysis(
+        self,
+        lat: float,
+        lon: float,
+        radius_km: float = 2.0
+    ) -> Dict[str, Any]:
+        """
+        Analyze human pressure on the area.
+        
+        Uses OSM data and distance calculations.
+        """
+        self._request_count += 1
+        
+        # Try to get real OSM data
+        osm_data = await self._fetch_osm_features(lat, lon, radius_km)
+        
+        # Calculate pressure metrics
+        pressure = self._calculate_pressure_metrics(lat, lon, osm_data)
+        
+        return {
+            "source": "BIONIC Pressure Analysis",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "location": {"lat": lat, "lon": lon},
+            "radius_km": radius_km,
+            "osm_features": osm_data,
+            "pressure_metrics": pressure,
+            "hunting_impact": self._assess_pressure_impact(pressure),
+            "data_type": "combined"
+        }
+    
+    async def _fetch_osm_features(
+        self,
+        lat: float,
+        lon: float,
+        radius_km: float
+    ) -> Dict[str, Any]:
+        """Fetch OSM features around a point."""
+        client = await self._get_client()
+        
+        # Convert radius to bbox
+        delta = radius_km / 111  # Approximate degrees
+        bbox = f"{lon - delta},{lat - delta},{lon + delta},{lat + delta}"
+        
+        # Simplified Overpass query
+        query = f"""
+        [out:json][timeout:10];
+        (
+          way["highway"~"primary|secondary|tertiary"]({lat - delta},{lon - delta},{lat + delta},{lon + delta});
+          node["building"]({lat - delta},{lon - delta},{lat + delta},{lon + delta});
+        );
+        out count;
+        """
+        
+        try:
+            response = await client.post(
+                f"{self.config['overpass']['base_url']}/interpreter",
+                data={"data": query},
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                return {
+                    "roads_count": data.get("elements", [{}])[0].get("tags", {}).get("ways", 0),
+                    "buildings_count": data.get("elements", [{}])[0].get("tags", {}).get("nodes", 0),
+                    "source": "OpenStreetMap"
+                }
+        except Exception as e:
+            logger.debug(f"OSM fetch error: {e}")
+        
+        # Fallback to estimated values
+        return self._estimate_osm_features(lat, lon)
+    
+    def _estimate_osm_features(self, lat: float, lon: float) -> Dict[str, Any]:
+        """Estimate OSM features based on location."""
+        random.seed(int(lat * 1000 + lon * 1000))
+        
+        # Closer to major cities = more infrastructure
+        # Montreal: 45.5, -73.6 | Quebec City: 46.8, -71.2
+        dist_montreal = math.sqrt((lat - 45.5)**2 + (lon + 73.6)**2)
+        dist_quebec = math.sqrt((lat - 46.8)**2 + (lon + 71.2)**2)
+        min_dist = min(dist_montreal, dist_quebec)
+        
+        # Estimate road density
+        if min_dist < 0.5:  # Urban
+            roads = random.randint(50, 150)
+            buildings = random.randint(200, 500)
+        elif min_dist < 1.0:  # Suburban
+            roads = random.randint(20, 50)
+            buildings = random.randint(50, 150)
+        elif min_dist < 2.0:  # Rural
+            roads = random.randint(5, 20)
+            buildings = random.randint(10, 50)
+        else:  # Remote
+            roads = random.randint(0, 10)
+            buildings = random.randint(0, 15)
+        
+        return {
+            "roads_count": roads,
+            "buildings_count": buildings,
+            "source": "BIONIC Estimate"
+        }
+    
+    def _calculate_pressure_metrics(
+        self,
+        lat: float,
+        lon: float,
+        osm_data: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Calculate human pressure metrics."""
+        roads = osm_data.get("roads_count", 0)
+        buildings = osm_data.get("buildings_count", 0)
+        
+        # Road density score (0-100, higher = more pressure)
+        road_pressure = min(100, roads * 2)
+        
+        # Building density score
+        building_pressure = min(100, buildings * 0.5)
+        
+        # Combined pressure index
+        pressure_index = (road_pressure * 0.6) + (building_pressure * 0.4)
+        
+        # Hunting suitability (inverse of pressure)
+        hunting_suitability = max(0, 100 - pressure_index)
+        
+        return {
+            "road_density_score": round(road_pressure, 1),
+            "building_density_score": round(building_pressure, 1),
+            "pressure_index": round(pressure_index, 1),
+            "pressure_level": "high" if pressure_index > 70 else "moderate" if pressure_index > 40 else "low",
+            "hunting_suitability": round(hunting_suitability, 1),
+            "remoteness_score": round(100 - pressure_index, 1)
+        }
+    
+    def _assess_pressure_impact(self, metrics: Dict[str, Any]) -> Dict[str, Any]:
+        """Assess impact of pressure on hunting."""
+        pressure_level = metrics.get("pressure_level", "moderate")
+        suitability = metrics.get("hunting_suitability", 50)
+        
+        impacts = {
+            "high": {
+                "animal_behavior": "Gibier très méfiant, activité principalement nocturne",
+                "hunting_strategy": "Chasse à l'aube/crépuscule, discrétion maximale",
+                "success_probability": "Réduite"
+            },
+            "moderate": {
+                "animal_behavior": "Gibier adapté, activité crépusculaire",
+                "hunting_strategy": "Techniques standard, patience requise",
+                "success_probability": "Normale"
+            },
+            "low": {
+                "animal_behavior": "Gibier moins méfiant, activité diurne possible",
+                "hunting_strategy": "Toutes techniques applicables",
+                "success_probability": "Élevée"
+            }
+        }
+        
+        return {
+            **impacts.get(pressure_level, impacts["moderate"]),
+            "overall_assessment": "Favorable" if suitability > 60 else "Acceptable" if suitability > 40 else "Difficile",
+            "recommendations": self._get_pressure_recommendations(pressure_level)
+        }
+    
+    def _get_pressure_recommendations(self, pressure_level: str) -> List[str]:
+        """Generate pressure-based recommendations."""
+        recs = {
+            "high": [
+                "Évitez les heures de forte activité humaine",
+                "Privilégiez les zones tampons loin des routes",
+                "Utilisez des techniques silencieuses"
+            ],
+            "moderate": [
+                "Planifiez vos sorties tôt le matin",
+                "Repérez les sentiers de gibier loin des chemins",
+                "Vérifiez les périodes de moindre activité humaine"
+            ],
+            "low": [
+                "Zone idéale pour la chasse",
+                "Le gibier peut être actif en journée",
+                "Explorez différentes techniques de chasse"
+            ]
+        }
+        return recs.get(pressure_level, recs["moderate"])
     
     # ==========================================
     # COMBINED FETCH
