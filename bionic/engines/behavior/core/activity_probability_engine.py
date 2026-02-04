@@ -87,8 +87,8 @@ class ActivityProbabilityEngine:
     }
     
     def __init__(self):
-        self.version = "1.0.0"
-        logger.info("BIONIC™ Activity Probability Engine initialized (v%s)", self.version)
+        self.version = "2.0.0"
+        logger.info("BIONIC™ Activity Probability Engine initialized (v%s) - Real-time data enabled", self.version)
     
     async def analyze(
         self,
