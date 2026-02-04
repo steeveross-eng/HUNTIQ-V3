@@ -81,6 +81,10 @@ try:
         WetnessModuleResult,
         FoodModuleResult,
         CoverModuleResult,
+        PressureModuleResult,
+        AccessModuleResult,
+        CorridorModuleResult,
+        GeoformModuleResult,
         
         # Species Results
         HabitatSuitability,
