@@ -4630,6 +4630,14 @@ try:
 except ImportError as e:
     print(f"BIONIC CORE not available: {e}")
 
+# Include BIONIC™ Main Engine (POST /api/bionic/analyze)
+try:
+    from bionic_engine import bionic_engine_router
+    app.include_router(bionic_engine_router)
+    print("BIONIC™ Engine loaded - Main analysis endpoint active")
+except ImportError as e:
+    print(f"BIONIC Engine not available: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
