@@ -60,6 +60,22 @@ from .geojson_builder import (
 # Import orchestrator
 from .orchestrator import BionicOrchestrator, bionic_orchestrator
 
+# Import cache manager
+from .cache_manager import (
+    BionicCacheManager,
+    cache_manager,
+    get_cached,
+    set_cached,
+    clear_cache,
+    cache_stats,
+)
+
+# Import real data fetcher
+from .real_data_fetcher import (
+    RealDataFetcher,
+    real_data_fetcher,
+)
+
 # Import Pydantic models for API responses
 try:
     from .models import (
