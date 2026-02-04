@@ -1,22 +1,29 @@
 """
 BIONIC™ Real Data Fetcher
 ==========================
-Service pour récupérer des données réelles depuis les APIs externes.
+Service centralisé pour récupérer des données géospatiales réelles depuis les APIs externes.
 
 Sources supportées:
-- Open-Meteo (météo temps réel)
-- Open-Elevation (terrain)
-- NASA GIBS (MODIS NDVI)
-- MERN Québec (SIGÉOM via WMS)
+- Open-Meteo (météo temps réel & prévisions)
+- Open-Elevation (élévation, pente, exposition)
+- NASA GIBS (MODIS NDVI/EVI/LAI)
+- MERN Québec (SIGÉOM géologie)
+- USGS (données terrain USA)
+- NRCan (données Canada)
+- Copernicus (Sentinel-2)
+- OpenStreetMap (infrastructure)
+- NOAA (météo/hydrologie)
 
-Version: 1.0
+Version: 2.0 - Phase 3 Real Data Implementation
 """
 
 import logging
-from typing import Dict, Any, Optional, List
-from datetime import datetime, timezone
+import math
+from typing import Dict, Any, Optional, List, Tuple
+from datetime import datetime, timezone, timedelta
 import asyncio
 import httpx
+import random
 
 logger = logging.getLogger(__name__)
 
@@ -26,25 +33,90 @@ logger = logging.getLogger(__name__)
 # ============================================
 
 API_CONFIG = {
+    # Météo & Climat
     "open_meteo": {
         "base_url": "https://api.open-meteo.com/v1",
-        "timeout": 10
+        "timeout": 15,
+        "rate_limit": 10000  # requests/day
     },
+    
+    # Élévation & Terrain
     "open_elevation": {
         "base_url": "https://api.open-elevation.com/api/v1",
-        "timeout": 10
+        "timeout": 15,
+        "rate_limit": 1000
     },
-    "modis_ndvi": {
-        # APPEEARS API (NASA) for MODIS data
-        "base_url": "https://appeears.earthdatacloud.nasa.gov/api",
-        "timeout": 30
+    "open_topo": {
+        "base_url": "https://portal.opentopography.org/API",
+        "timeout": 30,
+        "rate_limit": 100
     },
+    
+    # NASA/MODIS
     "gibs_wms": {
         "base_url": "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi",
-        "timeout": 15
+        "timeout": 20,
+        "layers": {
+            "modis_ndvi": "MODIS_Terra_NDVI_8Day",
+            "modis_evi": "MODIS_Terra_EVI_8Day",
+            "modis_lai": "MODIS_Terra_Leaf_Area_Index_8Day",
+            "viirs_ndvi": "VIIRS_SNPP_CorrectedReflectance_TrueColor"
+        }
     },
+    
+    # Québec / Canada
     "sigeom_wms": {
         "base_url": "https://servicescarto.mern.gouv.qc.ca/pes/services/Territoire/SDA_WMS/MapServer/WMSServer",
+        "timeout": 20,
+        "layers": {
+            "bedrock": "0",
+            "surficial": "1",
+            "faults": "2"
+        }
+    },
+    "grhq_wms": {
+        "base_url": "https://servicescarto.mern.gouv.qc.ca/pes/services/Territoire/Gestion_territoire_public/MapServer/WMSServer",
+        "timeout": 20
+    },
+    "lidar_qc": {
+        "base_url": "https://diffusion.mern.gouv.qc.ca/lidar",
+        "timeout": 30
+    },
+    "nrcan": {
+        "base_url": "https://maps.canada.ca/arcgis/rest/services",
+        "timeout": 20
+    },
+    
+    # USA
+    "usgs": {
+        "base_url": "https://basemap.nationalmap.gov/arcgis/rest/services",
+        "timeout": 20
+    },
+    "nlcd": {
+        "base_url": "https://www.mrlc.gov/geoserver/wms",
+        "timeout": 20,
+        "layers": {
+            "landcover": "mrlc_display:NLCD_2021_Land_Cover_L48"
+        }
+    },
+    "nhd": {
+        "base_url": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+        "timeout": 20
+    },
+    
+    # Global
+    "osm_nominatim": {
+        "base_url": "https://nominatim.openstreetmap.org",
+        "timeout": 10
+    },
+    "overpass": {
+        "base_url": "https://overpass-api.de/api",
+        "timeout": 30
+    },
+    
+    # Hydrologie
+    "noaa_nwis": {
+        "base_url": "https://waterservices.usgs.gov/nwis",
         "timeout": 15
     }
 }
