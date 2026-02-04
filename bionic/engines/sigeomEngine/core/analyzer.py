@@ -10,12 +10,23 @@ Version: 2.0 - Phase 3 Real Data Implementation
 """
 
 import logging
+import sys
 from typing import Dict, Any, Optional, List
 from datetime import datetime, timezone
 
-# Import cache and real data fetcher
-from ...core.cache_manager import cache_manager, get_cached, set_cached
-from ...core.real_data_fetcher import real_data_fetcher
+# Add core path for imports
+if '/app/bionic/engines' not in sys.path:
+    sys.path.insert(0, '/app/bionic/engines')
+
+# Import cache and real data fetcher with fallback
+try:
+    from core.cache_manager import cache_manager, get_cached, set_cached
+    from core.real_data_fetcher import real_data_fetcher
+    CACHE_AVAILABLE = True
+except ImportError:
+    CACHE_AVAILABLE = False
+    cache_manager = None
+    real_data_fetcher = None
 
 logger = logging.getLogger(__name__)
 
