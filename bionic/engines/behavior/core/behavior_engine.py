@@ -98,10 +98,10 @@ class BehaviorEngine:
     }
     
     def __init__(self):
-        self.version = "1.0.0"
+        self.version = "2.0.0"
         self._cache_namespace = "behavior"
         self._model_loaded = False
-        logger.info("BIONIC™ Behavior Engine initialized (v%s)", self.version)
+        logger.info("BIONIC™ Behavior Engine initialized (v%s) - Real-time data enabled", self.version)
     
     async def analyze(
         self,
