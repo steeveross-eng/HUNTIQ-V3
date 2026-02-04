@@ -426,7 +426,7 @@ class TerritoryFullAnalysis(BaseModel):
                 "modules": [],
                 "species": [],
                 "recommendations": [],
-                "engine_version": "BIONIC_CORE 1.0"
+                "engine_version": "BIONIC_CORE 2.0"
             }
         }
     )
