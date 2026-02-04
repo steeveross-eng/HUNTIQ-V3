@@ -139,10 +139,11 @@ class SentinelAnalyzer:
         
         Uses real data from RealDataFetcher with cache support.
         """
-        cache_key = cache_manager.make_geo_key(lat, lon)
+        cache_key = None
         
         # Check cache first
-        if use_cache:
+        if use_cache and CACHE_AVAILABLE and cache_manager:
+            cache_key = cache_manager.make_geo_key(lat, lon)
             cached = cache_manager.get(self._cache_namespace, cache_key)
             if cached:
                 self._cache_hits += 1
@@ -152,7 +153,7 @@ class SentinelAnalyzer:
         
         # Fetch real vegetation data
         veg_data = None
-        if use_real_data:
+        if use_real_data and CACHE_AVAILABLE and real_data_fetcher:
             try:
                 veg_data = await real_data_fetcher.fetch_modis_ndvi_estimate(lat, lon)
             except Exception as e:
