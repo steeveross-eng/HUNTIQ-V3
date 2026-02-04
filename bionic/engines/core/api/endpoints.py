@@ -438,15 +438,18 @@ def calculate_weather_score(weather_data: dict, species) -> float:
     return min(100, max(0, score))
 
 
-def calculate_species_score(modules: List[ModuleResult], species: SpeciesType) -> float:
+def calculate_species_score(modules: List[ModuleResult], species) -> float:
     """Calculate species suitability score from module results"""
+    # Handle both enum and string
+    species_key = species.value if hasattr(species, 'value') else species
+    
     weights = {
-        SpeciesType.DEER: {ModuleType.VEGETATION: 0.35, ModuleType.HYDROLOGY: 0.25, ModuleType.GEOLOGY: 0.15, ModuleType.WEATHER: 0.25},
-        SpeciesType.MOOSE: {ModuleType.VEGETATION: 0.30, ModuleType.HYDROLOGY: 0.35, ModuleType.GEOLOGY: 0.10, ModuleType.WEATHER: 0.25},
-        SpeciesType.BEAR: {ModuleType.VEGETATION: 0.40, ModuleType.HYDROLOGY: 0.20, ModuleType.GEOLOGY: 0.10, ModuleType.WEATHER: 0.30},
+        "deer": {ModuleType.VEGETATION: 0.35, ModuleType.HYDROLOGY: 0.25, ModuleType.GEOLOGY: 0.15, ModuleType.WEATHER: 0.25},
+        "moose": {ModuleType.VEGETATION: 0.30, ModuleType.HYDROLOGY: 0.35, ModuleType.GEOLOGY: 0.10, ModuleType.WEATHER: 0.25},
+        "bear": {ModuleType.VEGETATION: 0.40, ModuleType.HYDROLOGY: 0.20, ModuleType.GEOLOGY: 0.10, ModuleType.WEATHER: 0.30},
     }
     
-    species_weights = weights.get(species, {ModuleType.VEGETATION: 0.35, ModuleType.HYDROLOGY: 0.25, ModuleType.GEOLOGY: 0.15, ModuleType.WEATHER: 0.25})
+    species_weights = weights.get(species_key, {ModuleType.VEGETATION: 0.35, ModuleType.HYDROLOGY: 0.25, ModuleType.GEOLOGY: 0.15, ModuleType.WEATHER: 0.25})
     
     score = 0
     total_weight = 0
