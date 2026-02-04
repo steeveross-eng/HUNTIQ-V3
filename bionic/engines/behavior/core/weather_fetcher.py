@@ -401,7 +401,6 @@ class BehaviorWeatherFetcher:
         
         # Prochain cycle - nouvelle lune
         days_to_new = (1.0 - current_phase) * self.SYNODIC_MONTH
-        from datetime import timedelta
         event_date = current_date + timedelta(days=days_to_new)
         return {
             "name_fr": "Nouvelle lune",
