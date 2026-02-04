@@ -328,13 +328,29 @@ async def proxy_wms_tile(
 @router.get("/capabilities")
 async def proxy_wms_capabilities(url: str):
     """
-    Proxy une requête WMS GetCapabilities
+    Proxy une requête WMS GetCapabilities avec gestion robuste.
     """
     if not is_host_allowed(url):
-        raise HTTPException(status_code=403, detail="WMS host not allowed")
+        return JSONResponse(
+            status_code=403,
+            content={"error": "wms_host_not_allowed", "message": "Ce service WMS n'est pas autorisé"}
+        )
+    
+    host = get_host_from_url(url)
+    
+    # Vérifier le circuit breaker
+    if not is_source_available(host):
+        return JSONResponse(
+            status_code=503,
+            content={
+                "error": "source_unavailable",
+                "message": f"Le service {host} est temporairement indisponible",
+                "retry_after_seconds": 300
+            }
+        )
     
     try:
-        async with httpx.AsyncClient(timeout=15.0) as client:
+        async with httpx.AsyncClient(timeout=WMS_CONFIG["timeout_seconds"]) as client:
             params = {
                 "SERVICE": "WMS",
                 "REQUEST": "GetCapabilities",
@@ -343,17 +359,30 @@ async def proxy_wms_capabilities(url: str):
             response = await client.get(url, params=params)
             response.raise_for_status()
             
+            track_success(host)
+            
             return Response(
                 content=response.content,
                 media_type="application/xml",
                 headers={
-                    "Access-Control-Allow-Origin": "*"
+                    "Access-Control-Allow-Origin": "*",
+                    "X-WMS-Source": host
                 }
             )
             
+    except httpx.TimeoutException:
+        track_error(host, "timeout", "GetCapabilities timeout")
+        return JSONResponse(
+            status_code=504,
+            content={"error": "timeout", "message": "Le service WMS n'a pas répondu à temps"}
+        )
     except Exception as e:
+        track_error(host, "error", str(e))
         logger.error(f"WMS capabilities proxy error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=502,
+            content={"error": "fetch_failed", "message": str(e)}
+        )
 
 @router.get("/check")
 async def check_wms_availability(url: str):
