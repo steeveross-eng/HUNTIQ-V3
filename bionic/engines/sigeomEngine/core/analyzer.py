@@ -190,17 +190,6 @@ class GeologyAnalyzer:
                 geo_data = await real_data_fetcher.fetch_geology_estimate(lat, lon)
             except Exception as e:
                 logger.warning(f"Real geology data fetch failed: {e}")
-                cached["from_cache"] = True
-                return cached
-            self._cache_misses += 1
-        
-        # Fetch real geology data
-        geo_data = None
-        if use_real_data:
-            try:
-                geo_data = await real_data_fetcher.fetch_geology_estimate(lat, lon)
-            except Exception as e:
-                logger.warning(f"Real geology data fetch failed: {e}")
         
         # Build analysis result
         if geo_data:
@@ -236,7 +225,7 @@ class GeologyAnalyzer:
         }
         
         # Store in cache with longer TTL for geology
-        if use_cache:
+        if use_cache and CACHE_AVAILABLE and cache_manager and cache_key:
             cache_manager.set(self._cache_namespace, cache_key, result, ttl=86400)  # 24h
         
         return result
