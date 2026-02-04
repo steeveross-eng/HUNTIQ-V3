@@ -4606,6 +4606,22 @@ try:
 except ImportError as e:
     print(f"SIGÉOM Engine not available: {e}")
 
+# Include BIONIC™ Terrain Engine
+try:
+    from terrainEngine.api.endpoints import router as terrain_engine_router
+    app.include_router(terrain_engine_router)
+    print("BIONIC™ Terrain Engine loaded - Terrain analysis active")
+except ImportError as e:
+    print(f"Terrain Engine not available: {e}")
+
+# Include BIONIC™ Pressure Engine
+try:
+    from pressureEngine.api.endpoints import router as pressure_engine_router
+    app.include_router(pressure_engine_router)
+    print("BIONIC™ Pressure Engine loaded - Pressure analysis active")
+except ImportError as e:
+    print(f"Pressure Engine not available: {e}")
+
 # Include BIONIC™ Environment Engine (Combined Analysis)
 try:
     from environmentEngine.api.endpoints import environment_engine_router
