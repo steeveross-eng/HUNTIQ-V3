@@ -2408,3 +2408,353 @@ async def get_dashboard_summary(
         "last_updated": analysis_doc.get("timestamp"),
         "engine_version": "BIONIC_CORE 1.0"
     }
+
+
+# =============================================================================
+# GET /api/bionic/stats
+# BIONIC_CORE Global Statistics & Animated Counters
+# =============================================================================
+
+class BionicGlobalStats(BaseModel):
+    """Statistiques globales BIONIC_CORE pour les compteurs animés"""
+    total_analyses: int = 0
+    total_species_models: int = 0
+    total_zones_generated: int = 0
+    total_waypoints: int = 0
+    total_favorites: int = 0
+    average_global_score: float = 0.0
+    top_species_frequency: Dict[str, int] = {}
+    modules_usage: Dict[str, int] = {}
+    rating_distribution: Dict[str, int] = {}
+    engine_version: str = "BIONIC_CORE 1.0"
+    last_update: Optional[datetime] = None
+
+
+@router.get("/stats", response_model=BionicGlobalStats)
+async def get_bionic_global_stats():
+    """
+    Fournit les compteurs animés du BIONIC_CORE.
+    
+    Agrège des données provenant de plusieurs collections MongoDB
+    pour alimenter les dashboards et compteurs animés du frontend.
+    
+    Returns:
+        BionicGlobalStats: Statistiques globales consolidées
+        
+    Raises:
+        HTTPException 503: Si la base de données est indisponible
+    """
+    database = await get_db()
+    if database is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Database unavailable"
+        )
+    
+    stats = BionicGlobalStats()
+    
+    # =========================================================================
+    # a. total_analyses : count_documents() sur territory_analyses
+    # =========================================================================
+    try:
+        analysis_collection = database["territory_analyses"]
+        stats.total_analyses = await analysis_collection.count_documents({})
+    except Exception as e:
+        logger.warning(f"Failed to count analyses: {e}")
+        stats.total_analyses = 0
+    
+    # =========================================================================
+    # b. total_species_models : sommer la longueur du champ "species"
+    # =========================================================================
+    try:
+        pipeline_species = [
+            {
+                "$project": {
+                    "species_count": {
+                        "$cond": {
+                            "if": {"$isArray": "$species"},
+                            "then": {"$size": "$species"},
+                            "else": {
+                                "$cond": {
+                                    "if": {"$eq": [{"$type": "$species"}, "object"]},
+                                    "then": {"$size": {"$objectToArray": "$species"}},
+                                    "else": 0
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "$group": {
+                    "_id": None,
+                    "total": {"$sum": "$species_count"}
+                }
+            }
+        ]
+        result = await analysis_collection.aggregate(pipeline_species).to_list(length=1)
+        stats.total_species_models = result[0]["total"] if result else 0
+    except Exception as e:
+        logger.warning(f"Failed to count species models: {e}")
+        stats.total_species_models = 0
+    
+    # =========================================================================
+    # c. total_zones_generated : depuis territory_stats ou 0
+    # =========================================================================
+    try:
+        stats_collection = database["territory_stats"]
+        pipeline_zones = [
+            {
+                "$group": {
+                    "_id": None,
+                    "total": {"$sum": "$zones_generated"}
+                }
+            }
+        ]
+        result = await stats_collection.aggregate(pipeline_zones).to_list(length=1)
+        stats.total_zones_generated = result[0]["total"] if result else 0
+    except Exception as e:
+        logger.debug(f"Territory stats not available: {e}")
+        stats.total_zones_generated = 0
+    
+    # =========================================================================
+    # d. total_waypoints : count_documents() sur user_waypoints
+    # =========================================================================
+    try:
+        waypoints_collection = database["user_waypoints"]
+        stats.total_waypoints = await waypoints_collection.count_documents({})
+        
+        # Fallback sur waypoints standard si vide
+        if stats.total_waypoints == 0:
+            waypoints_collection = database["waypoints"]
+            stats.total_waypoints = await waypoints_collection.count_documents({})
+    except Exception as e:
+        logger.warning(f"Failed to count waypoints: {e}")
+        stats.total_waypoints = 0
+    
+    # =========================================================================
+    # e. total_favorites : count_documents() sur zone_favorites
+    # =========================================================================
+    try:
+        favorites_collection = database["zone_favorites"]
+        stats.total_favorites = await favorites_collection.count_documents({})
+    except Exception as e:
+        logger.warning(f"Failed to count favorites: {e}")
+        stats.total_favorites = 0
+    
+    # =========================================================================
+    # f. average_global_score : moyenne des global_score (arrondie à 2 décimales)
+    # =========================================================================
+    try:
+        pipeline_avg = [
+            {
+                "$group": {
+                    "_id": None,
+                    "avg_score": {
+                        "$avg": {
+                            "$ifNull": ["$overall_score", "$global_score"]
+                        }
+                    }
+                }
+            }
+        ]
+        result = await analysis_collection.aggregate(pipeline_avg).to_list(length=1)
+        if result and result[0]["avg_score"] is not None:
+            stats.average_global_score = round(result[0]["avg_score"], 2)
+        else:
+            stats.average_global_score = 0.0
+    except Exception as e:
+        logger.warning(f"Failed to calculate average score: {e}")
+        stats.average_global_score = 0.0
+    
+    # =========================================================================
+    # g. top_species_frequency : fréquence de chaque espèce
+    # =========================================================================
+    try:
+        # Pour les analyses où species est un dict
+        pipeline_species_freq = [
+            {
+                "$project": {
+                    "species_keys": {
+                        "$cond": {
+                            "if": {"$eq": [{"$type": "$species"}, "object"]},
+                            "then": {"$objectToArray": "$species"},
+                            "else": []
+                        }
+                    }
+                }
+            },
+            {"$unwind": {"path": "$species_keys", "preserveNullAndEmptyArrays": False}},
+            {
+                "$group": {
+                    "_id": "$species_keys.k",
+                    "count": {"$sum": 1}
+                }
+            },
+            {"$sort": {"count": -1}},
+            {"$limit": 10}
+        ]
+        cursor = analysis_collection.aggregate(pipeline_species_freq)
+        species_results = await cursor.to_list(length=10)
+        
+        species_freq = {}
+        for item in species_results:
+            if item["_id"]:
+                species_freq[item["_id"]] = item["count"]
+        
+        stats.top_species_frequency = species_freq
+    except Exception as e:
+        logger.warning(f"Failed to calculate species frequency: {e}")
+        stats.top_species_frequency = {}
+    
+    # =========================================================================
+    # h. modules_usage : fréquence d'utilisation des modules
+    # =========================================================================
+    try:
+        pipeline_modules = [
+            {
+                "$project": {
+                    "module_keys": {
+                        "$cond": {
+                            "if": {"$eq": [{"$type": "$modules"}, "object"]},
+                            "then": {"$objectToArray": "$modules"},
+                            "else": []
+                        }
+                    }
+                }
+            },
+            {"$unwind": {"path": "$module_keys", "preserveNullAndEmptyArrays": False}},
+            {
+                "$group": {
+                    "_id": "$module_keys.k",
+                    "count": {"$sum": 1}
+                }
+            },
+            {"$sort": {"count": -1}}
+        ]
+        cursor = analysis_collection.aggregate(pipeline_modules)
+        modules_results = await cursor.to_list(length=20)
+        
+        modules_usage = {}
+        for item in modules_results:
+            if item["_id"]:
+                modules_usage[item["_id"]] = item["count"]
+        
+        stats.modules_usage = modules_usage
+    except Exception as e:
+        logger.debug(f"Failed to calculate modules usage: {e}")
+        stats.modules_usage = {}
+    
+    # =========================================================================
+    # i. rating_distribution : distribution des ratings
+    # =========================================================================
+    try:
+        pipeline_rating = [
+            {
+                "$group": {
+                    "_id": {"$ifNull": ["$overall_rating", "$global_rating"]},
+                    "count": {"$sum": 1}
+                }
+            },
+            {"$sort": {"count": -1}}
+        ]
+        cursor = analysis_collection.aggregate(pipeline_rating)
+        rating_results = await cursor.to_list(length=10)
+        
+        rating_dist = {}
+        for item in rating_results:
+            if item["_id"]:
+                rating_dist[str(item["_id"])] = item["count"]
+        
+        stats.rating_distribution = rating_dist
+    except Exception as e:
+        logger.debug(f"Failed to calculate rating distribution: {e}")
+        stats.rating_distribution = {}
+    
+    # =========================================================================
+    # j. last_update : created_at le plus récent
+    # =========================================================================
+    try:
+        latest_doc = await analysis_collection.find_one(
+            {},
+            {"timestamp": 1, "created_at": 1},
+            sort=[("timestamp", -1)]
+        )
+        if latest_doc:
+            timestamp = latest_doc.get("timestamp") or latest_doc.get("created_at")
+            if isinstance(timestamp, str):
+                try:
+                    stats.last_update = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                except:
+                    stats.last_update = datetime.now(timezone.utc)
+            elif isinstance(timestamp, datetime):
+                stats.last_update = timestamp
+            else:
+                stats.last_update = datetime.now(timezone.utc)
+        else:
+            stats.last_update = datetime.now(timezone.utc)
+    except Exception as e:
+        logger.warning(f"Failed to get last update: {e}")
+        stats.last_update = datetime.now(timezone.utc)
+    
+    return stats
+
+
+# =============================================================================
+# GET /api/bionic/stats/live
+# Real-time live statistics (lightweight)
+# =============================================================================
+
+@router.get("/stats/live")
+async def get_bionic_live_stats():
+    """
+    Statistiques en temps réel légères pour les compteurs animés.
+    
+    Version optimisée avec moins de calculs pour un refresh rapide.
+    """
+    database = await get_db()
+    if database is None:
+        raise HTTPException(status_code=503, detail="Database unavailable")
+    
+    # Compteurs rapides
+    total_analyses = 0
+    total_waypoints = 0
+    total_favorites = 0
+    avg_score = 0.0
+    
+    try:
+        analysis_collection = database["territory_analyses"]
+        total_analyses = await analysis_collection.count_documents({})
+        
+        # Score moyen rapide
+        if total_analyses > 0:
+            pipeline = [
+                {"$group": {"_id": None, "avg": {"$avg": "$overall_score"}}}
+            ]
+            result = await analysis_collection.aggregate(pipeline).to_list(length=1)
+            if result and result[0]["avg"]:
+                avg_score = round(result[0]["avg"], 1)
+    except:
+        pass
+    
+    try:
+        total_waypoints = await database["user_waypoints"].count_documents({})
+        if total_waypoints == 0:
+            total_waypoints = await database["waypoints"].count_documents({})
+    except:
+        pass
+    
+    try:
+        total_favorites = await database["zone_favorites"].count_documents({})
+    except:
+        pass
+    
+    return {
+        "total_analyses": total_analyses,
+        "total_waypoints": total_waypoints,
+        "total_favorites": total_favorites,
+        "average_score": avg_score,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "engine_version": "BIONIC_CORE 1.0"
+    }
+
