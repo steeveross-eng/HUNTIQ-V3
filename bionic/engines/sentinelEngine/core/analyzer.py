@@ -200,20 +200,49 @@ class SentinelAnalyzer:
         # Calculate hunting score
         hunting_score = self._calculate_hunting_score_from_indices(ndvi, ndwi, evi)
         
-        result = {
-            "location": {"lat": lat, "lon": lon},
-            "analyzed_at": datetime.now(timezone.utc).isoformat(),
-            "data_source": veg_data.get("source", "BIONIC Estimate") if veg_data else "BIONIC Estimate",
-            "confidence": veg_data.get("confidence", 0.70) if veg_data else 0.70,
+        # Build raw data for standardized output
+        raw_data = {
             "indices": indices_result,
-            "hunting_score": hunting_score,
             "habitat": habitat,
             "season": season,
             "seasonal_context": seasonal_context,
-            "phenology": phenology,
-            "recommendations": self._generate_recommendations(habitat, ndvi, season),
-            "from_cache": False
+            "phenology": phenology
         }
+        
+        # Build recommendations
+        recommendations = self._generate_recommendations(habitat, ndvi, season)
+        
+        # Use standardized formatter if available
+        if self._formatter:
+            result = self._formatter.format_output(
+                lat=lat,
+                lon=lon,
+                score=hunting_score["score"],
+                components=hunting_score.get("components", {}),
+                interpretation=hunting_score.get("interpretation", ""),
+                raw_data=raw_data,
+                recommendations=recommendations,
+                confidence=veg_data.get("confidence", 0.70) if veg_data else 0.70,
+                data_source=veg_data.get("source", "BIONIC Estimate") if veg_data else "BIONIC Estimate",
+                data_source_type="real_api" if veg_data else "modeled",
+                from_cache=False
+            )
+        else:
+            # Fallback to legacy format
+            result = {
+                "location": {"lat": lat, "lon": lon},
+                "analyzed_at": datetime.now(timezone.utc).isoformat(),
+                "data_source": veg_data.get("source", "BIONIC Estimate") if veg_data else "BIONIC Estimate",
+                "confidence": veg_data.get("confidence", 0.70) if veg_data else 0.70,
+                "indices": indices_result,
+                "overall_score": hunting_score,
+                "habitat": habitat,
+                "season": season,
+                "seasonal_context": seasonal_context,
+                "phenology": phenology,
+                "recommendations": recommendations,
+                "from_cache": False
+            }
         
         # Store in cache
         if use_cache and CACHE_AVAILABLE and cache_manager and cache_key:
