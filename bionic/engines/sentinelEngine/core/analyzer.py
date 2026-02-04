@@ -1,7 +1,12 @@
 """
 BIONIC™ Sentinel Engine - Vegetation Analyzer
-
+==============================================
 Analyse de la végétation pour les territoires de chasse.
+
+Version: 2.0 - Phase 3 Real Data Implementation
+- Intégration du cache multi-niveaux
+- Données réelles via RealDataFetcher
+- Indices de végétation MODIS-calibrés
 """
 
 import logging
@@ -10,6 +15,10 @@ from datetime import datetime, timezone
 import httpx
 
 from .indices import vegetation_indices
+
+# Import cache and real data fetcher
+from ...core.cache_manager import cache_manager, get_cached, set_cached
+from ...core.real_data_fetcher import real_data_fetcher
 
 logger = logging.getLogger(__name__)
 
