@@ -402,14 +402,17 @@ def get_module_score(modules: List[ModuleResult], module_type: ModuleType) -> fl
     return 50.0  # Default
 
 
-def calculate_weather_score(weather_data: dict, species: SpeciesType) -> float:
+def calculate_weather_score(weather_data: dict, species) -> float:
     """Calculate hunting score based on weather conditions"""
     score = 60
+    
+    # Handle both enum and string
+    species_key = species.value if hasattr(species, 'value') else species
     
     if "main" in weather_data:
         temp = weather_data["main"].get("temp", 15)
         
-        if species in [SpeciesType.DEER, SpeciesType.MOOSE, SpeciesType.ELK]:
+        if species_key in ["deer", "moose", "elk"]:
             if 0 <= temp <= 10:
                 score = 85
             elif 10 < temp <= 20:
@@ -418,7 +421,7 @@ def calculate_weather_score(weather_data: dict, species: SpeciesType) -> float:
                 score = 60
             else:
                 score = 45
-        elif species == SpeciesType.BEAR:
+        elif species_key == "bear":
             if 10 <= temp <= 25:
                 score = 80
             else:
