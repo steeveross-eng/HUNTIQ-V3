@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 3.13 (Phase 2 Consolidation Modèles TERMINÉE)
+## Version: 3.14 (Intégration Sentinel & SIGÉOM Frontend TERMINÉE)
 ## Dernière mise à jour: 2026-02-04
 
 ---
