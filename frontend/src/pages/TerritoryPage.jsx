@@ -596,11 +596,11 @@ const TerritoryPage = () => {
                       </div>
                     </CardHeader>
                     <CardContent className="p-0">
-                      <EnvironmentAnalysisPanel
+                      <EnvironmentAnalysisPanelEnhanced
                         bbox={currentBbox}
                         location={selectedLocation}
                         position="inline"
-                        showDetailedBreakdown={true}
+                        defaultTab="combined"
                         onAnalysisComplete={setGlobalEnvironmentScore}
                       />
                     </CardContent>
