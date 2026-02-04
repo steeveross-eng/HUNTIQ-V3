@@ -43,7 +43,10 @@ const BionicHomePage = ({ onAddToCart }) => {
       {/* 1. Hero Section - Immersive full-screen hero */}
       <HeroSection />
       
-      {/* 2. Product Carousel - Featured products slider */}
+      {/* 2. BIONIC™ Stats Panel - Community statistics with animations */}
+      <StatsPanel />
+      
+      {/* 3. Product Carousel - Featured products slider */}
       <ProductCarousel onAddToCart={onAddToCart} />
       
       {/* 3. Map Module - Interactive Quebec territory map */}
