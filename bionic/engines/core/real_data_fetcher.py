@@ -1272,7 +1272,10 @@ class RealDataFetcher:
         lon: float,
         include_weather: bool = True,
         include_elevation: bool = True,
-        include_vegetation: bool = True
+        include_vegetation: bool = True,
+        include_geology: bool = True,
+        include_terrain: bool = True,
+        include_pressure: bool = True
     ) -> Dict[str, Any]:
         """
         Fetch all available data for a point.
@@ -1289,6 +1292,15 @@ class RealDataFetcher:
         
         if include_vegetation:
             tasks["vegetation"] = self.fetch_modis_ndvi_estimate(lat, lon)
+        
+        if include_geology:
+            tasks["geology"] = self.fetch_geology_estimate(lat, lon)
+        
+        if include_terrain:
+            tasks["terrain"] = self.fetch_terrain_analysis(lat, lon)
+        
+        if include_pressure:
+            tasks["pressure"] = self.fetch_pressure_analysis(lat, lon)
         
         results = {}
         
@@ -1308,9 +1320,124 @@ class RealDataFetcher:
         
         results["timestamp"] = datetime.now(timezone.utc).isoformat()
         results["location"] = {"lat": lat, "lon": lon}
+        results["fetcher_stats"] = self.get_stats()
         
         return results
+    
+    async def fetch_for_species(
+        self,
+        lat: float,
+        lon: float,
+        species: str
+    ) -> Dict[str, Any]:
+        """
+        Fetch data optimized for a specific species.
+        """
+        # All species need base data
+        all_data = await self.fetch_all(lat, lon)
+        
+        # Add species-specific scoring
+        species_scores = self._calculate_species_scores(all_data, species)
+        
+        return {
+            **all_data,
+            "species": species,
+            "species_analysis": species_scores
+        }
+    
+    def _calculate_species_scores(
+        self, 
+        data: Dict[str, Any], 
+        species: str
+    ) -> Dict[str, Any]:
+        """Calculate species-specific scores from fetched data."""
+        scores = {
+            "habitat_score": 0,
+            "food_score": 0,
+            "water_score": 0,
+            "cover_score": 0,
+            "pressure_score": 0
+        }
+        
+        # Vegetation/NDVI impacts habitat
+        veg = data.get("vegetation", {})
+        if veg:
+            ndvi = veg.get("indices", {}).get("ndvi", 0.5)
+            
+            # Species-specific NDVI preferences
+            ndvi_prefs = {
+                "moose": (0.4, 0.7),    # Mixed forest
+                "deer": (0.5, 0.8),     # Dense forest edges
+                "bear": (0.4, 0.8),     # Variable
+                "turkey": (0.3, 0.6),   # Forest edges
+                "waterfowl": (-0.1, 0.4) # Wetlands
+            }
+            
+            pref_min, pref_max = ndvi_prefs.get(species.lower(), (0.4, 0.7))
+            if pref_min <= ndvi <= pref_max:
+                scores["habitat_score"] = 85 + (1 - abs(ndvi - (pref_min + pref_max) / 2) / 0.2) * 15
+            else:
+                scores["habitat_score"] = max(30, 70 - abs(ndvi - (pref_min + pref_max) / 2) * 50)
+        
+        # Geology impacts
+        geology = data.get("geology", {})
+        if geology:
+            affinity = geology.get("hunting_relevance", {}).get("species_affinity", {})
+            species_aff = affinity.get(species.lower(), "moderate")
+            scores["cover_score"] = 90 if species_aff == "excellent" else 70 if species_aff == "good" else 50
+        
+        # Water availability
+        if geology:
+            water = geology.get("hunting_relevance", {}).get("water_availability", {})
+            scores["water_score"] = water.get("score", 60)
+        
+        # Pressure impacts
+        pressure = data.get("pressure", {})
+        if pressure:
+            metrics = pressure.get("pressure_metrics", {})
+            scores["pressure_score"] = metrics.get("hunting_suitability", 50)
+        
+        # Calculate overall
+        weights = {
+            "moose": {"habitat": 0.25, "water": 0.30, "cover": 0.20, "pressure": 0.25},
+            "deer": {"habitat": 0.30, "water": 0.15, "cover": 0.30, "pressure": 0.25},
+            "bear": {"habitat": 0.35, "water": 0.20, "cover": 0.25, "pressure": 0.20},
+            "turkey": {"habitat": 0.40, "water": 0.10, "cover": 0.25, "pressure": 0.25},
+            "waterfowl": {"habitat": 0.20, "water": 0.50, "cover": 0.10, "pressure": 0.20}
+        }
+        
+        w = weights.get(species.lower(), {"habitat": 0.30, "water": 0.20, "cover": 0.25, "pressure": 0.25})
+        
+        overall = (
+            scores["habitat_score"] * w["habitat"] +
+            scores["water_score"] * w["water"] +
+            scores["cover_score"] * w["cover"] +
+            scores["pressure_score"] * w["pressure"]
+        )
+        
+        return {
+            "scores": scores,
+            "weights": w,
+            "overall_score": round(overall, 1),
+            "rating": "excellent" if overall >= 80 else "bon" if overall >= 60 else "modéré" if overall >= 40 else "faible"
+        }
 
 
 # Singleton instance
 real_data_fetcher = RealDataFetcher()
+
+
+# Export convenience functions
+async def fetch_all_data(lat: float, lon: float) -> Dict[str, Any]:
+    """Convenience function to fetch all data."""
+    return await real_data_fetcher.fetch_all(lat, lon)
+
+
+async def fetch_vegetation_data(lat: float, lon: float) -> Optional[Dict[str, Any]]:
+    """Convenience function to fetch vegetation data."""
+    return await real_data_fetcher.fetch_modis_ndvi_estimate(lat, lon)
+
+
+async def fetch_geology_data(lat: float, lon: float) -> Dict[str, Any]:
+    """Convenience function to fetch geology data."""
+    return await real_data_fetcher.fetch_geology_estimate(lat, lon)
