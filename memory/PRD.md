@@ -668,6 +668,81 @@ deer, moose, bear, caribou, wolf, turkey, waterfowl, smallgame
 #### Documentation
 - `/app/memory/behavior_docs/BEHAVIOR_SUITE.md` - Guide complet
 
+### 2026-02-04 - Phase 3 - Étape 2: Standardisation des Formats ✅
+
+#### Résumé
+Uniformisation complète des formats de sortie des 4 moteurs géospatiaux (Sentinel, SIGÉOM, Terrain, Pressure) via un nouveau StandardOutputFormatter.
+
+#### Fichiers Modifiés/Créés
+```
+/app/bionic/engines/core/
+├── standardized_models.py     # MODIFIÉ - Ajout StandardOutputFormatter class
+
+/app/bionic/engines/*/core/analyzer.py
+├── sentinelEngine            # MODIFIÉ - Utilise get_formatter()
+├── sigeomEngine              # MODIFIÉ - Utilise get_formatter()  
+├── terrainEngine             # MODIFIÉ - Utilise get_formatter()
+└── pressureEngine            # MODIFIÉ - Utilise get_formatter()
+
+/app/bionic/engines/core/api/endpoints.py  # MODIFIÉ - Score extraction refactored
+
+/app/frontend/src/components/geospatial/
+└── EnvironmentAnalysisPanelEnhanced.jsx   # MODIFIÉ - Support overall_score
+```
+
+#### Format Standardisé
+Tous les moteurs retournent maintenant:
+```json
+{
+  "metadata": {
+    "engine_name": "SentinelEngine",
+    "engine_version": "2.0.0",
+    "analysis_id": "veg_abc123",
+    "analyzed_at": "2026-02-04T...",
+    "processing_time_ms": 45,
+    "data_source": "BIONIC Model",
+    "data_source_type": "modeled|real_api|cached",
+    "confidence": 0.78,
+    "confidence_level": "high",
+    "from_cache": false
+  },
+  "location": {"lat": 47.5, "lon": -72.5},
+  "overall_score": {
+    "score": 75.5,
+    "level": "good",
+    "components": {...},
+    "interpretation": "..."
+  },
+  "data": {...},
+  "recommendations": ["..."]
+}
+```
+
+#### Score Level Mapping
+| Score | Level |
+|-------|-------|
+| 90-100 | exceptional |
+| 80-89 | excellent |
+| 60-79 | good |
+| 40-59 | moderate |
+| 20-39 | low |
+| 0-19 | poor |
+
+#### Analysis ID Prefixes
+- `veg_` : SentinelEngine (végétation)
+- `geo_` : SigeomEngine (géologie)
+- `ter_` : TerrainEngine (terrain)
+- `pre_` : PressureEngine (pression)
+
+#### Tests
+- **30/30 tests pytest passés** (100%)
+- Cache hit rate: 100% sur appels répétés
+- Voir `/app/test_reports/iteration_12.json`
+
+#### Compatibilité Frontend
+- `EnvironmentAnalysisPanelEnhanced.jsx` supporte les deux formats (legacy `hunting_score` et nouveau `overall_score`)
+- Le hook `useBionicEngines.js` n'a pas eu besoin de modifications
+
 ---
 
 ## 4. Prochaines Étapes (P0-2+)
