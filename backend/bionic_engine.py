@@ -30,7 +30,7 @@ Data Sources:
 - NASA MODIS/Seasonal: Vegetation indices (NDVI/NDWI)
 """
 
-from fastapi import APIRouter, HTTPException, Query, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Query, BackgroundTasks, Path
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any, Literal
 from datetime import datetime, timezone, timedelta
@@ -39,7 +39,25 @@ import math
 import random
 import os
 import logging
+import sys
 from motor.motor_asyncio import AsyncIOMotorClient
+
+# Add bionic engines to path for model imports
+if '/app/bionic/engines' not in sys.path:
+    sys.path.insert(0, '/app/bionic/engines')
+
+# Import consolidated TerritoryFullAnalysis model
+try:
+    from bionic_core_models import (
+        TerritoryFullAnalysis,
+        ModuleResult as CoreModuleResult,
+        SpeciesResult as CoreSpeciesResult,
+        PredictionResult as CorePredictionResult,
+        TemporalResult as CoreTemporalResult,
+    )
+    CORE_MODELS_AVAILABLE = True
+except ImportError:
+    CORE_MODELS_AVAILABLE = False
 
 # Import real geospatial data service
 from geospatial_data import (
