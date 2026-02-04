@@ -24,10 +24,16 @@ class GeologyAnalyzer:
     """
     Analyseur géologique pour l'évaluation de territoires de chasse.
     
+    Version 2.0 - Intégration données réelles et cache
+    
     Corrélations géologie-chasse:
     - Type de roche → Drainage → Végétation → Habitat
     - Dépôts de surface → Accessibilité → Stratégie de chasse
     - Structures géologiques → Corridors → Déplacements du gibier
+    
+    Cache:
+    - L1 (RAM): 5 minutes
+    - L2 (Disque): 24 heures (données géologiques statiques)
     """
     
     # Geological province hunting characteristics
@@ -61,6 +67,16 @@ class GeologyAnalyzer:
             "hunting_score": 80,
             "species": ["deer", "moose", "bear", "turkey"],
             "strategy": "Chasse en montagne, surveillance des vallées et cols"
+        },
+        "fosse_labrador": {
+            "name": "Fosse du Labrador",
+            "rock_type": "Roches sédimentaires-volcaniques (fer rubané)",
+            "terrain": "Collines et plateaux",
+            "drainage": "Bon",
+            "forest_type": "Taïga et toundra",
+            "hunting_score": 70,
+            "species": ["caribou", "moose", "bear"],
+            "strategy": "Chasse au caribou en migration, orignal près des tourbières"
         }
     }
     
@@ -113,12 +129,313 @@ class GeologyAnalyzer:
             "bear": 55,
             "waterfowl": 10,
             "smallgame": 30
+        },
+        "colluvium": {
+            "base_score": 55,
+            "moose": 60,
+            "deer": 55,
+            "bear": 65,
+            "waterfowl": 15,
+            "smallgame": 50
         }
     }
     
     def __init__(self):
         self.provinces = self.GEOLOGICAL_PROVINCES
         self.deposit_scores = self.DEPOSIT_HUNTING_SCORES
+        self._cache_namespace = "geology"
+        self._cache_hits = 0
+        self._cache_misses = 0
+    
+    async def analyze_point_async(
+        self,
+        lat: float,
+        lon: float,
+        target_species: str = "deer",
+        use_cache: bool = True,
+        use_real_data: bool = True
+    ) -> Dict[str, Any]:
+        """
+        Analyze geology at a specific point (async version).
+        
+        Uses real data from RealDataFetcher with cache support.
+        """
+        cache_key = f"{cache_manager.make_geo_key(lat, lon)}_{target_species}"
+        
+        # Check cache first (geology is static, longer TTL)
+        if use_cache:
+            cached = cache_manager.get(self._cache_namespace, cache_key)
+            if cached:
+                self._cache_hits += 1
+                cached["from_cache"] = True
+                return cached
+            self._cache_misses += 1
+        
+        # Fetch real geology data
+        geo_data = None
+        if use_real_data:
+            try:
+                geo_data = await real_data_fetcher.fetch_geology_estimate(lat, lon)
+            except Exception as e:
+                logger.warning(f"Real geology data fetch failed: {e}")
+        
+        # Build analysis result
+        if geo_data:
+            province = geo_data.get("province", {})
+            deposit = geo_data.get("surficial_deposit", {})
+            bedrock = geo_data.get("bedrock", {})
+            relevance = geo_data.get("hunting_relevance", {})
+        else:
+            # Fallback to local estimation
+            province = self._determine_province_dict(lat, lon)
+            deposit = self._estimate_deposit(lat, lon, province.get("code", "bouclier_canadien"))
+            bedrock = self._get_bedrock_info(province.get("code", "bouclier_canadien"))
+            relevance = self._calculate_relevance(province, deposit, target_species)
+        
+        # Calculate overall score
+        overall_score = self._calculate_overall_score_v2(
+            province, deposit, target_species
+        )
+        
+        result = {
+            "location": {"lat": lat, "lon": lon},
+            "analyzed_at": datetime.now(timezone.utc).isoformat(),
+            "target_species": target_species,
+            "data_source": geo_data.get("source", "BIONIC Geological Model") if geo_data else "BIONIC Geological Model",
+            "confidence": geo_data.get("confidence", 0.70) if geo_data else 0.70,
+            "geological_province": province,
+            "surficial_deposit": deposit,
+            "bedrock": bedrock,
+            "hunting_relevance": relevance,
+            "overall_score": overall_score,
+            "recommendations": self._generate_recommendations_v2(province, deposit, target_species),
+            "from_cache": False
+        }
+        
+        # Store in cache with longer TTL for geology
+        if use_cache:
+            cache_manager.set(self._cache_namespace, cache_key, result, ttl=86400)  # 24h
+        
+        return result
+    
+    def _determine_province_dict(self, lat: float, lon: float) -> Dict[str, Any]:
+        """Determine geological province and return full dict."""
+        province_key = self._determine_province(lat, lon)
+        province_info = self.provinces.get(province_key, self.provinces["bouclier_canadien"])
+        return {
+            "code": province_key,
+            **province_info
+        }
+    
+    def _estimate_deposit(
+        self, 
+        lat: float, 
+        lon: float, 
+        province_code: str
+    ) -> Dict[str, Any]:
+        """Estimate surficial deposit type."""
+        import random
+        random.seed(int(lat * 1000 + lon * 1000))
+        
+        # Probability distributions by province
+        deposits_by_province = {
+            "bouclier_canadien": [
+                ("till", "Till glaciaire", 0.45),
+                ("sand_gravel", "Sable et gravier", 0.20),
+                ("bedrock", "Roc affleurant", 0.15),
+                ("peat", "Tourbe", 0.12),
+                ("alluvium", "Alluvions", 0.08)
+            ],
+            "basses_terres": [
+                ("marine_clay", "Argile marine", 0.40),
+                ("till", "Till glaciaire", 0.25),
+                ("alluvium", "Alluvions", 0.20),
+                ("sand_gravel", "Sable et gravier", 0.10),
+                ("peat", "Tourbe", 0.05)
+            ],
+            "appalaches": [
+                ("till", "Till glaciaire", 0.35),
+                ("bedrock", "Roc affleurant", 0.25),
+                ("colluvium", "Colluvions", 0.20),
+                ("alluvium", "Alluvions", 0.15),
+                ("peat", "Tourbe", 0.05)
+            ],
+            "fosse_labrador": [
+                ("till", "Till glaciaire", 0.40),
+                ("bedrock", "Roc affleurant", 0.30),
+                ("sand_gravel", "Sable et gravier", 0.15),
+                ("peat", "Tourbe", 0.10),
+                ("alluvium", "Alluvions", 0.05)
+            ]
+        }
+        
+        deposits = deposits_by_province.get(province_code, deposits_by_province["bouclier_canadien"])
+        
+        r = random.random()
+        cumulative = 0
+        selected_code = "till"
+        selected_name = "Till glaciaire"
+        
+        for code, name, prob in deposits:
+            cumulative += prob
+            if r < cumulative:
+                selected_code = code
+                selected_name = name
+                break
+        
+        return {
+            "code": selected_code,
+            "name": selected_name,
+            "drainage": self._get_deposit_drainage(selected_code),
+            "hunting_score": self.deposit_scores.get(selected_code, {}).get("base_score", 60)
+        }
+    
+    def _get_deposit_drainage(self, deposit_code: str) -> str:
+        """Get drainage quality for deposit type."""
+        drainage_map = {
+            "till": "bon",
+            "sand_gravel": "excellent",
+            "bedrock": "excellent",
+            "marine_clay": "mauvais",
+            "peat": "très mauvais",
+            "alluvium": "modéré",
+            "colluvium": "bon"
+        }
+        return drainage_map.get(deposit_code, "modéré")
+    
+    def _get_bedrock_info(self, province_code: str) -> Dict[str, Any]:
+        """Get bedrock information for province."""
+        bedrock_info = {
+            "bouclier_canadien": {
+                "type": "crystalline",
+                "dominant_rocks": ["granite", "gneiss", "greenstone"],
+                "age": "Archéen-Protérozoïque"
+            },
+            "basses_terres": {
+                "type": "sedimentary",
+                "dominant_rocks": ["limestone", "dolomite", "shale"],
+                "age": "Paléozoïque"
+            },
+            "appalaches": {
+                "type": "metamorphic",
+                "dominant_rocks": ["slate", "quartzite", "schist"],
+                "age": "Paléozoïque"
+            },
+            "fosse_labrador": {
+                "type": "sedimentary_volcanic",
+                "dominant_rocks": ["iron_formation", "quartzite", "basalt"],
+                "age": "Protérozoïque"
+            }
+        }
+        return bedrock_info.get(province_code, bedrock_info["bouclier_canadien"])
+    
+    def _calculate_relevance(
+        self, 
+        province: Dict, 
+        deposit: Dict, 
+        target_species: str
+    ) -> Dict[str, Any]:
+        """Calculate hunting relevance from geology."""
+        province_code = province.get("code", "bouclier_canadien")
+        deposit_code = deposit.get("code", "till")
+        
+        # Species affinity
+        species_affinity = {
+            "moose": "excellent" if province_code == "bouclier_canadien" or deposit_code == "peat" else "bon",
+            "deer": "excellent" if province_code == "basses_terres" or deposit_code == "alluvium" else "modéré",
+            "bear": "bon" if province_code in ["bouclier_canadien", "appalaches"] else "modéré",
+            "waterfowl": "excellent" if deposit_code in ["peat", "marine_clay"] else "faible",
+            "turkey": "excellent" if province_code == "basses_terres" else "faible"
+        }
+        
+        target_affinity = species_affinity.get(target_species.lower(), "modéré")
+        
+        return {
+            "species_affinity": species_affinity,
+            "target_species_affinity": target_affinity,
+            "terrain_assessment": province.get("terrain", "Variable"),
+            "drainage_impact": deposit.get("drainage", "modéré"),
+            "strategic_note": province.get("strategy", "Adapter selon le terrain")
+        }
+    
+    def _calculate_overall_score_v2(
+        self,
+        province: Dict,
+        deposit: Dict,
+        target_species: str
+    ) -> Dict[str, Any]:
+        """Calculate overall geological hunting score."""
+        province_score = province.get("hunting_score", 60)
+        
+        # Get species-specific deposit score
+        deposit_code = deposit.get("code", "till")
+        deposit_scores = self.deposit_scores.get(deposit_code, {"base_score": 60})
+        species_score = deposit_scores.get(target_species.lower(), deposit_scores.get("base_score", 60))
+        
+        # Weighted combination
+        total = (province_score * 0.5) + (species_score * 0.5)
+        
+        return {
+            "score": round(total, 1),
+            "level": self._score_to_level(total),
+            "components": {
+                "province_score": province_score,
+                "deposit_score": species_score
+            },
+            "interpretation": f"Terrain géologiquement {'favorable' if total >= 70 else 'acceptable' if total >= 50 else 'difficile'} pour {target_species}"
+        }
+    
+    def _generate_recommendations_v2(
+        self,
+        province: Dict,
+        deposit: Dict,
+        target_species: str
+    ) -> List[str]:
+        """Generate hunting recommendations based on geology."""
+        recommendations = []
+        
+        # Province strategy
+        if province.get("strategy"):
+            recommendations.append(province["strategy"])
+        
+        # Deposit-specific recommendations
+        deposit_code = deposit.get("code", "till")
+        deposit_tips = {
+            "till": "Terrain bien drainé - Recherchez les ravages dans les secteurs de till",
+            "sand_gravel": "Eskers et dépôts sableux - Corridors naturels de déplacement",
+            "marine_clay": "Zones d'argile marine - Prudence, terrain humide",
+            "peat": "Tourbières - Excellent pour orignal et petit gibier",
+            "alluvium": "Plaines alluviales - Boisés riverains à surveiller",
+            "bedrock": "Roc affleurant - Points de vue stratégiques",
+            "colluvium": "Pentes colluviales - Attention à la stabilité du terrain"
+        }
+        
+        if deposit_code in deposit_tips:
+            recommendations.append(deposit_tips[deposit_code])
+        
+        # Species-specific geology tips
+        species_geo_tips = {
+            "moose": "L'orignal affectionne les zones de till près des tourbières",
+            "deer": "Le cerf préfère les sols bien drainés avec couvert mixte",
+            "bear": "L'ours utilise les eskers comme corridors de déplacement",
+            "waterfowl": "La sauvagine se concentre sur les argiles marines et tourbières",
+            "turkey": "Le dindon privilégie les sols calcaires des basses-terres"
+        }
+        
+        if target_species.lower() in species_geo_tips:
+            recommendations.append(species_geo_tips[target_species.lower()])
+        
+        return recommendations
+    
+    def get_cache_stats(self) -> Dict[str, Any]:
+        """Get analyzer cache statistics."""
+        total = self._cache_hits + self._cache_misses
+        return {
+            "hits": self._cache_hits,
+            "misses": self._cache_misses,
+            "hit_rate": self._cache_hits / total if total > 0 else 0,
+            "cache_manager_stats": cache_manager.stats()
+        }
     
     def analyze_territory(
         self,
