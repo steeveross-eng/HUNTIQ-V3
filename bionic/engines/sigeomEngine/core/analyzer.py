@@ -159,6 +159,8 @@ class GeologyAnalyzer:
         self._cache_namespace = "geology"
         self._cache_hits = 0
         self._cache_misses = 0
+        # Standardized output formatter
+        self._formatter = get_formatter("SigeomEngine", "2.0.0", "geology") if get_formatter else None
     
     async def analyze_point_async(
         self,
