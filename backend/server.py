@@ -4614,6 +4614,14 @@ try:
 except ImportError as e:
     print(f"Environment Engine not available: {e}")
 
+# Include Stats Engine
+try:
+    from routes.stats_router import stats_router
+    app.include_router(stats_router)
+    print("BIONIC™ Stats Engine loaded - Platform statistics active")
+except ImportError as e:
+    print(f"Stats Engine not available: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
