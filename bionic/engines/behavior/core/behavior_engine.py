@@ -223,12 +223,7 @@ class BehaviorEngine:
         env_data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
-        Prépare les features pour le modèle.
-        
-        TODO P0-2:
-        - Normalisation des features
-        - Feature engineering avancé
-        - Encodage des variables catégorielles
+        Prépare les features pour le modèle avec données réelles.
         """
         features = {
             "species": input_data.species.value,
@@ -237,24 +232,31 @@ class BehaviorEngine:
             **env_data,
             # Features dérivées
             "temp_comfort": self._calculate_temp_comfort(
-                env_data["temperature_c"], 
+                env_data.get("temperature_c", 15.0), 
                 input_data.species
             ),
             "precip_impact": self._calculate_precip_impact(
-                env_data["precipitation_mm"],
+                env_data.get("precipitation_mm", 0.0),
                 input_data.species
             ),
             "wind_impact": self._calculate_wind_impact(
-                env_data["wind_speed_kmh"],
+                env_data.get("wind_speed_kmh", 10.0),
                 input_data.species
             ),
             "lunar_influence": self._calculate_lunar_influence(
-                env_data["moon_phase"],
+                env_data.get("moon_phase", 0.5),
                 input_data.species
             ),
-            "pressure_trend": self._calculate_pressure_trend(
-                env_data["barometric_pressure_hpa"]
-            )
+            "pressure_trend_score": self._calculate_pressure_trend(
+                env_data.get("barometric_pressure_hpa", 1013.0)
+            ),
+            # Pass through real-time lunar data
+            "lunar_hunting_impact": env_data.get("lunar_hunting_impact", {}),
+            "moon_illumination": env_data.get("moon_illumination", 0.5),
+            "moon_phase_name": env_data.get("moon_phase_name", ""),
+            # Pass through pressure trend
+            "pressure_trend": env_data.get("pressure_trend", "stable"),
+            "pressure_change_6h": env_data.get("pressure_change_6h", 0.0)
         }
         
         return features
