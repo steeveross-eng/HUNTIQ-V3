@@ -171,13 +171,25 @@ class GeologyAnalyzer:
         
         Uses real data from RealDataFetcher with cache support.
         """
-        cache_key = f"{cache_manager.make_geo_key(lat, lon)}_{target_species}"
+        cache_key = None
         
         # Check cache first (geology is static, longer TTL)
-        if use_cache:
+        if use_cache and CACHE_AVAILABLE and cache_manager:
+            cache_key = f"{cache_manager.make_geo_key(lat, lon)}_{target_species}"
             cached = cache_manager.get(self._cache_namespace, cache_key)
             if cached:
                 self._cache_hits += 1
+                cached["from_cache"] = True
+                return cached
+            self._cache_misses += 1
+        
+        # Fetch real geology data
+        geo_data = None
+        if use_real_data and CACHE_AVAILABLE and real_data_fetcher:
+            try:
+                geo_data = await real_data_fetcher.fetch_geology_estimate(lat, lon)
+            except Exception as e:
+                logger.warning(f"Real geology data fetch failed: {e}")
                 cached["from_cache"] = True
                 return cached
             self._cache_misses += 1
