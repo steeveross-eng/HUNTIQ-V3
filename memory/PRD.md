@@ -801,6 +801,49 @@ Implémentation complète de la logique métier de la Behavior Suite avec intég
 - **19/19 tests pytest passés** (100%)
 - Voir `/app/test_reports/iteration_13.json`
 
+### 2026-02-04 - Panneau Conditions Actuelles ✅
+
+#### Résumé
+Module frontend indépendant affichant les conditions de chasse en temps réel, alimenté par le BehaviorWeatherFetcher.
+
+#### Fichiers Créés
+```
+/app/bionic/engines/conditions/
+├── __init__.py
+└── api/
+    ├── __init__.py
+    └── endpoints.py              # Router FastAPI (3 endpoints)
+
+/app/frontend/src/components/geospatial/
+└── CurrentConditionsPanel.jsx    # Composant React complet
+```
+
+#### Fonctionnalités
+| Section | Données Affichées |
+|---------|-------------------|
+| 🎯 Score Global | 0-100 + niveau + résumé |
+| 🌙 Phase Lunaire | Nom + % illumination + impact chasse |
+| 📊 Pression | Valeur hPa + tendance + icône |
+| 🌡️ Météo | Température + conditions + vent |
+| ☀️ Photopériode | Lever/Coucher + durée jour |
+
+#### Endpoints API
+| Route | Description |
+|-------|-------------|
+| `GET /api/bionic/conditions/current` | Toutes les conditions |
+| `GET /api/bionic/conditions/lunar` | Phase lunaire seule |
+| `GET /api/bionic/conditions/export-data` | Format PDF |
+
+#### Intégration Frontend
+- Ajouté dans `TerritoryPage.jsx` (onglet Score)
+- Apparaît quand `selectedLocation` est défini
+- Auto-refresh toutes les 5 minutes
+- Boutons Refresh et Export
+
+#### Tests
+- **20/20 tests passés** (100%)
+- Voir `/app/test_reports/iteration_14.json`
+
 ---
 
 ## 4. Prochaines Étapes (P0-3+)
