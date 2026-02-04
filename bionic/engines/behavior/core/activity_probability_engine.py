@@ -533,27 +533,51 @@ class ActivityProbabilityEngine:
         target_prob: float,
         factors: Dict[str, Dict[str, Any]]
     ) -> List[str]:
-        """Génère des recommandations."""
+        """Génère des recommandations enrichies avec données réelles."""
         recs = []
         
         if target_prob >= 0.7:
-            recs.append("Excellente probabilité d'activité - moment idéal pour chasser")
+            recs.append("🎯 Excellente probabilité d'activité - moment idéal pour chasser")
         elif target_prob >= 0.5:
-            recs.append("Bonne probabilité d'activité")
+            recs.append("✅ Bonne probabilité d'activité")
         else:
-            recs.append("Probabilité d'activité faible - patience requise")
+            recs.append("⚠️ Probabilité d'activité faible - patience requise")
         
-        # Recommandations météo
+        # Recommandations météo enrichies
         weather = factors.get("weather", {})
         if weather.get("wind_score", 1) < 0.5:
-            recs.append("Vent fort - Le gibier sera nerveux, minimisez vos mouvements")
+            recs.append("💨 Vent fort - Le gibier sera nerveux, minimisez vos mouvements")
         
-        # Recommandations lunaires
+        current = weather.get("current_conditions", {})
+        if current:
+            weather_desc = current.get("weather_description", "")
+            if weather_desc:
+                recs.append(f"☁️ Conditions: {weather_desc}")
+        
+        # Recommandations lunaires enrichies
         lunar = factors.get("lunar", {})
-        if lunar.get("phase_name") == "Pleine lune":
-            recs.append("Pleine lune - Arrivez très tôt, le gibier sera actif avant l'aube")
+        phase_name = lunar.get("phase_name", "")
+        if lunar.get("is_full_moon"):
+            recs.append(f"🌕 {phase_name} - Arrivez très tôt, le gibier sera actif avant l'aube")
+        elif lunar.get("is_new_moon"):
+            recs.append(f"🌑 {phase_name} - Nuits sombres, concentrez-vous sur aube/crépuscule")
+        elif phase_name:
+            recs.append(f"🌙 {phase_name} ({round(lunar.get('illumination', 0.5) * 100)}% illumination)")
         
-        return recs[:5]
+        # Recommandations pression
+        pressure = factors.get("pressure", {})
+        trend = pressure.get("trend", "")
+        if trend == "rising_fast":
+            recs.append("📈 Pression en forte hausse - Excellentes conditions!")
+        elif trend == "falling_fast":
+            recs.append("📉 Chute de pression - Activité frénétique possible avant tempête")
+        
+        # Source des données
+        data_source = factors.get("data_source", "estimated")
+        if data_source == "real_time":
+            recs.append("📡 Données temps réel (Open-Meteo + algorithme astronomique)")
+        
+        return recs[:6]
 
 
 # Singleton instance
