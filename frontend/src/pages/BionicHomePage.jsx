@@ -39,13 +39,10 @@ import {
 const BionicHomePage = ({ onAddToCart }) => {
   return (
     <main className="min-h-screen bg-[#0a0a0a]" data-testid="bionic-homepage">
-      {/* 1. Hero Section - Immersive full-screen hero */}
+      {/* 1. Hero Section - Immersive full-screen hero with BIONIC™ Stats */}
       <HeroSection />
       
-      {/* 2. BIONIC™ Stats Panel - Community statistics with animations */}
-      <StatsPanel />
-      
-      {/* 3. Product Carousel - Featured products slider */}
+      {/* 2. Product Carousel - Featured products slider */}
       <ProductCarousel onAddToCart={onAddToCart} />
       
       {/* 3. Map Module - Interactive Quebec territory map */}
