@@ -431,6 +431,7 @@ const TerritoryPage = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [waypoints, setWaypoints] = useState([]);
   const [territoryScore, setTerritoryScore] = useState(null);
+  const [globalEnvironmentScore, setGlobalEnvironmentScore] = useState(null);
   const [activeTab, setActiveTab] = useState('map');
   const [showHydroPanel, setShowHydroPanel] = useState(true);
   
