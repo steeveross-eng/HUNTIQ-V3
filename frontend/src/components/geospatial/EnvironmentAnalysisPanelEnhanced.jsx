@@ -317,9 +317,18 @@ const SigeomTab = ({ data, loading, error }) => {
     );
   }
   
-  const { province, bedrock, surficial, hunting_score, recommendations } = data;
-  const score = hunting_score || 0;
-  const category = getRatingCategory(score);
+  // Extract data from response
+  const province = data.geological_province;
+  const bedrock = data.bedrock_analysis;
+  const surficial = data.surficial_analysis;
+  const huntingScore = data.hunting_score;
+  const recommendations = data.recommendations;
+  
+  // Get score value
+  const scoreValue = typeof huntingScore === 'object' 
+    ? huntingScore?.score || 0 
+    : huntingScore || 70; // Default if not provided
+  const category = getRatingCategory(scoreValue);
   const colors = CLASSIFICATION_COLORS[category];
   
   return (
@@ -332,31 +341,47 @@ const SigeomTab = ({ data, loading, error }) => {
             <span className="text-sm font-medium text-white">Score Géologique</span>
           </div>
           <Badge className={`${colors.bg}/20 ${colors.text}`}>
-            {Math.round(score)}/100
+            {Math.round(scoreValue)}/100
           </Badge>
         </div>
+        {huntingScore?.interpretation && (
+          <p className="text-xs text-gray-400 mt-1">{huntingScore.interpretation}</p>
+        )}
       </div>
       
       {/* Geological Province */}
       {province && (
         <div className="p-2 bg-black/20 rounded-sm">
           <span className="text-xs text-gray-400">Province géologique</span>
-          <p className="text-sm font-medium text-white">{province.name || 'N/A'}</p>
-          <p className="text-xs text-gray-500 mt-1">{province.description || ''}</p>
-          {province.era && (
+          <p className="text-sm font-medium text-white capitalize">
+            {province.replace(/_/g, ' ') || 'N/A'}
+          </p>
+          {data.area_km2 && (
             <Badge className="mt-1 bg-purple-500/20 text-purple-300 text-xs">
-              {province.era}
+              {data.area_km2?.toFixed(0)} km²
             </Badge>
           )}
         </div>
       )}
       
-      {/* Bedrock */}
+      {/* Bedrock Analysis */}
       {bedrock && (
         <div className="p-2 bg-black/20 rounded-sm">
           <span className="text-xs text-gray-400">Socle rocheux</span>
-          <p className="text-sm font-medium text-white">{bedrock.type || 'N/A'}</p>
-          <p className="text-xs text-gray-500 mt-1">{bedrock.description || ''}</p>
+          {bedrock.rock_types && bedrock.rock_types.length > 0 ? (
+            <div className="space-y-1 mt-1">
+              {bedrock.rock_types.slice(0, 3).map((rock, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <span className="text-sm text-white">{rock.name || rock.type}</span>
+                  <span className="text-xs text-gray-500">{rock.province}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm font-medium text-white">
+              {bedrock.dominant_type || bedrock.type || 'Données disponibles'}
+            </p>
+          )}
         </div>
       )}
       
@@ -364,14 +389,33 @@ const SigeomTab = ({ data, loading, error }) => {
       {surficial && (
         <div className="p-2 bg-black/20 rounded-sm">
           <span className="text-xs text-gray-400">Dépôts de surface</span>
-          <p className="text-sm font-medium text-white">{surficial.type || 'N/A'}</p>
-          <p className="text-xs text-gray-500 mt-1">{surficial.description || ''}</p>
-          {surficial.drainage && (
-            <div className="flex items-center gap-2 mt-1">
-              <Droplets className="h-3 w-3 text-blue-400" />
-              <span className="text-xs text-gray-400">Drainage: {surficial.drainage}</span>
+          {surficial.deposit_types && surficial.deposit_types.length > 0 ? (
+            <div className="space-y-1 mt-1">
+              {surficial.deposit_types.slice(0, 3).map((deposit, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <span className="text-sm text-white">{deposit.name || deposit.type}</span>
+                  {deposit.drainage && (
+                    <div className="flex items-center gap-1">
+                      <Droplets className="h-3 w-3 text-blue-400" />
+                      <span className="text-xs text-gray-400">{deposit.drainage}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
+          ) : surficial.dominant_type ? (
+            <p className="text-sm font-medium text-white">{surficial.dominant_type}</p>
+          ) : (
+            <p className="text-sm text-gray-400">Données en cours de chargement...</p>
           )}
+        </div>
+      )}
+      
+      {/* Species Impact */}
+      {data.species_impact && (
+        <div className="p-2 bg-black/20 rounded-sm">
+          <span className="text-xs text-gray-400">Impact pour {data.target_species}</span>
+          <p className="text-sm text-white mt-1">{data.species_impact.summary || data.species_impact}</p>
         </div>
       )}
       
@@ -381,7 +425,7 @@ const SigeomTab = ({ data, loading, error }) => {
           <span className="text-xs text-gray-500">Recommandations</span>
           {recommendations.slice(0, 3).map((rec, i) => (
             <p key={i} className="text-xs text-gray-300 pl-2 border-l border-purple-500/30">
-              {typeof rec === 'string' ? rec : rec.message}
+              {typeof rec === 'string' ? rec : (rec?.message || rec?.text || JSON.stringify(rec))}
             </p>
           ))}
         </div>
