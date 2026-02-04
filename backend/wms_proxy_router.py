@@ -5,26 +5,43 @@ Ce module permet de:
 1. Proxifier les requêtes WMS depuis le frontend
 2. Contourner les restrictions CORS des services gouvernementaux
 3. Ajouter du cache pour les tuiles fréquemment demandées
+4. Gérer les timeouts et retries de manière robuste
+5. Logger les erreurs de manière structurée
 
 Auteur: BIONIC™ Team
 """
 
 from fastapi import APIRouter, HTTPException, Response
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 import httpx
 import logging
-from typing import Optional
+from typing import Optional, Dict, Any
 import hashlib
 from datetime import datetime, timedelta
+import asyncio
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/wms-proxy", tags=["WMS Proxy"])
 
+# Configuration robuste
+WMS_CONFIG = {
+    "timeout_seconds": 15,
+    "max_retries": 3,
+    "retry_delay_seconds": 1,
+    "cache_duration_hours": 1,
+    "max_cache_size": 500,
+}
+
 # Cache simple pour les tuiles WMS (en mémoire)
-WMS_CACHE = {}
-CACHE_DURATION = timedelta(hours=1)
-MAX_CACHE_SIZE = 500
+WMS_CACHE: Dict[str, Dict[str, Any]] = {}
+CACHE_DURATION = timedelta(hours=WMS_CONFIG["cache_duration_hours"])
+MAX_CACHE_SIZE = WMS_CONFIG["max_cache_size"]
+
+# Tracking des erreurs par source (pour circuit breaker basique)
+WMS_ERROR_TRACKING: Dict[str, Dict[str, Any]] = {}
+ERROR_THRESHOLD = 5  # Nombre d'erreurs avant de marquer comme indisponible
+ERROR_WINDOW = timedelta(minutes=10)  # Fenêtre de temps pour compter les erreurs
 
 # Services WMS autorisés (whitelist)
 ALLOWED_WMS_HOSTS = [
