@@ -144,19 +144,41 @@ class ActivityProbabilityEngine:
         self, 
         input_data: ActivityProbabilityInput
     ) -> Dict[str, Dict[str, Any]]:
-        """Prépare les facteurs d'influence."""
-        # Facteur météo
+        """Prépare les facteurs d'influence avec données temps réel."""
+        
+        # Fetch real-time data if available
+        real_time_weather = None
+        real_time_lunar = None
+        
+        if WEATHER_FETCHER_AVAILABLE and behavior_weather_fetcher:
+            try:
+                all_data = await behavior_weather_fetcher.get_all_environmental_data(
+                    input_data.latitude,
+                    input_data.longitude,
+                    use_cache=True
+                )
+                real_time_weather = all_data.get("weather", {})
+                real_time_lunar = all_data.get("lunar", {})
+                real_time_pressure = all_data.get("pressure_trend", {})
+                
+                logger.info(f"Fetched real-time data for activity probability: temp={real_time_weather.get('temperature_c')}°C")
+            except Exception as e:
+                logger.warning(f"Error fetching real-time data: {e}")
+        
+        # Facteur météo (utilise données réelles si disponibles)
         weather_factor = self._calculate_weather_factor(
-            input_data.temperature_c,
-            input_data.cloud_cover_percent,
-            input_data.precipitation_mm,
-            input_data.wind_speed_kmh
+            input_data.temperature_c or (real_time_weather.get("temperature_c") if real_time_weather else None),
+            input_data.cloud_cover_percent or (real_time_weather.get("cloud_cover_percent") if real_time_weather else None),
+            input_data.precipitation_mm or (real_time_weather.get("precipitation_mm") if real_time_weather else None),
+            input_data.wind_speed_kmh or (real_time_weather.get("wind_speed_kmh") if real_time_weather else None),
+            weather_data=real_time_weather
         )
         
-        # Facteur lunaire
-        lunar_factor = self._calculate_lunar_factor(
+        # Facteur lunaire (utilise données réelles si disponibles)
+        lunar_factor = self._calculate_lunar_factor_real(
             input_data.moon_phase,
-            input_data.moon_illumination
+            input_data.moon_illumination,
+            real_time_lunar
         )
         
         # Facteur saisonnier
@@ -164,11 +186,108 @@ class ActivityProbabilityEngine:
             input_data.target_datetime or datetime.now()
         )
         
+        # Facteur pression (nouveau)
+        pressure_factor = self._calculate_pressure_factor(
+            real_time_pressure if 'real_time_pressure' in dir() else None,
+            real_time_weather
+        )
+        
         return {
             "weather": weather_factor,
             "lunar": lunar_factor,
-            "seasonal": seasonal_factor
+            "seasonal": seasonal_factor,
+            "pressure": pressure_factor if 'pressure_factor' in dir() else {"modifier": 1.0, "description": "Non disponible"},
+            "data_source": "real_time" if real_time_weather else "estimated"
         }
+    
+    def _calculate_pressure_factor(
+        self,
+        pressure_trend_data: Optional[Dict],
+        weather_data: Optional[Dict]
+    ) -> Dict[str, Any]:
+        """Calcule l'impact de la pression barométrique."""
+        if pressure_trend_data:
+            trend = pressure_trend_data.get("trend", "stable")
+            change = pressure_trend_data.get("change_6h", 0)
+            
+            if trend == "rising_fast":
+                modifier = 1.20
+                description = "Pression en forte hausse - Conditions excellentes"
+            elif trend == "rising":
+                modifier = 1.10
+                description = "Pression en hausse - Bonnes conditions"
+            elif trend == "falling_fast":
+                modifier = 1.05
+                description = "Chute de pression - Activité frénétique possible"
+            elif trend == "falling":
+                modifier = 0.90
+                description = "Pression en baisse - Tempête approche"
+            else:
+                modifier = 1.0
+                description = "Pression stable"
+            
+            return {
+                "modifier": modifier,
+                "trend": trend,
+                "change_6h": change,
+                "description": description
+            }
+        elif weather_data:
+            pressure = weather_data.get("pressure_hpa", 1013)
+            if pressure > 1020:
+                modifier = 1.10
+            elif pressure < 1005:
+                modifier = 0.90
+            else:
+                modifier = 1.0
+            
+            return {
+                "modifier": modifier,
+                "current_hpa": pressure,
+                "description": "Basé sur pression actuelle"
+            }
+        
+        return {"modifier": 1.0, "description": "Non disponible"}
+    
+    def _calculate_lunar_factor_real(
+        self,
+        moon_phase_input: Optional[float],
+        moon_illumination_input: Optional[float],
+        lunar_data: Optional[Dict]
+    ) -> Dict[str, Any]:
+        """Calcule l'impact lunaire avec données temps réel."""
+        if lunar_data:
+            phase = lunar_data.get("phase", 0.5)
+            illumination = lunar_data.get("illumination", 0.5)
+            phase_name = lunar_data.get("phase_name_fr", "")
+            hunting_impact = lunar_data.get("hunting_impact", {})
+            
+            # Utiliser le score d'impact calculé par l'algorithme astronomique
+            base_modifier = 1.0
+            if hunting_impact:
+                impact_score = hunting_impact.get("score", 70)
+                base_modifier = 0.85 + (impact_score / 100) * 0.30
+            else:
+                # Calcul alternatif
+                if 0.4 <= phase <= 0.6:
+                    base_modifier = 1.15
+                elif phase < 0.1 or phase > 0.9:
+                    base_modifier = 0.95
+            
+            return {
+                "modifier": round(base_modifier, 3),
+                "phase": round(phase, 4),
+                "illumination": round(illumination, 4),
+                "phase_name": phase_name,
+                "is_full_moon": lunar_data.get("is_full_moon", False),
+                "is_new_moon": lunar_data.get("is_new_moon", False),
+                "hunting_impact": hunting_impact.get("impact", "neutral"),
+                "description": hunting_impact.get("description", "") or f"Phase: {phase_name}",
+                "data_source": "real_time_algorithm"
+            }
+        
+        # Fallback to input or estimation
+        return self._calculate_lunar_factor(moon_phase_input, moon_illumination_input)
     
     def _calculate_weather_factor(
         self,
