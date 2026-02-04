@@ -397,3 +397,163 @@ SUPPORTED_SPECIES = [
 
 # Saisons
 SEASONS = ["spring", "summer", "fall", "winter"]
+
+
+# =============================================================================
+# OUTPUT FORMATTER MIXIN / HELPER CLASS
+# =============================================================================
+
+class StandardOutputFormatter:
+    """
+    Mixin/Helper pour formater les sorties des moteurs de manière standardisée.
+    
+    Usage:
+        formatter = StandardOutputFormatter("SentinelEngine", "2.0.0", "vegetation")
+        output = formatter.format_output(
+            lat=47.5, lon=-72.5,
+            score=75.5,
+            components={"base": 70, "bonus": 5.5},
+            interpretation="Zone favorable",
+            raw_data={"indices": {...}},
+            recommendations=["Tip 1", "Tip 2"],
+            confidence=0.85,
+            data_source="NASA MODIS",
+            from_cache=False
+        )
+    """
+    
+    def __init__(
+        self, 
+        engine_name: str, 
+        engine_version: str, 
+        module_name: str
+    ):
+        self.engine_name = engine_name
+        self.engine_version = engine_version
+        self.module_name = module_name
+    
+    def format_output(
+        self,
+        lat: float,
+        lon: float,
+        score: float,
+        components: Dict[str, Any] = None,
+        interpretation: str = "",
+        raw_data: Dict[str, Any] = None,
+        recommendations: List[str] = None,
+        confidence: float = 0.70,
+        data_source: str = "BIONIC Model",
+        data_source_type: str = "modeled",
+        from_cache: bool = False,
+        cache_age_seconds: Optional[int] = None,
+        processing_time_ms: int = 0,
+        extra_fields: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
+        """
+        Formate la sortie d'un moteur selon le standard BIONIC™.
+        
+        Args:
+            lat, lon: Coordonnées
+            score: Score global (0-100)
+            components: Composantes du score
+            interpretation: Texte d'interprétation
+            raw_data: Données brutes spécifiques au moteur
+            recommendations: Liste de recommandations
+            confidence: Niveau de confiance (0-1)
+            data_source: Nom de la source de données
+            data_source_type: Type de source (real_api, cached, modeled, etc.)
+            from_cache: Si les données viennent du cache
+            cache_age_seconds: Âge du cache si applicable
+            processing_time_ms: Temps de traitement
+            extra_fields: Champs additionnels spécifiques au moteur
+        
+        Returns:
+            Dict standardisé conforme à BaseEngineOutput
+        """
+        import uuid
+        
+        # Generate analysis ID
+        prefix = self.module_name[:3].lower()
+        analysis_id = f"{prefix}_{uuid.uuid4().hex[:12]}"
+        
+        # Build metadata
+        metadata = {
+            "engine_name": self.engine_name,
+            "engine_version": self.engine_version,
+            "analysis_id": analysis_id,
+            "analyzed_at": datetime.now().isoformat(),
+            "processing_time_ms": processing_time_ms,
+            "data_source": data_source,
+            "data_source_type": data_source_type,
+            "confidence": round(confidence, 3),
+            "confidence_level": confidence_to_level(confidence).value,
+            "from_cache": from_cache,
+            "cache_age_seconds": cache_age_seconds
+        }
+        
+        # Build standardized score
+        overall_score = {
+            "score": round(score, 1),
+            "level": score_to_level(score).value,
+            "components": components or {},
+            "interpretation": interpretation
+        }
+        
+        # Build output
+        output = {
+            "metadata": metadata,
+            "location": {"lat": lat, "lon": lon},
+            "overall_score": overall_score,
+            "data": raw_data or {},
+            "recommendations": (recommendations or [])[:10],
+            "warnings": [],
+            "errors": [],
+            "from_cache": from_cache
+        }
+        
+        # Add extra fields at top level
+        if extra_fields:
+            for key, value in extra_fields.items():
+                if key not in output:
+                    output[key] = value
+        
+        return output
+    
+    def format_territory_module(
+        self,
+        score: float,
+        data: Dict[str, Any],
+        recommendations: List[str] = None,
+        confidence: float = 0.70,
+        weight: float = 0.25
+    ) -> Dict[str, Any]:
+        """
+        Formate un module pour TerritoryFullAnalysis.
+        
+        Retourne un TerritoryAnalysisModule standardisé.
+        """
+        return {
+            "module_name": self.module_name,
+            "engine_name": self.engine_name,
+            "score": {
+                "score": round(score, 1),
+                "level": score_to_level(score).value,
+                "components": {},
+                "interpretation": ""
+            },
+            "data": data,
+            "recommendations": recommendations or [],
+            "confidence": round(confidence, 3),
+            "weight_in_global": weight
+        }
+
+
+# Factory function for formatters
+def get_formatter(engine_name: str, engine_version: str, module_name: str) -> StandardOutputFormatter:
+    """
+    Factory pour créer un formatter standardisé.
+    
+    Example:
+        formatter = get_formatter("SentinelEngine", "2.0.0", "vegetation")
+    """
+    return StandardOutputFormatter(engine_name, engine_version, module_name)
