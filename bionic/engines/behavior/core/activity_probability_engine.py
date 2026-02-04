@@ -196,8 +196,7 @@ class ActivityProbabilityEngine:
             "weather": weather_factor,
             "lunar": lunar_factor,
             "seasonal": seasonal_factor,
-            "pressure": pressure_factor if 'pressure_factor' in dir() else {"modifier": 1.0, "description": "Non disponible"},
-            "data_source": "real_time" if real_time_weather else "estimated"
+            "pressure": pressure_factor if 'pressure_factor' in dir() else {"modifier": 1.0, "description": "Non disponible"}
         }
     
     def _calculate_pressure_factor(
