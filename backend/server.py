@@ -4622,6 +4622,14 @@ try:
 except ImportError as e:
     print(f"Stats Engine not available: {e}")
 
+# Include BIONIC™ CORE Engine
+try:
+    from core.api.endpoints import bionic_core_router
+    app.include_router(bionic_core_router)
+    print("BIONIC™ CORE Engine loaded - Full territory analysis active")
+except ImportError as e:
+    print(f"BIONIC CORE not available: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
