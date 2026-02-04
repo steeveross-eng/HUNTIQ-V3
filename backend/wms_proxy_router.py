@@ -224,22 +224,46 @@ async def proxy_wms_tile(
     bbox: str = ""
 ):
     """
-    Proxy une requête WMS GetMap
+    Proxy une requête WMS GetMap avec gestion robuste des erreurs.
     
-    Cette route permet de récupérer des tuiles WMS depuis des services
-    qui ne supportent pas CORS (comme les services gouvernementaux du Québec).
+    Features:
+    - Retries automatiques (3 tentatives)
+    - Circuit breaker pour sources instables
+    - Cache en mémoire
+    - Logging structuré
+    - Réponses JSON claires en cas d'erreur
     
-    Note: Utilise curl en subprocess pour contourner les problèmes de connexion
-    avec httpx/requests depuis certains environnements cloud.
+    Returns:
+        Image tile ou JSON avec détails de l'erreur
     """
-    import subprocess
-    
     # Vérification de sécurité
     if not is_host_allowed(url):
-        raise HTTPException(status_code=403, detail="WMS host not allowed")
+        logger.warning(f"WMS host blocked: {url}")
+        return JSONResponse(
+            status_code=403,
+            content={"error": "wms_host_not_allowed", "message": "Ce service WMS n'est pas autorisé", "url": url}
+        )
     
     if not bbox:
-        raise HTTPException(status_code=400, detail="BBOX parameter required")
+        return JSONResponse(
+            status_code=400,
+            content={"error": "missing_bbox", "message": "Paramètre BBOX requis"}
+        )
+    
+    host = get_host_from_url(url)
+    
+    # Vérifier le circuit breaker
+    if not is_source_available(host):
+        logger.info(f"WMS source temporarily unavailable (circuit breaker): {host}")
+        return JSONResponse(
+            status_code=503,
+            content={
+                "error": "source_unavailable",
+                "message": f"Le service {host} est temporairement indisponible",
+                "retry_after_seconds": 300,
+                "host": host
+            }
+        )
     
     # Construire l'URL complète
     wms_url = f"{url}?SERVICE={service}&REQUEST={request}&VERSION={version}&LAYERS={layers}&STYLES={styles}&FORMAT={format}&TRANSPARENT={transparent}&WIDTH={width}&HEIGHT={height}&CRS={crs}&BBOX={bbox}"
@@ -256,7 +280,8 @@ async def proxy_wms_tile(
                 media_type=format,
                 headers={
                     "Access-Control-Allow-Origin": "*",
-                    "Cache-Control": "public, max-age=3600"
+                    "Cache-Control": "public, max-age=3600",
+                    "X-WMS-Cache": "HIT"
                 }
             )
     
@@ -264,42 +289,41 @@ async def proxy_wms_tile(
     if len(WMS_CACHE) > MAX_CACHE_SIZE * 0.9:
         clean_cache()
     
-    try:
-        # Utiliser curl pour récupérer la tuile
-        result = subprocess.run(
-            ['curl', '-s', '-L', wms_url, '--connect-timeout', '15'],
-            capture_output=True,
-            timeout=30
-        )
-        
-        if result.returncode != 0:
-            raise HTTPException(status_code=502, detail="WMS service error")
-        
-        content = result.stdout
-        
+    # Récupérer la tuile avec retries
+    content, success, error_message = await fetch_wms_with_retry(wms_url)
+    
+    if success and content:
         # Mettre en cache
         WMS_CACHE[cache_key] = {
             'data': content,
             'timestamp': datetime.now()
         }
         
-        logger.debug(f"WMS proxy: {layers} - {len(content)} bytes")
+        logger.debug(f"WMS proxy success: {layers} - {len(content)} bytes from {host}")
         
         return Response(
             content=content,
             media_type=format,
             headers={
                 "Access-Control-Allow-Origin": "*",
-                "Cache-Control": "public, max-age=3600"
+                "Cache-Control": "public, max-age=3600",
+                "X-WMS-Cache": "MISS",
+                "X-WMS-Source": host
             }
         )
-        
-    except subprocess.TimeoutExpired:
-        logger.warning(f"WMS proxy timeout for {url}")
-        raise HTTPException(status_code=504, detail="WMS service timeout")
-    except Exception as e:
-        logger.error(f"WMS proxy error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    else:
+        # Échec après tous les retries
+        logger.error(f"WMS proxy failed for {host}/{layers}: {error_message}")
+        return JSONResponse(
+            status_code=502,
+            content={
+                "error": "wms_fetch_failed",
+                "message": f"Impossible de récupérer la tuile après plusieurs tentatives",
+                "details": error_message,
+                "host": host,
+                "layer": layers
+            }
+        )
 
 @router.get("/capabilities")
 async def proxy_wms_capabilities(url: str):
