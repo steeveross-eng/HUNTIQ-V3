@@ -261,32 +261,84 @@ class BehaviorEngine:
     
     def run_model(self, features: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Exécute le modèle comportemental.
+        Exécute le modèle comportemental avec données réelles.
         
-        TODO P0-2:
-        - Implémenter modèle ML (Random Forest / XGBoost)
-        - Charger poids pré-entraînés
-        - Intégrer TensorFlow/PyTorch pour deep learning
-        
-        STUB: Retourne des valeurs basées sur des heuristiques.
+        Intègre:
+        - Température et confort thermique
+        - Phase lunaire et illumination
+        - Pression barométrique et tendance
+        - Précipitations et vent
+        - Photopériode (lever/coucher)
         """
         species = SpeciesCode(features["species"])
         
-        # Calcul du score d'activité (heuristique)
+        # Score de base
         base_activity = 50.0
         
-        # Ajustements
-        base_activity += features.get("temp_comfort", 0) * 20
-        base_activity += features.get("lunar_influence", 0) * 15
-        base_activity -= features.get("precip_impact", 0) * 25
-        base_activity -= features.get("wind_impact", 0) * 15
-        base_activity += features.get("pressure_trend", 0) * 10
+        # ===== TEMPÉRATURE =====
+        temp_comfort = features.get("temp_comfort", 0)
+        base_activity += temp_comfort * 20
+        
+        # ===== PHASE LUNAIRE (Données réelles) =====
+        lunar_influence = features.get("lunar_influence", 0)
+        lunar_impact = features.get("lunar_hunting_impact", {})
+        if lunar_impact:
+            # Utiliser le score d'impact lunaire réel
+            lunar_score = lunar_impact.get("score", 70)
+            lunar_bonus = (lunar_score - 70) / 5  # -6 à +6
+            base_activity += lunar_bonus
+        else:
+            base_activity += lunar_influence * 15
+        
+        # ===== PRESSION BAROMÉTRIQUE (Tendance réelle) =====
+        pressure_trend = features.get("pressure_trend", "stable")
+        pressure_change = features.get("pressure_change_6h", 0)
+        
+        if pressure_trend == "rising_fast":
+            base_activity += 15  # Excellentes conditions
+        elif pressure_trend == "rising":
+            base_activity += 8
+        elif pressure_trend == "falling_fast":
+            base_activity += 5  # Activité frénétique avant tempête
+        elif pressure_trend == "falling":
+            base_activity -= 5
+        else:
+            base_activity += features.get("pressure_trend_score", 0) * 10
+        
+        # ===== PRÉCIPITATIONS =====
+        precip_impact = features.get("precip_impact", 0)
+        base_activity -= precip_impact * 25
+        
+        # ===== VENT =====
+        wind_impact = features.get("wind_impact", 0)
+        base_activity -= wind_impact * 15
+        
+        # ===== COUVERTURE NUAGEUSE =====
+        cloud_cover = features.get("cloud_cover_percent", 50)
+        if cloud_cover > 80:
+            # Nuageux = peut favoriser mouvement diurne
+            base_activity += 5
+        elif cloud_cover < 20:
+            # Très dégagé = gibier plus prudent en journée
+            base_activity -= 3
+        
+        # ===== HEURE DE LA JOURNÉE =====
+        hour = features.get("hour_of_day", 12)
+        patterns = self.BASE_ACTIVITY_PATTERNS.get(species, {})
+        peak_hours = patterns.get("peak_hours", [6, 7, 17, 18])
+        
+        if hour in peak_hours:
+            base_activity += 15
+        elif hour in patterns.get("secondary_hours", [5, 8, 16, 20]):
+            base_activity += 8
+        elif 10 <= hour <= 14:
+            base_activity -= 10  # Milieu de journée
         
         # Normaliser entre 0-100
         activity_score = max(0, min(100, base_activity))
         
-        # Déterminer les fenêtres d'activité
-        activity_windows = self._calculate_activity_windows(
+        # Déterminer les fenêtres d'activité avec données réelles
+        activity_windows = self._calculate_activity_windows_real(
             species, features, activity_score
         )
         
@@ -294,13 +346,90 @@ class BehaviorEngine:
             "activity_score": activity_score,
             "activity_windows": activity_windows,
             "factors": {
-                "temperature": features.get("temp_comfort", 0),
-                "precipitation": features.get("precip_impact", 0),
-                "wind": features.get("wind_impact", 0),
-                "lunar": features.get("lunar_influence", 0),
-                "pressure": features.get("pressure_trend", 0)
+                "temperature": round(features.get("temp_comfort", 0), 2),
+                "precipitation": round(features.get("precip_impact", 0), 2),
+                "wind": round(features.get("wind_impact", 0), 2),
+                "lunar": round(features.get("lunar_influence", 0), 2),
+                "lunar_phase": features.get("moon_phase_name", ""),
+                "lunar_illumination": round(features.get("moon_illumination", 0.5) * 100, 1),
+                "pressure": features.get("barometric_pressure_hpa", 1013),
+                "pressure_trend": features.get("pressure_trend", "stable"),
+                "cloud_cover": features.get("cloud_cover_percent", 50),
+                "hour_factor": "peak" if hour in peak_hours else "secondary" if hour in patterns.get("secondary_hours", []) else "low"
+            },
+            "real_time_data": {
+                "temperature_c": features.get("temperature_c", 15),
+                "weather": features.get("weather_description", ""),
+                "sunrise": features.get("sunrise", "06:00"),
+                "sunset": features.get("sunset", "18:00"),
+                "daylight_hours": features.get("daylight_hours", 12),
+                "data_source": features.get("data_source", "unknown")
             }
         }
+    
+    def _calculate_activity_windows_real(
+        self,
+        species: SpeciesCode,
+        features: Dict[str, Any],
+        base_score: float
+    ) -> List[Dict[str, Any]]:
+        """Calcule les fenêtres d'activité avec données photoperiod réelles."""
+        windows = []
+        
+        # Extraire heures de lever/coucher du soleil
+        sunrise = features.get("sunrise", "06:00")
+        sunset = features.get("sunset", "18:00")
+        golden_morning = features.get("golden_hour_morning", "06:30")
+        golden_evening = features.get("golden_hour_evening", "17:30")
+        
+        try:
+            sunrise_hour = int(sunrise.split(":")[0]) if isinstance(sunrise, str) else 6
+            sunset_hour = int(sunset.split(":")[0]) if isinstance(sunset, str) else 18
+        except:
+            sunrise_hour = 6
+            sunset_hour = 18
+        
+        # Ajustement lunaire pour activité nocturne
+        moon_phase = features.get("moon_phase", 0.5)
+        nocturnal_tendency = self.BASE_ACTIVITY_PATTERNS.get(species, {}).get("nocturnal_tendency", 0.3)
+        
+        # Fenêtre matinale (autour du lever du soleil)
+        morning_start = max(sunrise_hour - 1, 4)
+        morning_end = min(sunrise_hour + 2, 10)
+        morning_prob = min(0.95, (base_score / 100) + 0.2)
+        
+        windows.append({
+            "start": morning_start,
+            "end": morning_end,
+            "probability": morning_prob,
+            "level": "peak" if base_score > 70 else "high" if base_score > 50 else "moderate",
+            "notes": f"Fenêtre matinale (lever: {sunrise})"
+        })
+        
+        # Fenêtre crépusculaire (autour du coucher du soleil)
+        evening_start = max(sunset_hour - 2, 15)
+        evening_end = min(sunset_hour + 1, 21)
+        evening_prob = min(0.95, (base_score / 100) + 0.15)
+        
+        windows.append({
+            "start": evening_start,
+            "end": evening_end,
+            "probability": evening_prob,
+            "level": "peak" if base_score > 70 else "high" if base_score > 50 else "moderate",
+            "notes": f"Fenêtre crépusculaire (coucher: {sunset})"
+        })
+        
+        # Fenêtre nocturne (si pleine lune et espèce nocturne)
+        if 0.4 <= moon_phase <= 0.6 and nocturnal_tendency > 0.3:
+            windows.append({
+                "start": 22,
+                "end": 4,
+                "probability": min(0.7, nocturnal_tendency + 0.2),
+                "level": "moderate",
+                "notes": f"Activité nocturne (pleine lune, illumination élevée)"
+            })
+        
+        return windows
     
     def postprocess(
         self,
