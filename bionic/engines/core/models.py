@@ -178,15 +178,59 @@ class FoodModuleResult(ModuleResult):
 
 
 class CoverModuleResult(ModuleResult):
-    """Résultat spécifique du module Cover (Couvert)"""
-    module_type: ModuleType = ModuleType.COVER
-    module_name: str = "Analyse Couvert"
+    """Résultat spécifique du module Canopy (Couvert forestier)"""
+    module_type: ModuleType = ModuleType.CANOPY
+    module_name: str = "Analyse Canopée"
     
     # Types de couvert
     forest_coverage_percent: float = 0.0
     canopy_density: Optional[str] = None
     cover_types: Dict[str, float] = {}  # {"coniferous": 40, "deciduous": 30, ...}
     bedding_areas: List[GeoPoint] = []
+
+
+class PressureModuleResult(ModuleResult):
+    """Résultat spécifique du module Pressure (Pression humaine)"""
+    module_type: ModuleType = ModuleType.PRESSURE
+    module_name: str = "Analyse Pression"
+    
+    # Indicateurs de pression
+    road_density: Optional[float] = None
+    building_proximity: Optional[float] = None
+    disturbance_level: float = 0.0
+
+
+class AccessModuleResult(ModuleResult):
+    """Résultat spécifique du module Access (Accessibilité)"""
+    module_type: ModuleType = ModuleType.ACCESS
+    module_name: str = "Analyse Accessibilité"
+    
+    # Indicateurs d'accès
+    trail_proximity: Optional[float] = None
+    road_access: Optional[float] = None
+    terrain_difficulty: float = 0.0
+
+
+class CorridorModuleResult(ModuleResult):
+    """Résultat spécifique du module Corridor (Corridors fauniques)"""
+    module_type: ModuleType = ModuleType.CORRIDOR
+    module_name: str = "Analyse Corridors"
+    
+    # Indicateurs de corridors
+    connectivity_score: Optional[float] = None
+    bottleneck_count: int = 0
+    corridor_length_km: float = 0.0
+
+
+class GeoformModuleResult(ModuleResult):
+    """Résultat spécifique du module Geoform (Géomorphologie)"""
+    module_type: ModuleType = ModuleType.GEOFORM
+    module_name: str = "Analyse Géomorphologie"
+    
+    # Indicateurs géomorphologiques
+    slope_avg: Optional[float] = None
+    aspect_dominant: Optional[str] = None
+    roughness_index: float = 0.0
 
 
 # =============================================================================
