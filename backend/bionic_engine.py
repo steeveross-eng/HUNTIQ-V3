@@ -2055,3 +2055,356 @@ async def list_territory_analyses(
         "has_more": total > skip + limit,
         "analyses": analyses
     }
+
+
+
+# =============================================================================
+# GET /api/bionic/dashboard/{territory_id}
+# Complete BIONIC Territory Dashboard
+# =============================================================================
+
+class DashboardLocalStats(BaseModel):
+    """Statistiques locales du territoire"""
+    zones_count: int = 0
+    hotspots_count: int = 0
+    corridors_count: int = 0
+    module_averages: Dict[str, float] = {}
+    species_averages: Dict[str, float] = {}
+    last_updated: Optional[datetime] = None
+    total_analyses: int = 0
+
+
+class BionicDashboard(BaseModel):
+    """BIONIC Territory Dashboard consolidé"""
+    territory_id: str
+    analysis: Dict[str, Any]
+    modules: List[Dict[str, Any]]
+    species: List[Dict[str, Any]]
+    predictions: Optional[Dict[str, Any]] = None
+    temporal: Optional[Dict[str, Any]] = None
+    global_score: float
+    global_rating: str
+    recommendations: List[str]
+    geojson: Optional[Dict[str, Any]] = None
+    favorites: List[Dict[str, Any]] = []
+    waypoints: List[Dict[str, Any]] = []
+    local_stats: DashboardLocalStats
+    data_sources: List[str] = []
+    engine_version: str = "BIONIC_CORE 1.0"
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+@router.get("/dashboard/{territory_id}", response_model=BionicDashboard)
+async def get_territory_dashboard(
+    territory_id: str = Path(..., description="Identifiant unique du territoire")
+):
+    """
+    Assemble un BIONIC Territory Dashboard complet.
+    
+    Fusionne plusieurs sources de données :
+    - Analyse consolidée TerritoryFullAnalysis
+    - Favoris utilisateur
+    - Waypoints utilisateur
+    - Statistiques locales du territoire
+    
+    Args:
+        territory_id: Identifiant unique du territoire
+        
+    Returns:
+        BionicDashboard: Dashboard consolidé avec toutes les données
+        
+    Raises:
+        HTTPException 404: Si l'analyse n'est pas trouvée
+        HTTPException 503: Si la base de données est indisponible
+    """
+    # Obtenir la connexion à la base de données
+    database = await get_db()
+    if database is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Database unavailable"
+        )
+    
+    # =========================================================================
+    # a. Récupérer l'analyse consolidée TerritoryFullAnalysis
+    # =========================================================================
+    analysis_collection = database["territory_analyses"]
+    analysis_doc = await analysis_collection.find_one(
+        {"territory_id": territory_id},
+        {"_id": 0}
+    )
+    
+    if analysis_doc is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Analysis not found"
+        )
+    
+    # Convertir en format TerritoryFullAnalysis
+    analysis_formatted = _format_raw_analysis(analysis_doc)
+    
+    # =========================================================================
+    # b. Récupérer les favoris utilisateur
+    # =========================================================================
+    favorites = []
+    try:
+        favorites_collection = database["zone_favorites"]
+        favorites_cursor = favorites_collection.find(
+            {"territory_id": territory_id},
+            {"_id": 0}
+        )
+        favorites = await favorites_cursor.to_list(length=100)
+    except Exception as e:
+        logger.warning(f"Failed to fetch favorites: {e}")
+    
+    # =========================================================================
+    # c. Récupérer les waypoints utilisateur
+    # =========================================================================
+    waypoints = []
+    try:
+        waypoints_collection = database["user_waypoints"]
+        waypoints_cursor = waypoints_collection.find(
+            {"territory_id": territory_id},
+            {"_id": 0}
+        )
+        waypoints = await waypoints_cursor.to_list(length=100)
+    except Exception as e:
+        logger.warning(f"Failed to fetch waypoints: {e}")
+    
+    # Fallback: essayer la collection waypoints standard
+    if not waypoints:
+        try:
+            waypoints_collection = database["waypoints"]
+            waypoints_cursor = waypoints_collection.find(
+                {"territory_id": territory_id},
+                {"_id": 0}
+            )
+            waypoints = await waypoints_cursor.to_list(length=100)
+        except Exception as e:
+            logger.debug(f"Fallback waypoints fetch: {e}")
+    
+    # =========================================================================
+    # d. Récupérer et calculer les statistiques locales
+    # =========================================================================
+    local_stats = await _calculate_local_stats(database, territory_id, analysis_doc)
+    
+    # =========================================================================
+    # e. Construire le dashboard consolidé
+    # =========================================================================
+    
+    # Extraire les modules
+    modules_raw = analysis_doc.get("modules", {})
+    if isinstance(modules_raw, dict):
+        modules_list = list(modules_raw.values())
+    else:
+        modules_list = modules_raw if isinstance(modules_raw, list) else []
+    
+    # Extraire les espèces
+    species_raw = analysis_doc.get("species", {})
+    if isinstance(species_raw, dict):
+        species_list = list(species_raw.values())
+    else:
+        species_list = species_raw if isinstance(species_raw, list) else []
+    
+    # Construire le dashboard
+    dashboard = BionicDashboard(
+        territory_id=territory_id,
+        analysis=analysis_formatted,
+        modules=modules_list,
+        species=species_list,
+        predictions=analysis_doc.get("predictions"),
+        temporal=analysis_doc.get("temporal"),
+        global_score=analysis_doc.get("overall_score", analysis_doc.get("global_score", 0)),
+        global_rating=analysis_doc.get("overall_rating", analysis_doc.get("global_rating", "C")),
+        recommendations=_extract_all_recommendations(analysis_doc),
+        geojson=analysis_doc.get("geojson"),
+        favorites=favorites,
+        waypoints=waypoints,
+        local_stats=local_stats,
+        data_sources=analysis_doc.get("data_sources", []),
+        engine_version="BIONIC_CORE 1.0",
+        generated_at=datetime.now(timezone.utc)
+    )
+    
+    return dashboard
+
+
+async def _calculate_local_stats(
+    database,
+    territory_id: str,
+    analysis_doc: Dict
+) -> DashboardLocalStats:
+    """
+    Calcule les statistiques locales du territoire.
+    
+    Agrège les données de plusieurs collections pour produire
+    des métriques consolidées.
+    """
+    stats = DashboardLocalStats()
+    
+    # Compter les zones et hotspots depuis l'analyse
+    modules = analysis_doc.get("modules", {})
+    species = analysis_doc.get("species", {})
+    
+    # Compter les hotspots
+    total_hotspots = 0
+    for species_data in species.values() if isinstance(species, dict) else species:
+        if isinstance(species_data, dict):
+            hotspots = species_data.get("hotspots", [])
+            total_hotspots += len(hotspots) if isinstance(hotspots, list) else 0
+    stats.hotspots_count = total_hotspots
+    
+    # Calculer les moyennes par module
+    module_scores = {}
+    for module_name, module_data in (modules.items() if isinstance(modules, dict) else []):
+        if isinstance(module_data, dict):
+            score = module_data.get("score", 0)
+            module_scores[module_name] = score
+    stats.module_averages = module_scores
+    
+    # Calculer les moyennes par espèce
+    species_scores = {}
+    for species_name, species_data in (species.items() if isinstance(species, dict) else []):
+        if isinstance(species_data, dict):
+            score = species_data.get("score", 0)
+            species_scores[species_name] = score
+    stats.species_averages = species_scores
+    
+    # Compter les corridors (depuis le GeoJSON si disponible)
+    geojson = analysis_doc.get("geojson", {})
+    if geojson:
+        features = geojson.get("features", [])
+        corridors = [f for f in features if f.get("properties", {}).get("type") == "corridor"]
+        stats.corridors_count = len(corridors)
+        stats.zones_count = len(features)
+    
+    # Récupérer les stats depuis territory_stats si disponible
+    try:
+        stats_collection = database["territory_stats"]
+        stored_stats = await stats_collection.find_one(
+            {"territory_id": territory_id},
+            {"_id": 0}
+        )
+        if stored_stats:
+            stats.zones_count = stored_stats.get("zones_count", stats.zones_count)
+            stats.hotspots_count = stored_stats.get("hotspots_count", stats.hotspots_count)
+            stats.corridors_count = stored_stats.get("corridors_count", stats.corridors_count)
+            stats.total_analyses = stored_stats.get("total_analyses", 0)
+            stats.last_updated = stored_stats.get("last_updated")
+    except Exception as e:
+        logger.debug(f"Territory stats fetch: {e}")
+    
+    # Compter le total d'analyses pour ce territoire
+    try:
+        analysis_collection = database["territory_analyses"]
+        # Compter les analyses avec des coordonnées similaires
+        location = analysis_doc.get("location", {})
+        lat = location.get("latitude", 0)
+        lon = location.get("longitude", 0)
+        
+        if lat and lon:
+            # Chercher les analyses dans un rayon de ~5km
+            count = await analysis_collection.count_documents({
+                "$or": [
+                    {"territory_id": territory_id},
+                    {
+                        "location.latitude": {"$gte": lat - 0.05, "$lte": lat + 0.05},
+                        "location.longitude": {"$gte": lon - 0.05, "$lte": lon + 0.05}
+                    }
+                ]
+            })
+            stats.total_analyses = count
+    except Exception as e:
+        logger.debug(f"Analysis count error: {e}")
+    
+    # Définir la date de dernière mise à jour
+    if not stats.last_updated:
+        timestamp = analysis_doc.get("timestamp")
+        if timestamp:
+            if isinstance(timestamp, str):
+                try:
+                    stats.last_updated = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                except:
+                    stats.last_updated = datetime.now(timezone.utc)
+            elif isinstance(timestamp, datetime):
+                stats.last_updated = timestamp
+            else:
+                stats.last_updated = datetime.now(timezone.utc)
+    
+    return stats
+
+
+# =============================================================================
+# GET /api/bionic/dashboard/{territory_id}/summary
+# Lightweight dashboard summary
+# =============================================================================
+
+@router.get("/dashboard/{territory_id}/summary")
+async def get_dashboard_summary(
+    territory_id: str = Path(..., description="Identifiant unique du territoire")
+):
+    """
+    Retourne un résumé léger du dashboard.
+    
+    Utile pour les affichages rapides et les listes.
+    """
+    database = await get_db()
+    if database is None:
+        raise HTTPException(status_code=503, detail="Database unavailable")
+    
+    # Récupérer uniquement les champs essentiels
+    analysis_collection = database["territory_analyses"]
+    analysis_doc = await analysis_collection.find_one(
+        {"territory_id": territory_id},
+        {
+            "_id": 0,
+            "territory_id": 1,
+            "location": 1,
+            "overall_score": 1,
+            "overall_rating": 1,
+            "timestamp": 1,
+            "data_sources": 1,
+            "season": 1
+        }
+    )
+    
+    if analysis_doc is None:
+        raise HTTPException(status_code=404, detail="Analysis not found")
+    
+    # Compter les favoris et waypoints
+    favorites_count = 0
+    waypoints_count = 0
+    
+    try:
+        favorites_count = await database["zone_favorites"].count_documents(
+            {"territory_id": territory_id}
+        )
+    except:
+        pass
+    
+    try:
+        waypoints_count = await database["user_waypoints"].count_documents(
+            {"territory_id": territory_id}
+        )
+        if waypoints_count == 0:
+            waypoints_count = await database["waypoints"].count_documents(
+                {"territory_id": territory_id}
+            )
+    except:
+        pass
+    
+    location = analysis_doc.get("location", {})
+    
+    return {
+        "territory_id": territory_id,
+        "latitude": location.get("latitude", 0),
+        "longitude": location.get("longitude", 0),
+        "global_score": analysis_doc.get("overall_score", 0),
+        "global_rating": analysis_doc.get("overall_rating", "C"),
+        "season": analysis_doc.get("season"),
+        "favorites_count": favorites_count,
+        "waypoints_count": waypoints_count,
+        "data_sources_count": len(analysis_doc.get("data_sources", [])),
+        "last_updated": analysis_doc.get("timestamp"),
+        "engine_version": "BIONIC_CORE 1.0"
+    }
