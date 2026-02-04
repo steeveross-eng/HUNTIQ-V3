@@ -2055,5 +2055,3 @@ async def list_territory_analyses(
         "has_more": total > skip + limit,
         "analyses": analyses
     }
-
-    )
