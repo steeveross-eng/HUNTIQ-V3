@@ -4654,6 +4654,14 @@ try:
 except ImportError as e:
     print(f"Behavior Suite not available: {e}")
 
+# Include BIONIC™ Current Conditions (P0-2 - Panneau Conditions Actuelles)
+try:
+    from conditions.api.endpoints import conditions_router
+    app.include_router(conditions_router)
+    print("BIONIC™ Current Conditions loaded - Real-time conditions panel active")
+except ImportError as e:
+    print(f"Current Conditions not available: {e}")
+
 # Include BIONIC™ Main Engine (POST /api/bionic/analyze)
 try:
     import sys
