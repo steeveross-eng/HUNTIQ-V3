@@ -19,6 +19,7 @@ export { default as useBionicLayers } from './useBionicLayers';
 export { default as useBionicScoring } from './useBionicScoring';
 export { default as useBionicStrategy } from './useBionicStrategy';
 export { default as useBionicWeather } from './useBionicWeather';
+export { useStatsEngine } from './useStatsEngine';
 
 // Feature Hooks
 export { default as useAnalytics } from './useAnalytics';
@@ -26,3 +27,4 @@ export { default as useLiveTracking } from './useLiveTracking';
 export { default as useSharing } from './useSharing';
 export { default as useUserData } from './useUserData';
 export { default as useWaterExclusion } from './useWaterExclusion';
+
