@@ -34,22 +34,39 @@ Transformer l'architecture backend de monolithique vers modulaire, en utilisant 
 
 ---
 
-## Phase 2 : Consolidation des Modèles (PROCHAINE ÉTAPE)
+## ✅ Phase 2 TERMINÉE - Consolidation des Modèles Pydantic (2026-02-04)
 
-**Objectif**: Unifier les modèles Pydantic
+### Résultats
+- **Fichier redondant supprimé** : `/app/bionic/engines/bionic_core_models.py` (213 lignes)
+- **Modèles consolidés** dans `/app/bionic/engines/core/models.py` (554 lignes)
+- **Enums synchronisés** : `models.py` importe depuis `configs.py` (source unique)
+- **Nouveaux modèles de modules** ajoutés : PressureModuleResult, AccessModuleResult, CorridorModuleResult, GeoformModuleResult
+- **API publique** : 100% compatible, tous les tests passent
 
-### Fichiers à Consolider
-- `/app/bionic/engines/core/models.py` (à conserver)
-- `/app/bionic/engines/bionic_core_models.py` (à supprimer, dupliquer)
+### Changements clés
+1. Les Enums `ModuleType`, `SpeciesType`, `SeasonType` sont maintenant définis UNIQUEMENT dans `configs.py`
+2. `models.py` importe ces Enums depuis `configs.py` (évite la duplication)
+3. Ajout de modèles Pydantic spécialisés pour les nouveaux types de modules
+4. Version du moteur : BIONIC_CORE 2.0
 
-### Tâches
-1. Vérifier que tous les imports utilisent `/app/bionic/engines/core/models.py`
-2. Supprimer `/app/bionic/engines/bionic_core_models.py`
-3. Nettoyer les imports redondants
+### Structure finale des modèles
+```
+/app/bionic/engines/core/models.py (554 lignes)
+├── Enums additionnels: ScoreRating, PredictionHorizon
+├── Sub-models: GeoPoint, BoundingBox, DataSourceInfo, ScoreBreakdown, Recommendation
+├── Module Results: ThermalModuleResult, WetnessModuleResult, FoodModuleResult, 
+│                   CoverModuleResult, PressureModuleResult, AccessModuleResult,
+│                   CorridorModuleResult, GeoformModuleResult
+├── Species Results: HabitatSuitability, ActivityPattern, SpeciesResult
+├── Prediction Results: SinglePrediction, PredictionResult
+├── Temporal Results: NDVITimeSeries, SnowAnalysis, PhenologyData, TemporalResult
+├── Main Model: TerritoryFullAnalysis (avec méthodes utilitaires)
+└── Request/Response: TerritoryAnalysisRequest, TerritoryAnalysisSummary
+```
 
 ---
 
-## Phase 3 : Implémentation Réelle des Moteurs (FUTURE)
+## Phase 3 : Implémentation Réelle des Moteurs (PROCHAINE ÉTAPE)
 
 **Objectif**: Remplacer les simulations par de vraies données
 
