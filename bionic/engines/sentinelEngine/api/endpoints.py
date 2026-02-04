@@ -222,12 +222,29 @@ async def analyze_point(request: PointAnalysisRequest):
 
 @sentinel_engine_router.get("/analyze/point")
 async def analyze_point_get(
-    lat: float = Query(...),
-    lon: float = Query(...)
+    lat: float = Query(..., ge=-90, le=90, description="Latitude"),
+    lon: float = Query(..., ge=-180, le=180, description="Longitude"),
+    use_cache: bool = Query(True, description="Utiliser le cache"),
+    use_real_data: bool = Query(True, description="Utiliser les données réelles")
 ):
     """
-    Analyze vegetation at a point (GET version with estimated values).
+    Analyze vegetation at a point with caching and real data support.
+    
+    Returns:
+    - Vegetation indices (NDVI, NDWI, EVI, SAVI)
+    - Habitat classification
+    - Phenology stage
+    - Hunting score and recommendations
     """
+    try:
+        return await sentinel_analyzer.analyze_point_async(
+            lat, lon,
+            use_cache=use_cache,
+            use_real_data=use_real_data
+        )
+    except Exception as e:
+        # Fallback to sync version
+        return sentinel_analyzer.analyze_point(lat=lat, lon=lon)
     return sentinel_analyzer.analyze_point(lat, lon)
 
 
