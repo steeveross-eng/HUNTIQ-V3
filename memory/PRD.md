@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 3.12 (Phase 1 Refactoring Backend TERMINÉE)
+## Version: 3.13 (Phase 2 Consolidation Modèles TERMINÉE)
 ## Dernière mise à jour: 2026-02-04
 
 ---
