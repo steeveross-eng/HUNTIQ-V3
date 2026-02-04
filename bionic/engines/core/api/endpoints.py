@@ -481,20 +481,22 @@ def get_species_name_fr(species) -> str:
     return names.get(species_key, str(species_key))
 
 
-def generate_species_recommendations(species: SpeciesType, score: float) -> List[str]:
+def generate_species_recommendations(species, score: float) -> List[str]:
     """Generate species-specific recommendations"""
     recs = []
+    species_name = get_species_name_fr(species)
+    species_key = species.value if hasattr(species, 'value') else species
     
     if score >= 70:
-        recs.append(f"Zone favorable pour {get_species_name_fr(species)}")
+        recs.append(f"Zone favorable pour {species_name}")
     elif score >= 50:
-        recs.append(f"Potentiel modéré pour {get_species_name_fr(species)}")
+        recs.append(f"Potentiel modéré pour {species_name}")
     else:
-        recs.append(f"Zone peu propice pour {get_species_name_fr(species)}")
+        recs.append(f"Zone peu propice pour {species_name}")
     
     season = get_current_season()
     if season == Season.FALL:
-        if species in [SpeciesType.DEER, SpeciesType.MOOSE]:
+        if species_key in ["deer", "moose"]:
             recs.append("Période de rut - Utiliser des attractants")
     
     return recs
