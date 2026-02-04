@@ -387,17 +387,18 @@ async def proxy_wms_capabilities(url: str):
 @router.get("/check")
 async def check_wms_availability(url: str):
     """
-    Vérifie la disponibilité d'un service WMS
+    Vérifie la disponibilité d'un service WMS avec retries.
     
-    Note: Les services WMS gouvernementaux du Québec peuvent ne pas être 
-    accessibles depuis certains environnements cloud/datacenter en raison
-    de restrictions géographiques ou de sécurité.
+    Returns:
+        JSON avec statut de disponibilité et métriques
     """
     logger.info(f"Checking WMS availability for: {url}")
     
     if not is_host_allowed(url):
         logger.warning(f"WMS host not allowed: {url}")
-        return {"available": False, "error": "Host not allowed"}
+        return {"available": False, "error": "host_not_allowed", "message": "Ce service WMS n'est pas autorisé"}
+    
+    host = get_host_from_url(url)
     
     try:
         import time
@@ -405,8 +406,7 @@ async def check_wms_availability(url: str):
         
         start_time = time.time()
         
-        # Utiliser curl en subprocess car httpx/requests ont des problèmes de connexion
-        # avec certains services gouvernementaux depuis les environnements cloud
+        # Utiliser curl en subprocess avec timeout réduit pour le check
         result = subprocess.run(
             [
                 'curl', '-s', '-o', '/dev/null', '-w', '%{http_code}',
@@ -421,19 +421,96 @@ async def check_wms_availability(url: str):
         elapsed_ms = int((time.time() - start_time) * 1000)
         status_code = int(result.stdout) if result.stdout.isdigit() else 0
         
-        logger.info(f"WMS check response: status={status_code}, time={elapsed_ms}ms")
+        logger.info(f"WMS check response: host={host}, status={status_code}, time={elapsed_ms}ms")
+        
+        is_available = status_code == 200
+        
+        if is_available:
+            track_success(host)
+        else:
+            track_error(host, "check_failed", f"HTTP {status_code}")
         
         return {
-            "available": status_code == 200,
+            "available": is_available,
+            "host": host,
             "status_code": status_code,
-            "response_time_ms": elapsed_ms
+            "response_time_ms": elapsed_ms,
+            "circuit_breaker_status": "open" if not is_source_available(host) else "closed"
         }
             
     except subprocess.TimeoutExpired:
-        logger.warning(f"WMS check timeout")
-        return {"available": False, "error": "Timeout"}
+        track_error(host, "timeout", "Check timeout")
+        logger.warning(f"WMS check timeout for {host}")
+        return {
+            "available": False,
+            "host": host,
+            "error": "timeout",
+            "message": "Le service n'a pas répondu dans les délais"
+        }
     except Exception as e:
+        track_error(host, "error", str(e))
         logger.error(f"WMS check error: {type(e).__name__}: {e}")
-        return {"available": False, "error": str(e)}
+        return {
+            "available": False,
+            "host": host,
+            "error": "check_error",
+            "message": str(e)
+        }
 
-logger.info("WMS Proxy Router initialized")
+
+@router.get("/status")
+async def get_wms_status():
+    """
+    Retourne le statut de santé de tous les services WMS trackés.
+    
+    Utile pour:
+    - Monitoring administratif
+    - Debug des problèmes de couches
+    - Visualisation des sources instables
+    """
+    status = {
+        "allowed_hosts": ALLOWED_WMS_HOSTS,
+        "cache_size": len(WMS_CACHE),
+        "max_cache_size": MAX_CACHE_SIZE,
+        "sources": {}
+    }
+    
+    for host in ALLOWED_WMS_HOSTS:
+        tracking = WMS_ERROR_TRACKING.get(host, {})
+        recent_errors = tracking.get("errors", [])
+        
+        status["sources"][host] = {
+            "available": is_source_available(host),
+            "recent_errors_count": len(recent_errors),
+            "last_success": tracking.get("last_success").isoformat() if tracking.get("last_success") else None,
+            "marked_unavailable": tracking.get("marked_unavailable", False)
+        }
+    
+    return status
+
+
+@router.post("/reset-circuit-breaker")
+async def reset_circuit_breaker(host: str = None):
+    """
+    Réinitialise le circuit breaker pour un hôte spécifique ou tous les hôtes.
+    
+    Args:
+        host: Hôte spécifique à réinitialiser (optionnel, tous si non spécifié)
+    """
+    global WMS_ERROR_TRACKING
+    
+    if host:
+        if host in WMS_ERROR_TRACKING:
+            WMS_ERROR_TRACKING[host] = {
+                "errors": [],
+                "last_success": None,
+                "marked_unavailable": False
+            }
+            logger.info(f"Circuit breaker reset for {host}")
+            return {"success": True, "message": f"Circuit breaker réinitialisé pour {host}"}
+        else:
+            return {"success": False, "message": f"Hôte {host} non trouvé dans le tracking"}
+    else:
+        WMS_ERROR_TRACKING = {}
+        logger.info("All circuit breakers reset")
+        return {"success": True, "message": "Tous les circuit breakers ont été réinitialisés"}
