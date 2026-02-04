@@ -241,9 +241,7 @@ export const useBionicEngines = () => {
    */
   const fetchGeospatialData = useCallback(async (lat, lon) => {
     try {
-      const response = await api.get('/api/bionic/geospatial/complete', {
-        params: { latitude: lat, longitude: lon }
-      });
+      const response = await api.get(`/api/bionic/geospatial/complete?latitude=${lat}&longitude=${lon}`);
       return response.data;
     } catch (err) {
       console.error('Geospatial data error:', err);
