@@ -626,6 +626,17 @@ const TerritoryPage = () => {
                   </Card>
                 )}
 
+                {/* Current Conditions Panel - BIONIC™ BehaviorWeatherFetcher */}
+                {selectedLocation && (
+                  <CurrentConditionsPanel
+                    lat={selectedLocation.lat}
+                    lon={selectedLocation.lng}
+                    autoRefresh={true}
+                    refreshInterval={300000}
+                    compact={true}
+                  />
+                )}
+
                 {/* Weather panel */}
                 {selectedLocation && (
                   <WeatherPanel
