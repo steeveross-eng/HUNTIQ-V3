@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 3.11 (Stats Engine & WMS Proxy Robustesse)
+## Version: 3.12 (Phase 1 Refactoring Backend TERMINÉE)
 ## Dernière mise à jour: 2026-02-04
 
 ---
