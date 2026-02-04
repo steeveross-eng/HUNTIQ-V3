@@ -747,11 +747,16 @@ Tous les moteurs retournent maintenant:
 
 ## 4. Prochaines Étapes (P0-2+)
 
-### P0-2 - Données Réelles Behavior Suite (En cours)
+### P0-2 - Implémentation Logique Behavior Suite (PROCHAINE PRIORITÉ)
+- Remplir la logique métier des 6 moteurs de la Behavior Suite (actuellement stubbed)
 - Intégrer météo temps réel (Open-Meteo) aux moteurs comportementaux
 - Calcul précis phase lunaire avec ephemeris
 - Pression barométrique et son impact sur l'activité
 - Calibration avec données de télémétrie historiques
+
+### P0-3 - Tests d'Intégration Endpoint Consolidé
+- Ajouter tests pour `/api/bionic/core/analyze/real-data-full`
+- Tests de régression pour les 4 moteurs standardisés
 
 ### P0-3 - Modèles ML
 - Entraînement modèles prédictifs sur données Québec
