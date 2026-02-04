@@ -20,7 +20,7 @@ import requests
 import os
 from datetime import datetime
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://geospatial-hub-6.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://fauna-analysis.preview.emergentagent.com').rstrip('/')
 
 # Test coordinates (Quebec City area)
 TEST_LAT = 46.8

@@ -1,69 +1,59 @@
 <analysis>**original_problem_statement:**
-L'utilisateur a initialement demandé de reconstruire une application géospatiale (BIONIC) avec une architecture modulaire pour différents moteurs d'analyse (hydro, sentinel, etc.). Les exigences ont évolué pour inclure :
-1.  La vérification et l'intégration d'un Stats Engine pour afficher des statistiques dynamiques sur la page d'accueil.
-2.  La résolution de problèmes architecturaux majeurs, notamment le passage d'un backend monolithique () à une architecture de micro-moteurs orchestrés.
-3.  L'amélioration de la robustesse d'un proxy WMS pour gérer les défaillances des services externes.
-4.  La consolidation et la standardisation des modèles de données Pydantic (BIONIC_CORE 2.0).
-5.  L'intégration des moteurs  et  dans le frontend via un panneau d'analyse amélioré.
-6.  Le remplacement de la logique de moteur simulée par des appels à des données réelles.
-7.  L'implémentation d'un système de pre-cache pour optimiser les performances.
+L'utilisateur a demandé une évolution majeure de son application géospatiale BIONIC. Le projet est découpé en phases distinctes :
+1.  **Phase 1 & 2 (Terminé)** : Refactoring d'une architecture monolithique vers un système modulaire de micro-moteurs, consolidation des modèles de données et robustification d'un proxy WMS.
+2.  **Phase 3 (En cours)** : Remplacement de la logique de données simulée par des appels à des sources de données réelles (USGS, NASA, SIGÉOM, etc.), et implémentation d'un système de cache à plusieurs niveaux (RAM, disque) pour optimiser les performances. Cette phase a également vu la création de nouveaux moteurs (, ). L'étape actuelle est la standardisation des formats de sortie de ces moteurs.
+3.  **Phase P0 (Prochaine priorité)** : Implémentation d'une suite de moteurs d'intelligence artificielle (Behavior Suite) pour l'analyse comportementale de la faune, basée sur les données géospatiales collectées. Les fondations (fichiers, classes, endpoints) pour cette suite ont déjà été créées.
 
 **User's preferred language**: Français
 
 **what currently exists?**
-L'application est une stack React/FastAPI/MongoDB qui a subi un refactoring significatif.
-- **Backend (BIONIC_CORE 2.0)**:
-    - L'architecture a été refactorisée avec succès en un modèle modulaire. La logique métier a été extraite du fichier monolithique  (réduit de ~2900 à ~750 lignes) et déplacée dans des modules spécialisés sous  (, , , etc.).  agit désormais comme un simple orchestrateur de routes.
-    - Les modèles de données Pydantic ont été consolidés dans , et les fichiers redondants ont été supprimés.
-    - Le proxy WMS () a été rendu plus robuste avec l'ajout de la bibliothèque  pour les retries et de  pour un pattern de circuit breaker, ainsi que des endpoints de monitoring.
-    - Les moteurs  et  ont des endpoints API fonctionnels, mais leur logique d'analyse principale est encore simulée.
-    - Les fichiers de base pour un gestionnaire de cache () et un fetcher de données réelles () ont été créés.
-- **Frontend**:
-    - La page d'accueil () affiche correctement les statistiques dynamiques via le  et l'endpoint .
-    - La page  intègre un  avec des onglets (Global, Végétation, Géologie). Ce composant utilise le hook  pour appeler les APIs des moteurs  et  et afficher leurs analyses (encore simulées) lorsque l'utilisateur clique sur la carte.
+L'application est une stack React/FastAPI/MongoDB fonctionnelle.
+- **Backend**: L'architecture est désormais entièrement modulaire. Les moteurs , , , et  sont fonctionnels, utilisant des données réelles via  et un système de cache via . Un nouvel endpoint consolidé, , agrège les résultats de ces moteurs.
+- **Behavior Suite (Stubbed)**: La structure complète pour la suite de moteurs d'intelligence faunique a été créée dans . Cela inclut les modèles Pydantic, les classes de moteurs vides (stubs), et les endpoints API. La logique métier n'est pas encore implémentée.
+- **Standardisation (En cours)**: Un nouveau fichier, , a été créé pour définir des modèles de sortie Pydantic communs à tous les moteurs, afin de corriger les incohérences de format.
 
 **Last working item**:
-    - Last item agent was working: Démarrage de la Phase 3 (remplacement de la logique simulée) et de l'implémentation du pre-cache. L'agent a créé les fichiers de base pour cette tâche :  et .
+    - Last item agent was working: Démarrage de la Phase 3 – Étape 2, qui consiste à uniformiser les formats de sortie des moteurs existants (, , , ). L'agent a identifié des incohérences dans les structures de données retournées et a créé un fichier de modèles standardisés pour y remédier.
     - Status: IN PROGRESS
     - Agent Testing Done: N
     - Which testing method agent to use? backend testing agent
     - User Testing Done: N
 
 **All Pending/In progress Issue list**:
-Aucun. Les deux problèmes majeurs identifiés dans le handover précédent (conflit architectural et robustesse WMS) ont été résolus ou sont en cours de résolution via des tâches planifiées.
+  Aucun bogue bloquant identifié. Le travail en cours est une tâche de refactoring planifiée pour améliorer la cohérence du code.
 
 **In progress Task List**:
-  - Task 1: **Phase 3 - Implémenter la Logique Réelle des Moteurs (P0)**
-     - **Description**: Remplacer la logique de données simulée dans les analyseurs de  et  par des appels à des données réelles en utilisant le .
-     - **Where to resume**: Intégrer  et  dans les fichiers  des moteurs  et . La logique d'appel aux APIs externes doit être ajoutée dans .
-     - **What will be achieved with this?**: Les analyses géospatiales fourniront des résultats basés sur des données réelles au lieu de simulations, ce qui constitue une avancée majeure pour l'application.
-     - **Status**: IN PROGRESS
-     - **Should Test frontend/backend/both after fix?**: both
-     - **Blocked on something**: Non
-
-  - Task 2: **Mettre en place un système de Pre-Cache (P1)**
-     - **Description**: Utiliser le  pour mettre en cache les résultats des analyses coûteuses des moteurs, afin de réduire les temps de chargement pour les requêtes répétées sur les mêmes zones.
-     - **Where to resume**: Intégrer la logique de  (vérification, écriture, invalidation) au début et à la fin des fonctions d'analyse dans les  des moteurs.
-     - **What will be achieved with this?**: Amélioration significative des performances et de l'expérience utilisateur en réduisant la latence des analyses.
+  - Task 1: **Uniformiser les formats de sortie des moteurs (P0)**
+     - **Description**: Appliquer les modèles Pydantic définis dans  aux analyseurs de , , , et .
+     - **Where to resume**: Créer un mixin ou une classe d'assistance pour formater les sorties, puis intégrer cette logique dans les fichiers  de chacun des quatre moteurs.
+     - **What will be achieved with this?**: Tous les moteurs retourneront des données dans un format cohérent et prévisible, ce qui facilitera la validation des données, l'intégration frontend et la préparation pour la .
      - **Status**: IN PROGRESS
      - **Should Test frontend/backend/both after fix?**: backend
-     - **Blocked on something**: Dépendant de la Tâche 1 pour avoir des données réelles à mettre en cache.
+     - **Blocked on something**: Non
 
 **Upcoming and Future Tasks**
     Upcoming Tasks:
-    - P2: **Migration **: Migrer le moteur de nutrition de sa version JS potentielle vers une implémentation Python alignée sur la nouvelle architecture.
-    
+    - **P0: Implémenter l'Intelligence Faunique (Priorité Absolue)**: Remplir la logique métier des moteurs de la  (, , , etc.). Transformer les données géospatiales en prédictions comportementales exploitables.
+    - **P0: Tests d'intégration**: Ajouter des tests pour l'endpoint consolidé .
+    - **P1: Nouveaux moteurs géospatiaux**: Implémenter la logique pour , , et .
+
     Future Tasks:
-    - **Sauvegarde de Zones**: Permettre la sauvegarde de zones géographiques analysées par les utilisateurs.
-    - **Export PDF**: Permettre l'exportation des rapports d'analyse de territoire au format PDF.
-    - **Graphiques de Statistiques**: Ajouter des graphiques pour visualiser l'évolution des statistiques dans le temps sur une page dédiée.
+    - **P2: Cache Cloud (L3)**: Mettre en place un cache distribué (ex: Redis) pour le troisième niveau de cache.
+    - **Sauvegarde de Zones**: Permettre aux utilisateurs de sauvegarder des zones géographiques analysées.
+    - **Export PDF**: Permettre l'exportation des rapports d'analyse au format PDF.
+    - **Graphiques de Statistiques**: Ajouter des graphiques pour visualiser l'évolution des statistiques.
 
 **Completed work in this session**
-- **Vérification du Stats Engine**: Test et validation complets des endpoints  et  et de leur intégration réussie sur la page d'accueil.
-- **Amélioration du WMS Proxy**: Le proxy a été renforcé avec une logique de  (tenacity) et un  (pybreaker) pour une meilleure résilience. Des endpoints de monitoring ont été ajoutés.
-- **Refactoring Backend Phase 1 (Modularisation)**: L'architecture backend monolithique a été décomposée avec succès en une structure modulaire et orchestrée, réduisant la taille du fichier principal de 74%.
-- **Refactoring Backend Phase 2 (Consolidation des Modèles)**: Les modèles de données Pydantic ont été unifiés dans un seul fichier source de vérité (), les incohérences ont été résolues et les fichiers redondants supprimés.
-- **Intégration Frontend des Moteurs**: Les moteurs  et  ont été connectés avec succès au panneau d'analyse sur la page , incluant un nouveau design à onglets.
+- **Phase 3 - Données Réelles & Cache**:
+  -  a été amélioré avec de nombreuses sources de données réelles.
+  - Le  (cache RAM/disque) a été intégré avec succès dans les moteurs.
+  - De nouveaux moteurs  et  ont été créés et sont fonctionnels.
+  - Un endpoint d'analyse consolidé  a été créé et intégré au frontend.
+- **Phase P0 - Scaffolding de la Behavior Suite**:
+  - Toute la structure de fichiers, les modèles Pydantic, les classes de moteurs (stubs) et les endpoints API pour les 6 moteurs d'analyse comportementale ont été créés et intégrés au backend.
+- **Tests & Documentation**:
+  - L'implémentation de la Phase 3 et le scaffolding de la Phase P0 ont été validés par le testing agent (rapports  et ).
+  - La documentation (, , ) a été créée ou mise à jour.
 
 **Earlier issues found/mentioned but not fixed**
    - Aucun.
@@ -75,77 +65,73 @@ Aucun. Les deux problèmes majeurs identifiés dans le handover précédent (con
 
 
 **Key Technical Concepts**
-- **Backend:** FastAPI, Pydantic, Agrégations MongoDB,  pour les retries,  pour le pattern Circuit Breaker.
-- **Architecture:** Refactoring majeur d'une architecture monolithique vers une architecture de micro-moteurs orchestrés.
-- **Frontend:** React, MapLibre GL, Hooks personnalisés (), Composants Shadcn/UI (Tabs, Tooltip).
+- **Backend**: FastAPI, Pydantic,  (retries),  (circuit breaker), Architecture de micro-moteurs, Cache multi-niveaux (en mémoire, disque).
+- **Frontend**: React, MapLibre GL, Hooks personnalisés.
+- **Données**: Agrégations MongoDB, appels à des API géospatiales externes (USGS, NASA, etc.).
 
 **key DB schema**
   - Pas de changement au schéma de la base de données dans cette session.
 
 **All files of reference**
-- **Refactoring Core:**
-  -  (le nouveau routeur léger)
-  -  (l'orchestrateur principal)
-  -  (les modèles Pydantic consolidés)
-- **WMS Proxy:**
-  - 
-- **Frontend Integration:**
-  - 
-  - 
-  - 
-- **New Task Files:**
-  - 
-  - 
+- **Logique de standardisation:** 
+- **Nouveaux moteurs (stubs):** 
+- **Nouveaux moteurs (fonctionnels):** , 
+- **Moteurs mis à jour:** , 
+- **Endpoint principal:**  (fonction )
+- **Hook frontend:** 
+- **Documentation:** , , 
 
 **Areas that need refactoring**:
-- Le refactoring majeur a été effectué. La prochaine étape est l'implémentation de la logique métier, pas un autre refactoring.
+- La tâche en cours EST un refactoring pour standardiser les sorties des moteurs.
 
 **key api endpoints**
--  (Nouveau)
--  (Nouveau)
--  (Intégré au frontend)
--  (Intégré au frontend)
--  (Vérifié)
--  (Vérifié)
+-  (POST, **Nouveau et principal**)
+-  (GET, Nouveau)
+-  (GET, Nouveau)
+-  (GET, Nouveau, stubbed)
+-  (POST, Nouveau, stubbed)
+-  (GET, Mis à jour)
+-  (GET, Nouveau)
 
 **Critical Info for New Agent**
-- Le projet a subi un refactoring backend majeur en deux phases (modularisation et consolidation des modèles). L'API publique est restée stable.
-- La priorité actuelle, confirmée par l'utilisateur, est double : implémenter la logique de données réelles dans les moteurs (Phase 3) et mettre en place un système de pre-cache pour optimiser les performances.
-- Les fondations pour ces deux tâches (, ) ont déjà été créées. Le travail doit reprendre à partir de leur intégration dans les analyseurs des moteurs existants.
+- La priorité absolue de l'utilisateur après la tâche actuelle est l'implémentation de la logique métier dans la **Behavior Suite** (Phase P0).
+- La tâche immédiate est de terminer la standardisation des formats de sortie des moteurs , ,  et  en utilisant les modèles dans .
+- Le système de cache est fonctionnel et a été prouvé efficace (voir ). Tout nouveau moteur ou logique coûteuse doit l'utiliser.
+- L'utilisateur est très directif et fournit des instructions détaillées. Suivez-les à la lettre.
 
 **documents and test reports created in this job**
+-  (mis à jour)
 - 
--  (mis à jour de manière extensive)
--  (Tests WMS Proxy)
--  (Tests Refactoring Phase 1)
--  (Tests Refactoring Phase 2)
--  (Tests Intégration Frontend)
+- 
+- 
+- 
 
 **Last 10 User Messages and any pending HUMAN messages** 
-- **10. User:** Approuve l'intégration des moteurs Sentinel & SIGÉOM au frontend. (Terminé)
-- **9. Agent:** Résume la fin de l'intégration et propose une amélioration (pre-cache). (Terminé)
-- **8. User:** Confirme que la priorité est la **Phase 3 (logique réelle)** et demande également d'implémenter le **pre-cache**. (En cours)
-- **7. Agent:** Démarre la Phase 3 et l'implémentation du cache, en créant les fichiers  et . (En cours)
+- **User (Message 265):** Lance la Phase 3 – Étape 2 : Validation croisée et uniformisation des moteurs réels. Demande de standardiser les formats de sortie, de préparer les structures pour les futurs moteurs, et d'ajouter des tests d'intégration. **(C'est la tâche en cours)**.
+- **Agent (Message 264):** Termine la tâche précédente (scaffolding de la ), confirme que tous les tests sont passés (30/30) et propose une amélioration pour le frontend.
+- **User (Message 202):** Approuve la fin de la Phase 3 et donne la commande pour la prochaine priorité absolue (P0) : Mettre en place les fondations de la  (tâche maintenant terminée).
+- **Agent (Message 201):** Termine la Phase 3 (données réelles & cache), confirme que les tests sont passés et propose une amélioration pour visualiser les scores sur la carte.
 
 **Project Health Check:**
+- **MOCKED:** Toute la  dans  est une coquille vide. La logique d'IA/ML est à implémenter. C'est la prochaine grande priorité de l'utilisateur.
 - **BROKEN:** Aucun.
-- **MOCKED:** La logique d'analyse dans  et  reste simulée. C'est l'objet de la tâche en cours (Phase 3).
 
 **3rd Party Integrations**
 - OpenWeatherMap
 - MapLibre GL
 - Sources de données WMS
--  (nouvelle dépendance backend)
--  (nouvelle dépendance backend)
+- 
+- 
+- Sources de données externes via API (USGS, NRCan, NOAA, NASA EarthData) - intégrées dans le .
 
 **Testing status**
-  - Testing agent used after significant changes: YES (utilisé 4 fois avec succès après chaque étape majeure)
+  - Testing agent used after significant changes: YES (2 fois dans cette session)
   - Troubleshoot agent used after agent stuck in loop: NO
-  - Test files created: Oui, le testing agent a créé des fichiers de test (ex: ).
+  - Test files created: Oui, via le testing agent. Rapports dans .
   - Known regressions: Aucun.
 
 **Credentials to test flow:**
 - **Admin Password:** 
 
 **What agent forgot to execute**
-- L'agent a suivi les instructions et les changements de priorité de l'utilisateur de manière très rigoureuse. Aucune tâche demandée n'a été oubliée.</analysis>
+- Rien. L'agent a suivi méticuleusement les instructions très détaillées de l'utilisateur.</analysis>
