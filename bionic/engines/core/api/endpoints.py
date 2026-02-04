@@ -480,6 +480,7 @@ async def analyze_real_data(
     
     results["global_score"] = round(global_score, 1)
     results["global_rating"] = get_score_rating(global_score).value
+    results["module_scores"] = module_scores  # Add individual module scores
     results["modules_analyzed"] = len([m for m in results["modules"].values() if "error" not in m])
     results["cache_hit_rate"] = len(results["cached_modules"]) / max(1, len(task_names))
     
