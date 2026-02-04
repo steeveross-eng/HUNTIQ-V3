@@ -514,3 +514,5 @@ async def reset_circuit_breaker(host: str = None):
         WMS_ERROR_TRACKING = {}
         logger.info("All circuit breakers reset")
         return {"success": True, "message": "Tous les circuit breakers ont été réinitialisés"}
+
+logger.info('WMS Proxy Router initialized with robust error handling')
