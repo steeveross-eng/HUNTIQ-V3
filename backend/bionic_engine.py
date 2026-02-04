@@ -1215,35 +1215,145 @@ async def get_territory_results(
     }
 
 
-@router.get("/stats")
-async def get_analysis_stats():
-    """Get overall analysis statistics"""
+@router.get("/stats", response_model=BionicGlobalStats)
+async def get_bionic_stats():
+    """
+    Fournit les compteurs animés du BIONIC_CORE.
+    
+    Agrège des données provenant de plusieurs collections MongoDB
+    pour alimenter les dashboards et compteurs animés du frontend.
+    
+    Returns:
+        BionicGlobalStats: Statistiques globales consolidées
+    """
     database = await get_db()
+    if database is None:
+        raise HTTPException(status_code=503, detail="Database unavailable")
     
-    total_analyses = await database.territory_analyses.count_documents({})
-    total_module_results = await database.module_results.count_documents({})
-    total_species_scores = await database.species_scores.count_documents({})
+    stats = BionicGlobalStats()
     
-    # Get average scores per module
-    module_stats = {}
-    for module_type in ModuleType:
-        pipeline = [
-            {"$match": {"module": module_type.value}},
-            {"$group": {"_id": None, "avg_score": {"$avg": "$result.score"}}}
+    # a. total_analyses
+    try:
+        stats.total_analyses = await database.territory_analyses.count_documents({})
+    except Exception as e:
+        logger.warning(f"Failed to count analyses: {e}")
+        stats.total_analyses = 0
+    
+    # b. total_species_models
+    try:
+        pipeline_species = [
+            {
+                "$project": {
+                    "species_count": {
+                        "$cond": {
+                            "if": {"$isArray": "$species"},
+                            "then": {"$size": "$species"},
+                            "else": {
+                                "$cond": {
+                                    "if": {"$eq": [{"$type": "$species"}, "object"]},
+                                    "then": {"$size": {"$objectToArray": "$species"}},
+                                    "else": 0
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {"$group": {"_id": None, "total": {"$sum": "$species_count"}}}
         ]
-        result = await database.module_results.aggregate(pipeline).to_list(length=1)
-        if result:
-            module_stats[module_type.value] = round(result[0]["avg_score"], 1)
+        result = await database.territory_analyses.aggregate(pipeline_species).to_list(length=1)
+        stats.total_species_models = result[0]["total"] if result else 0
+    except Exception as e:
+        logger.debug(f"Species count error: {e}")
+        stats.total_species_models = 0
     
-    return {
-        "success": True,
-        "stats": {
-            "total_analyses": total_analyses,
-            "total_module_results": total_module_results,
-            "total_species_scores": total_species_scores,
-            "module_averages": module_stats
-        }
-    }
+    # c. total_zones_generated
+    try:
+        pipeline_zones = [{"$group": {"_id": None, "total": {"$sum": "$zones_generated"}}}]
+        result = await database.territory_stats.aggregate(pipeline_zones).to_list(length=1)
+        stats.total_zones_generated = result[0]["total"] if result else 0
+    except:
+        stats.total_zones_generated = 0
+    
+    # d. total_waypoints
+    try:
+        stats.total_waypoints = await database.user_waypoints.count_documents({})
+        if stats.total_waypoints == 0:
+            stats.total_waypoints = await database.waypoints.count_documents({})
+    except:
+        stats.total_waypoints = 0
+    
+    # e. total_favorites
+    try:
+        stats.total_favorites = await database.zone_favorites.count_documents({})
+    except:
+        stats.total_favorites = 0
+    
+    # f. average_global_score
+    try:
+        pipeline_avg = [
+            {"$group": {"_id": None, "avg_score": {"$avg": {"$ifNull": ["$overall_score", "$global_score"]}}}}
+        ]
+        result = await database.territory_analyses.aggregate(pipeline_avg).to_list(length=1)
+        stats.average_global_score = round(result[0]["avg_score"], 2) if result and result[0]["avg_score"] else 0.0
+    except:
+        stats.average_global_score = 0.0
+    
+    # g. top_species_frequency
+    try:
+        pipeline_freq = [
+            {"$project": {"species_keys": {"$cond": {"if": {"$eq": [{"$type": "$species"}, "object"]}, "then": {"$objectToArray": "$species"}, "else": []}}}},
+            {"$unwind": {"path": "$species_keys", "preserveNullAndEmptyArrays": False}},
+            {"$group": {"_id": "$species_keys.k", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 10}
+        ]
+        results = await database.territory_analyses.aggregate(pipeline_freq).to_list(length=10)
+        stats.top_species_frequency = {item["_id"]: item["count"] for item in results if item["_id"]}
+    except:
+        stats.top_species_frequency = {}
+    
+    # h. modules_usage
+    try:
+        pipeline_modules = [
+            {"$project": {"module_keys": {"$cond": {"if": {"$eq": [{"$type": "$modules"}, "object"]}, "then": {"$objectToArray": "$modules"}, "else": []}}}},
+            {"$unwind": {"path": "$module_keys", "preserveNullAndEmptyArrays": False}},
+            {"$group": {"_id": "$module_keys.k", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}}
+        ]
+        results = await database.territory_analyses.aggregate(pipeline_modules).to_list(length=20)
+        stats.modules_usage = {item["_id"]: item["count"] for item in results if item["_id"]}
+    except:
+        stats.modules_usage = {}
+    
+    # i. rating_distribution
+    try:
+        pipeline_rating = [
+            {"$group": {"_id": {"$ifNull": ["$overall_rating", "$global_rating"]}, "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}}
+        ]
+        results = await database.territory_analyses.aggregate(pipeline_rating).to_list(length=10)
+        stats.rating_distribution = {str(item["_id"]): item["count"] for item in results if item["_id"]}
+    except:
+        stats.rating_distribution = {}
+    
+    # j. last_update
+    try:
+        latest = await database.territory_analyses.find_one({}, {"timestamp": 1, "created_at": 1}, sort=[("timestamp", -1)])
+        if latest:
+            ts = latest.get("timestamp") or latest.get("created_at")
+            if isinstance(ts, str):
+                stats.last_update = datetime.fromisoformat(ts.replace('Z', '+00:00'))
+            elif isinstance(ts, datetime):
+                stats.last_update = ts
+            else:
+                stats.last_update = datetime.now(timezone.utc)
+        else:
+            stats.last_update = datetime.now(timezone.utc)
+    except:
+        stats.last_update = datetime.now(timezone.utc)
+    
+    return stats
 
 
 # ============================================
