@@ -188,13 +188,13 @@ class RutPredictionEngine:
         days_from_peak = abs(current_day - peak)
         
         if phase == RutPhase.BREEDING:
-            return min(1.0, 0.9 + (5 - days_from_peak) * 0.02)
+            return min(1.0, max(0.0, 0.9 + (5 - days_from_peak) * 0.02))
         elif phase == RutPhase.SEEKING:
-            return 0.6 + (1 - days_from_peak / 20) * 0.3
+            return max(0.0, min(1.0, 0.6 + (1 - days_from_peak / 20) * 0.3))
         elif phase == RutPhase.POST_RUT:
-            return max(0.2, 0.6 - days_from_peak * 0.02)
+            return max(0.0, min(1.0, 0.6 - days_from_peak * 0.02))
         elif phase == RutPhase.PRE_RUT:
-            return 0.3 + (1 - days_from_peak / 30) * 0.2
+            return max(0.0, min(1.0, 0.3 + (1 - days_from_peak / 30) * 0.2))
         else:
             return 0.2
     
