@@ -1,11 +1,14 @@
 """
 BIONIC™ CORE - Territory Full Analysis Models
-
+==============================================
 Modèles Pydantic consolidés pour l'analyse complète d'un territoire.
 Inclut tous les modules thématiques, modèles fauniques, prédictions IA,
 analyse temporelle et recommandations consolidées.
 
-Version: BIONIC_CORE 1.0
+IMPORTANT: Les Enums de base (ModuleType, SpeciesType, SeasonType) sont
+définis dans configs.py et réexportés ici pour la compatibilité.
+
+Version: BIONIC_CORE 2.0
 """
 
 from pydantic import BaseModel, Field, ConfigDict
@@ -13,35 +16,13 @@ from typing import List, Optional, Dict, Any, Literal
 from datetime import datetime, timezone
 from enum import Enum
 
+# Import des Enums depuis configs.py (source unique)
+from .configs import ModuleType, SpeciesType, SeasonType
+
 
 # =============================================================================
-# ENUMS
+# ENUMS ADDITIONNELS (spécifiques aux modèles)
 # =============================================================================
-
-class ModuleType(str, Enum):
-    """Types de modules d'analyse thématique"""
-    THERMAL = "thermal"
-    WETNESS = "wetness"
-    FOOD = "food"
-    COVER = "cover"
-    TERRAIN = "terrain"
-    HYDROLOGY = "hydrology"
-    VEGETATION = "vegetation"
-    GEOLOGY = "geology"
-    WEATHER = "weather"
-    HUMAN_ACTIVITY = "human_activity"
-
-
-class SpeciesType(str, Enum):
-    """Espèces supportées par BIONIC"""
-    MOOSE = "moose"
-    DEER = "deer"
-    BEAR = "bear"
-    ELK = "elk"
-    WATERFOWL = "waterfowl"
-    TURKEY = "turkey"
-    SMALLGAME = "smallgame"
-
 
 class ScoreRating(str, Enum):
     """Niveaux de classification des scores"""
@@ -60,12 +41,8 @@ class PredictionHorizon(str, Enum):
     D7 = "7d"
 
 
-class Season(str, Enum):
-    """Saisons pour l'analyse temporelle"""
-    SPRING = "spring"
-    SUMMER = "summer"
-    FALL = "fall"
-    WINTER = "winter"
+# Alias pour compatibilité
+Season = SeasonType
 
 
 # =============================================================================
