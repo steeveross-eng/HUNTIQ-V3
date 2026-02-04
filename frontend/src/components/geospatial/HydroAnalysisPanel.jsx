@@ -118,12 +118,9 @@ const HydroAnalysisPanel = ({
   const fetchProximityScore = useCallback(async () => {
     try {
       // Use a sample distance (500m is typical)
-      const response = await api.get(`/api/bionic/hydro/score/proximity`, {
-        params: {
-          distance_m: 500,
-          species: targetSpecies
-        }
-      });
+      const response = await api.get(
+        `/api/bionic/hydro/score/proximity?distance_m=500&species=${targetSpecies}`
+      );
       setProximityScore(response.data);
     } catch (err) {
       console.error('Proximity score error:', err);
