@@ -449,33 +449,31 @@ async def analyze_real_data(
     
     # Calculate consolidated scores
     scores = []
-    if "vegetation" in results["modules"] and "hunting_score" in results["modules"]["vegetation"]:
-        veg_score = results["modules"]["vegetation"]["hunting_score"]
-        if isinstance(veg_score, dict):
-            scores.append(veg_score.get("score", 50))
-        else:
-            scores.append(50)
+    module_scores = {}
     
-    if "geology" in results["modules"] and "overall_score" in results["modules"]["geology"]:
-        geo_score = results["modules"]["geology"]["overall_score"]
-        if isinstance(geo_score, dict):
-            scores.append(geo_score.get("score", 50))
-        else:
-            scores.append(50)
+    # Helper function to extract score from standardized or legacy format
+    def extract_score(module_data: dict, module_name: str) -> float:
+        # New standardized format: overall_score is always present
+        if "overall_score" in module_data:
+            score_data = module_data["overall_score"]
+            if isinstance(score_data, dict):
+                return score_data.get("score", 50)
+            return 50
+        # Legacy format: vegetation used hunting_score
+        if module_name == "vegetation" and "hunting_score" in module_data:
+            score_data = module_data["hunting_score"]
+            if isinstance(score_data, dict):
+                return score_data.get("score", 50)
+            return 50
+        return 50
     
-    if "terrain" in results["modules"] and "overall_score" in results["modules"]["terrain"]:
-        terrain_score = results["modules"]["terrain"]["overall_score"]
-        if isinstance(terrain_score, dict):
-            scores.append(terrain_score.get("score", 50))
-        else:
-            scores.append(50)
-    
-    if "pressure" in results["modules"] and "overall_score" in results["modules"]["pressure"]:
-        pressure_score = results["modules"]["pressure"]["overall_score"]
-        if isinstance(pressure_score, dict):
-            scores.append(pressure_score.get("score", 50))
-        else:
-            scores.append(50)
+    for module_name in ["vegetation", "geology", "terrain", "pressure"]:
+        if module_name in results["modules"]:
+            module_data = results["modules"][module_name]
+            if isinstance(module_data, dict) and "error" not in module_data:
+                score = extract_score(module_data, module_name)
+                scores.append(score)
+                module_scores[module_name] = score
     
     # Global score
     global_score = sum(scores) / len(scores) if scores else 50
