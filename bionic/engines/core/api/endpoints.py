@@ -366,6 +366,144 @@ async def quick_analysis(
 
 
 # =============================================================================
+# PHASE 3 - REAL DATA ANALYSIS ENDPOINT
+# =============================================================================
+
+@bionic_core_router.get("/analyze/real")
+async def analyze_real_data(
+    lat: float = Query(..., ge=-90, le=90, description="Latitude"),
+    lon: float = Query(..., ge=-180, le=180, description="Longitude"),
+    target_species: str = Query("deer", description="Espèce cible"),
+    include_vegetation: bool = Query(True, description="Inclure analyse végétation"),
+    include_geology: bool = Query(True, description="Inclure analyse géologie"),
+    include_terrain: bool = Query(True, description="Inclure analyse terrain"),
+    include_pressure: bool = Query(True, description="Inclure analyse pression humaine"),
+    use_cache: bool = Query(True, description="Utiliser le cache")
+):
+    """
+    Phase 3 - Real Data Analysis
+    
+    Uses all BIONIC engines with real/modeled data and multi-level caching.
+    Returns a consolidated analysis combining:
+    - Vegetation (Sentinel Engine)
+    - Geology (SIGÉOM Engine)
+    - Terrain (Terrain Engine)
+    - Human Pressure (Pressure Engine)
+    
+    All data is either fetched from real sources or modeled from calibrated datasets.
+    """
+    import sys
+    if '/app/bionic/engines' not in sys.path:
+        sys.path.insert(0, '/app/bionic/engines')
+    
+    start_time = datetime.now(timezone.utc)
+    results = {
+        "location": {"lat": lat, "lon": lon},
+        "target_species": target_species,
+        "analyzed_at": start_time.isoformat(),
+        "modules": {},
+        "cached_modules": []
+    }
+    
+    # Import analyzers
+    try:
+        from sentinelEngine.core.analyzer import sentinel_analyzer
+        from sigeomEngine.core.analyzer import geology_analyzer
+        from terrainEngine.core.analyzer import terrain_analyzer
+        from pressureEngine.core.analyzer import pressure_analyzer
+    except ImportError as e:
+        raise HTTPException(status_code=500, detail=f"Engine import error: {e}")
+    
+    # Run analyses in parallel
+    import asyncio
+    tasks = []
+    task_names = []
+    
+    if include_vegetation:
+        tasks.append(sentinel_analyzer.analyze_point_async(lat, lon, use_cache=use_cache))
+        task_names.append("vegetation")
+    
+    if include_geology:
+        tasks.append(geology_analyzer.analyze_point_async(lat, lon, target_species, use_cache=use_cache))
+        task_names.append("geology")
+    
+    if include_terrain:
+        tasks.append(terrain_analyzer.analyze_point_async(lat, lon, use_cache=use_cache))
+        task_names.append("terrain")
+    
+    if include_pressure:
+        tasks.append(pressure_analyzer.analyze_point_async(lat, lon, use_cache=use_cache))
+        task_names.append("pressure")
+    
+    # Execute all tasks
+    if tasks:
+        task_results = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        for name, result in zip(task_names, task_results):
+            if isinstance(result, Exception):
+                results["modules"][name] = {"error": str(result)}
+            else:
+                results["modules"][name] = result
+                if result.get("from_cache"):
+                    results["cached_modules"].append(name)
+    
+    # Calculate consolidated scores
+    scores = []
+    if "vegetation" in results["modules"] and "hunting_score" in results["modules"]["vegetation"]:
+        veg_score = results["modules"]["vegetation"]["hunting_score"]
+        if isinstance(veg_score, dict):
+            scores.append(veg_score.get("score", 50))
+        else:
+            scores.append(50)
+    
+    if "geology" in results["modules"] and "overall_score" in results["modules"]["geology"]:
+        geo_score = results["modules"]["geology"]["overall_score"]
+        if isinstance(geo_score, dict):
+            scores.append(geo_score.get("score", 50))
+        else:
+            scores.append(50)
+    
+    if "terrain" in results["modules"] and "overall_score" in results["modules"]["terrain"]:
+        terrain_score = results["modules"]["terrain"]["overall_score"]
+        if isinstance(terrain_score, dict):
+            scores.append(terrain_score.get("score", 50))
+        else:
+            scores.append(50)
+    
+    if "pressure" in results["modules"] and "overall_score" in results["modules"]["pressure"]:
+        pressure_score = results["modules"]["pressure"]["overall_score"]
+        if isinstance(pressure_score, dict):
+            scores.append(pressure_score.get("score", 50))
+        else:
+            scores.append(50)
+    
+    # Global score
+    global_score = sum(scores) / len(scores) if scores else 50
+    
+    results["global_score"] = round(global_score, 1)
+    results["global_rating"] = get_score_rating(global_score).value
+    results["modules_analyzed"] = len([m for m in results["modules"].values() if "error" not in m])
+    results["cache_hit_rate"] = len(results["cached_modules"]) / max(1, len(task_names))
+    
+    # Processing time
+    end_time = datetime.now(timezone.utc)
+    results["processing_time_ms"] = int((end_time - start_time).total_seconds() * 1000)
+    
+    # Generate consolidated recommendations
+    recommendations = []
+    for name, module in results["modules"].items():
+        if isinstance(module, dict) and "recommendations" in module:
+            recs = module["recommendations"]
+            if isinstance(recs, list):
+                for rec in recs[:2]:  # Top 2 from each module
+                    recommendations.append(f"[{name.upper()}] {rec}")
+    
+    results["recommendations"] = recommendations[:8]  # Top 8 overall
+    
+    return results
+
+
+# =============================================================================
 # SCHEMA ENDPOINT
 # =============================================================================
 
