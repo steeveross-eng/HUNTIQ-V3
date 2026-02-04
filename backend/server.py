@@ -4646,6 +4646,14 @@ try:
 except ImportError as e:
     print(f"BIONIC CORE not available: {e}")
 
+# Include BIONIC™ Behavior Suite (P0 - Intelligence Faunique)
+try:
+    from behavior.api.endpoints import behavior_router
+    app.include_router(behavior_router)
+    print("BIONIC™ Behavior Suite loaded - 6 behavior engines active")
+except ImportError as e:
+    print(f"Behavior Suite not available: {e}")
+
 # Include BIONIC™ Main Engine (POST /api/bionic/analyze)
 try:
     import sys
