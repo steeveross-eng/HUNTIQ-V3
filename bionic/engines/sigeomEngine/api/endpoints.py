@@ -222,6 +222,35 @@ async def get_province_info(
     return geology_analyzer.get_province_info(lat, lon)
 
 
+@sigeom_engine_router.get("/analyze/point")
+async def analyze_point(
+    lat: float = Query(..., ge=-90, le=90, description="Latitude"),
+    lon: float = Query(..., ge=-180, le=180, description="Longitude"),
+    target_species: str = Query("deer", description="Espèce cible"),
+    use_cache: bool = Query(True, description="Utiliser le cache"),
+    use_real_data: bool = Query(True, description="Utiliser les données réelles")
+):
+    """
+    Analyze geology at a specific point with caching and real data support.
+    
+    Returns detailed geological analysis including:
+    - Geological province
+    - Surficial deposits
+    - Bedrock information
+    - Hunting relevance for target species
+    """
+    try:
+        result = await geology_analyzer.analyze_point_async(
+            lat, lon,
+            target_species=target_species,
+            use_cache=use_cache,
+            use_real_data=use_real_data
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # =============================================================================
 # REFERENCE DATA ENDPOINTS
 # =============================================================================
