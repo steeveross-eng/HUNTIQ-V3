@@ -1688,6 +1688,7 @@ def _fallback_adjustment(request: HybridAIRequest) -> HybridAIResponse:
         recommendations=recommendations[:5] if recommendations else ["Analyse basée sur les règles"],
         confidence=0.6,
         reasoning="Ajustement basé sur le moteur de règles (IA indisponible)"
+    )
 
 
 # =============================================================================
