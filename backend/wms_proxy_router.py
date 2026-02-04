@@ -61,10 +61,22 @@ def is_host_allowed(url: str) -> bool:
             return True
     return False
 
+
+def get_host_from_url(url: str) -> str:
+    """Extrait l'hôte depuis une URL"""
+    try:
+        from urllib.parse import urlparse
+        parsed = urlparse(url)
+        return parsed.netloc or "unknown"
+    except:
+        return "unknown"
+
+
 def get_cache_key(url: str, params: dict) -> str:
     """Génère une clé de cache unique pour la requête"""
     key_str = url + str(sorted(params.items()))
     return hashlib.md5(key_str.encode()).hexdigest()
+
 
 def clean_cache():
     """Nettoie les entrées expirées du cache"""
@@ -79,6 +91,122 @@ def clean_cache():
         oldest_keys = sorted(WMS_CACHE.keys(), key=lambda k: WMS_CACHE[k]['timestamp'])[:100]
         for k in oldest_keys:
             del WMS_CACHE[k]
+
+
+def track_error(host: str, error_type: str, error_message: str):
+    """
+    Enregistre une erreur pour un hôte WMS.
+    Permet de détecter les sources instables.
+    """
+    global WMS_ERROR_TRACKING
+    now = datetime.now()
+    
+    if host not in WMS_ERROR_TRACKING:
+        WMS_ERROR_TRACKING[host] = {
+            "errors": [],
+            "last_success": None,
+            "marked_unavailable": False
+        }
+    
+    # Nettoyer les vieilles erreurs
+    WMS_ERROR_TRACKING[host]["errors"] = [
+        e for e in WMS_ERROR_TRACKING[host]["errors"]
+        if now - e["timestamp"] < ERROR_WINDOW
+    ]
+    
+    # Ajouter la nouvelle erreur
+    WMS_ERROR_TRACKING[host]["errors"].append({
+        "timestamp": now,
+        "type": error_type,
+        "message": error_message[:200]  # Limiter la taille
+    })
+    
+    # Vérifier si on dépasse le seuil
+    if len(WMS_ERROR_TRACKING[host]["errors"]) >= ERROR_THRESHOLD:
+        WMS_ERROR_TRACKING[host]["marked_unavailable"] = True
+        logger.warning(f"WMS source marked as unavailable: {host} ({len(WMS_ERROR_TRACKING[host]['errors'])} errors)")
+
+
+def track_success(host: str):
+    """Enregistre un succès pour un hôte WMS"""
+    global WMS_ERROR_TRACKING
+    if host in WMS_ERROR_TRACKING:
+        WMS_ERROR_TRACKING[host]["last_success"] = datetime.now()
+        WMS_ERROR_TRACKING[host]["marked_unavailable"] = False
+
+
+def is_source_available(host: str) -> bool:
+    """Vérifie si une source WMS est considérée comme disponible"""
+    if host not in WMS_ERROR_TRACKING:
+        return True
+    
+    tracking = WMS_ERROR_TRACKING[host]
+    
+    # Si marquée indisponible, vérifier si on peut réessayer (après 5 min)
+    if tracking["marked_unavailable"]:
+        if tracking["errors"]:
+            last_error = tracking["errors"][-1]["timestamp"]
+            if datetime.now() - last_error < timedelta(minutes=5):
+                return False
+            # Réinitialiser après 5 minutes
+            tracking["marked_unavailable"] = False
+    
+    return True
+
+
+async def fetch_wms_with_retry(
+    wms_url: str,
+    max_retries: int = WMS_CONFIG["max_retries"],
+    timeout: int = WMS_CONFIG["timeout_seconds"]
+) -> tuple[bytes, bool, str]:
+    """
+    Récupère une tuile WMS avec gestion des retries.
+    
+    Returns:
+        tuple: (content, success, error_message)
+    """
+    import subprocess
+    
+    host = get_host_from_url(wms_url)
+    last_error = ""
+    
+    for attempt in range(max_retries):
+        try:
+            result = subprocess.run(
+                ['curl', '-s', '-L', wms_url, '--connect-timeout', str(timeout)],
+                capture_output=True,
+                timeout=timeout + 5
+            )
+            
+            if result.returncode == 0 and result.stdout:
+                # Vérifier que c'est bien une image (pas une erreur XML)
+                content = result.stdout
+                if content[:4] == b'\x89PNG' or content[:2] in [b'\xff\xd8', b'GI']:
+                    track_success(host)
+                    return content, True, ""
+                elif b'<ServiceException' in content or b'<ExceptionReport' in content:
+                    last_error = "WMS service returned exception"
+                    logger.warning(f"WMS exception on attempt {attempt+1}: {content[:200]}")
+                else:
+                    track_success(host)
+                    return content, True, ""
+            else:
+                last_error = f"curl returned code {result.returncode}"
+                
+        except subprocess.TimeoutExpired:
+            last_error = "timeout"
+            logger.warning(f"WMS timeout on attempt {attempt+1}/{max_retries} for {host}")
+        except Exception as e:
+            last_error = str(e)
+            logger.warning(f"WMS error on attempt {attempt+1}/{max_retries}: {e}")
+        
+        # Attendre avant le prochain retry
+        if attempt < max_retries - 1:
+            await asyncio.sleep(WMS_CONFIG["retry_delay_seconds"])
+    
+    # Tous les retries ont échoué
+    track_error(host, "fetch_failed", last_error)
+    return b"", False, last_error
 
 @router.get("/tile")
 async def proxy_wms_tile(
