@@ -213,20 +213,50 @@ class GeologyAnalyzer:
             province, deposit, target_species
         )
         
-        result = {
-            "location": {"lat": lat, "lon": lon},
-            "analyzed_at": datetime.now(timezone.utc).isoformat(),
-            "target_species": target_species,
-            "data_source": geo_data.get("source", "BIONIC Geological Model") if geo_data else "BIONIC Geological Model",
-            "confidence": geo_data.get("confidence", 0.70) if geo_data else 0.70,
+        # Build raw data for standardized output
+        raw_data = {
             "geological_province": province,
             "surficial_deposit": deposit,
             "bedrock": bedrock,
             "hunting_relevance": relevance,
-            "overall_score": overall_score,
-            "recommendations": self._generate_recommendations_v2(province, deposit, target_species),
-            "from_cache": False
+            "target_species": target_species
         }
+        
+        # Build recommendations
+        recommendations = self._generate_recommendations_v2(province, deposit, target_species)
+        
+        # Use standardized formatter if available
+        if self._formatter:
+            result = self._formatter.format_output(
+                lat=lat,
+                lon=lon,
+                score=overall_score["score"],
+                components=overall_score.get("components", {}),
+                interpretation=overall_score.get("interpretation", ""),
+                raw_data=raw_data,
+                recommendations=recommendations,
+                confidence=geo_data.get("confidence", 0.70) if geo_data else 0.70,
+                data_source=geo_data.get("source", "BIONIC Geological Model") if geo_data else "BIONIC Geological Model",
+                data_source_type="real_api" if geo_data else "modeled",
+                from_cache=False,
+                extra_fields={"target_species": target_species}
+            )
+        else:
+            # Fallback to legacy format
+            result = {
+                "location": {"lat": lat, "lon": lon},
+                "analyzed_at": datetime.now(timezone.utc).isoformat(),
+                "target_species": target_species,
+                "data_source": geo_data.get("source", "BIONIC Geological Model") if geo_data else "BIONIC Geological Model",
+                "confidence": geo_data.get("confidence", 0.70) if geo_data else 0.70,
+                "geological_province": province,
+                "surficial_deposit": deposit,
+                "bedrock": bedrock,
+                "hunting_relevance": relevance,
+                "overall_score": overall_score,
+                "recommendations": recommendations,
+                "from_cache": False
+            }
         
         # Store in cache with longer TTL for geology
         if use_cache and CACHE_AVAILABLE and cache_manager and cache_key:
