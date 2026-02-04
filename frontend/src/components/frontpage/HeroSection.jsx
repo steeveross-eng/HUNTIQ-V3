@@ -3,9 +3,16 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Play, MapPin, Radar, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useStatsEngine } from '@/hooks/useStatsEngine';
 
 const HeroSection = () => {
   const [scrollY, setScrollY] = useState(0);
+  
+  // Use Stats Engine for dynamic values with animation
+  const stats = useStatsEngine({
+    animationDuration: 1500,
+    refreshInterval: 120000, // Refresh every 2 minutes
+  });
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
