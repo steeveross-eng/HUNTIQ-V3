@@ -212,7 +212,7 @@ class SentinelAnalyzer:
         }
         
         # Store in cache
-        if use_cache:
+        if use_cache and CACHE_AVAILABLE and cache_manager and cache_key:
             cache_manager.set(self._cache_namespace, cache_key, result)
             
             # Schedule prefetch for adjacent cells
@@ -237,12 +237,14 @@ class SentinelAnalyzer:
         based on typical Quebec forest conditions and seasonal models.
         """
         # Check cache
-        cache_key = cache_manager.make_geo_key(lat, lon)
-        cached = cache_manager.get(self._cache_namespace, cache_key)
-        if cached:
-            self._cache_hits += 1
-            cached["from_cache"] = True
-            return cached
+        cache_key = None
+        if CACHE_AVAILABLE and cache_manager:
+            cache_key = cache_manager.make_geo_key(lat, lon)
+            cached = cache_manager.get(self._cache_namespace, cache_key)
+            if cached:
+                self._cache_hits += 1
+                cached["from_cache"] = True
+                return cached
         self._cache_misses += 1
         
         # Use provided bands or estimate from typical values
