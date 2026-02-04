@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 3.18 (P0-2 Behavior Suite Temps Réel TERMINÉE)
+## Version: 3.19 (Panneau Conditions Actuelles TERMINÉ)
 ## Dernière mise à jour: 2026-02-04
 
 ---
