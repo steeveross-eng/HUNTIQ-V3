@@ -4633,12 +4633,13 @@ except ImportError as e:
 # Include BIONIC™ Main Engine (POST /api/bionic/analyze)
 try:
     import sys
-    sys.path.insert(0, '/app/bionic/engines')
+    if '/app/bionic/engines' not in sys.path:
+        sys.path.insert(0, '/app/bionic/engines')
     from bionic_engine import bionic_engine_router
     app.include_router(bionic_engine_router)
     print("BIONIC™ Engine loaded - Main analysis endpoint active")
-except ImportError as e:
-    print(f"BIONIC Engine not available: {e}")
+except Exception as e:
+    print(f"BIONIC Engine not available: {type(e).__name__}: {e}")
 
 app.add_middleware(
     CORSMiddleware,
