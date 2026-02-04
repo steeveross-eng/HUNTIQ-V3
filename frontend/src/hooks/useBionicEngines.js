@@ -237,6 +237,86 @@ export const useBionicEngines = () => {
   }, []);
   
   /**
+   * Phase 3 - Real Data Analysis (utilise les données réelles et le cache multi-niveaux)
+   */
+  const fetchRealDataAnalysis = useCallback(async (lat, lon, options = {}) => {
+    const {
+      targetSpecies = 'deer',
+      includeVegetation = true,
+      includeGeology = true,
+      includeTerrain = true,
+      includePressure = true,
+      useCache = true
+    } = options;
+    
+    const cacheParams = { lat, lon, targetSpecies, includeVegetation, includeGeology, includeTerrain, includePressure };
+    
+    // Check local cache
+    const cached = checkCache('real_data', cacheParams);
+    if (cached && useCache) {
+      setData(prev => ({ ...prev, combined: cached }));
+      return cached;
+    }
+    
+    setLoading(prev => ({ ...prev, combined: true }));
+    setErrors(prev => ({ ...prev, combined: null }));
+    
+    try {
+      const params = new URLSearchParams({
+        lat: lat.toString(),
+        lon: lon.toString(),
+        target_species: targetSpecies,
+        include_vegetation: includeVegetation.toString(),
+        include_geology: includeGeology.toString(),
+        include_terrain: includeTerrain.toString(),
+        include_pressure: includePressure.toString(),
+        use_cache: useCache.toString()
+      });
+      
+      const response = await api.get(`/api/bionic/core/analyze/real?${params.toString()}`);
+      
+      const result = response.data;
+      setCache('real_data', cacheParams, result);
+      setData(prev => ({ ...prev, combined: result }));
+      
+      return result;
+    } catch (err) {
+      console.error('Real data analysis error:', err);
+      const errorMsg = err.response?.data?.detail || 'Erreur analyse données réelles';
+      setErrors(prev => ({ ...prev, combined: errorMsg }));
+      return null;
+    } finally {
+      setLoading(prev => ({ ...prev, combined: false }));
+    }
+  }, []);
+  
+  /**
+   * Fetch Terrain analysis (new Phase 3 engine)
+   */
+  const fetchTerrainAnalysis = useCallback(async (lat, lon, useCache = true) => {
+    try {
+      const response = await api.get(`/api/bionic/terrain/analyze/point?lat=${lat}&lon=${lon}&use_cache=${useCache}`);
+      return response.data;
+    } catch (err) {
+      console.error('Terrain analysis error:', err);
+      return null;
+    }
+  }, []);
+  
+  /**
+   * Fetch Pressure analysis (new Phase 3 engine)
+   */
+  const fetchPressureAnalysis = useCallback(async (lat, lon, radiusKm = 2, useCache = true) => {
+    try {
+      const response = await api.get(`/api/bionic/pressure/analyze/point?lat=${lat}&lon=${lon}&radius_km=${radiusKm}&use_cache=${useCache}`);
+      return response.data;
+    } catch (err) {
+      console.error('Pressure analysis error:', err);
+      return null;
+    }
+  }, []);
+  
+  /**
    * Fetch geospatial data (weather, terrain, vegetation)
    */
   const fetchGeospatialData = useCallback(async (lat, lon) => {
