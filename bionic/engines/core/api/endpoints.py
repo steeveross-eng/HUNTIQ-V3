@@ -458,18 +458,21 @@ def calculate_species_score(modules: List[ModuleResult], species: SpeciesType) -
     return 50.0
 
 
-def get_species_name_fr(species: SpeciesType) -> str:
+def get_species_name_fr(species) -> str:
     """Get French name for species"""
+    # Handle both enum and string
+    species_key = species.value if hasattr(species, 'value') else species
+    
     names = {
-        SpeciesType.DEER: "Cerf de Virginie",
-        SpeciesType.MOOSE: "Orignal",
-        SpeciesType.BEAR: "Ours noir",
-        SpeciesType.ELK: "Wapiti",
-        SpeciesType.WATERFOWL: "Sauvagine",
-        SpeciesType.TURKEY: "Dindon sauvage",
-        SpeciesType.SMALLGAME: "Petit gibier"
+        "deer": "Cerf de Virginie",
+        "moose": "Orignal",
+        "bear": "Ours noir",
+        "elk": "Wapiti",
+        "waterfowl": "Sauvagine",
+        "turkey": "Dindon sauvage",
+        "smallgame": "Petit gibier"
     }
-    return names.get(species, species.value)
+    return names.get(species_key, str(species_key))
 
 
 def generate_species_recommendations(species: SpeciesType, score: float) -> List[str]:
