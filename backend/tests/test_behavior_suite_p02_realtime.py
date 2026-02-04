@@ -609,14 +609,14 @@ class TestDynamicRecommendations:
     
     def test_recommendations_present(self):
         """Verify recommendations are generated for all endpoints"""
-        endpoints = [
+        # Endpoints with 'recommendations' field
+        endpoints_with_recommendations = [
             ("/api/bionic/behavior/analyze", {"lat": TEST_LAT, "lon": TEST_LON, "species": "deer"}),
             ("/api/bionic/behavior/seasonal", {"lat": TEST_LAT, "lon": TEST_LON, "species": "moose"}),
             ("/api/bionic/behavior/activity", {"lat": TEST_LAT, "lon": TEST_LON, "species": "deer"}),
-            ("/api/bionic/behavior/species-model", {"lat": TEST_LAT, "lon": TEST_LON, "species": "bear"}),
         ]
         
-        for endpoint, params in endpoints:
+        for endpoint, params in endpoints_with_recommendations:
             response = requests.get(f"{BASE_URL}{endpoint}", params=params)
             assert response.status_code == 200, f"Failed for {endpoint}: {response.text}"
             data = response.json()
@@ -626,7 +626,18 @@ class TestDynamicRecommendations:
             
             print(f"  {endpoint}: {len(data['recommendations'])} recommendations")
         
-        print(f"✅ All endpoints return recommendations")
+        # Species-model uses 'species_specific_tips' instead
+        response = requests.get(
+            f"{BASE_URL}/api/bionic/behavior/species-model",
+            params={"lat": TEST_LAT, "lon": TEST_LON, "species": "bear"}
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "species_specific_tips" in data
+        assert len(data["species_specific_tips"]) >= 1
+        print(f"  /api/bionic/behavior/species-model: {len(data['species_specific_tips'])} tips")
+        
+        print(f"✅ All endpoints return recommendations/tips")
 
 
 class TestInputValidationP02:
