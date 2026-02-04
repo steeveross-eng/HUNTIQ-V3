@@ -294,9 +294,10 @@ class ActivityProbabilityEngine:
         temp: Optional[float],
         clouds: Optional[float],
         precip: Optional[float],
-        wind: Optional[float]
+        wind: Optional[float],
+        weather_data: Optional[Dict] = None
     ) -> Dict[str, Any]:
-        """Calcule l'impact météo."""
+        """Calcule l'impact météo avec données enrichies."""
         temp = temp or 15.0
         clouds = clouds or 50.0
         precip = precip or 0.0
@@ -332,13 +333,25 @@ class ActivityProbabilityEngine:
         
         overall = (temp_score * 0.4 + precip_score * 0.35 + wind_score * 0.25)
         
-        return {
+        result = {
             "modifier": round(overall, 3),
             "temperature_score": temp_score,
             "precipitation_score": precip_score,
             "wind_score": wind_score,
             "description": self._describe_weather_impact(overall)
         }
+        
+        # Add real-time details if available
+        if weather_data:
+            result["current_conditions"] = {
+                "temperature_c": weather_data.get("temperature_c"),
+                "weather_description": weather_data.get("weather_description"),
+                "humidity_percent": weather_data.get("humidity_percent"),
+                "wind_gusts_kmh": weather_data.get("wind_gusts_kmh")
+            }
+            result["data_source"] = weather_data.get("source", "Unknown")
+        
+        return result
     
     def _calculate_lunar_factor(
         self,
