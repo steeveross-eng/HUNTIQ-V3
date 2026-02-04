@@ -522,32 +522,26 @@ REACT_APP_BACKEND_URL="https://xxx.emergent.sh"
 - ✅ GET /api/bionic/stats (statistiques globales)
 - ✅ GET /api/bionic/geospatial/* (données temps réel)
 
----
+### 2026-02-04 - Phase 2 Consolidation Modèles Pydantic ✅
 
-### 2026-02-04 - BIONIC™ CORE Engine (TerritoryFullAnalysis)
-- ✅ Créé modèle Pydantic complet `TerritoryFullAnalysis` dans `/app/bionic/engines/core/models.py`
-- ✅ Créé endpoints API dans `/app/bionic/engines/core/api/endpoints.py`
-- ✅ Intégré dans `server.py`
+#### Résultats
+- **Fichier redondant supprimé** : `/app/bionic/engines/bionic_core_models.py` (213 lignes)
+- **Modèles consolidés** dans `/app/bionic/engines/core/models.py` (554 lignes)
+- **Enums synchronisés** : `models.py` importe depuis `configs.py` (source unique)
+- **Nouveaux modèles de modules** ajoutés : PressureModuleResult, AccessModuleResult, CorridorModuleResult, GeoformModuleResult
+- **API publique** : 100% compatible
 
-**Modèles créés (22 propriétés):**
-- `TerritoryFullAnalysis` - Modèle principal consolidé
-- `ModuleResult`, `ThermalModuleResult`, `WetnessModuleResult`, `FoodModuleResult`, `CoverModuleResult`
-- `SpeciesResult`, `HabitatSuitability`, `ActivityPattern`
-- `PredictionResult`, `SinglePrediction` (24h, 72h, 7j)
-- `TemporalResult`, `NDVITimeSeries`, `SnowAnalysis`, `PhenologyData`
-- `Recommendation`, `ScoreBreakdown`, `BoundingBox`, `GeoPoint`
+#### Architecture Consolidée des Enums
+```
+configs.py (source unique)
+├── ModuleType: thermal, wetness, food, pressure, access, corridor, geoform, canopy
+├── SpeciesType: moose, deer, bear, caribou, wolf, turkey
+└── SeasonType: spring, summer, fall, winter
 
-**Endpoints BIONIC CORE:**
-- `GET /api/bionic/core/status` - Statut du moteur
-- `POST /api/bionic/core/analyze` - Analyse complète territoire
-- `GET /api/bionic/core/quick` - Analyse rapide
-- `GET /api/bionic/core/schema` - Schéma JSON du modèle
-
-**Fonctionnalités:**
-- Modules thématiques (thermal, wetness, food, cover, terrain, hydrology, vegetation, geology, weather, human_activity)
-- Espèces supportées (moose, deer, bear, elk, waterfowl, turkey, smallgame)
-- Prédictions IA avec horizons temporels
-- Analyse temporelle NDVI/NDWI/neige/phénologie
+models.py (importe depuis configs.py)
+├── ScoreRating: exceptional, excellent, good, moderate, low, poor
+└── PredictionHorizon: 24h, 72h, 7d
+```
 - GeoJSON output
 - Recommandations consolidées
 
