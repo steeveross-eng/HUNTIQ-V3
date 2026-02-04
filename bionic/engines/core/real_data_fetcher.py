@@ -125,22 +125,42 @@ API_CONFIG = {
 class RealDataFetcher:
     """
     Service centralisé pour récupérer des données géospatiales réelles.
+    
+    Implémente:
+    - Appels parallèles aux APIs
+    - Gestion des erreurs avec fallback
+    - Modèles saisonniers pour estimation
+    - Support du cache externe
     """
     
     def __init__(self):
         self.config = API_CONFIG
         self._client: Optional[httpx.AsyncClient] = None
+        self._request_count = 0
+        self._error_count = 0
     
     async def _get_client(self) -> httpx.AsyncClient:
         """Get or create HTTP client."""
         if self._client is None or self._client.is_closed:
-            self._client = httpx.AsyncClient(timeout=30)
+            self._client = httpx.AsyncClient(
+                timeout=30,
+                follow_redirects=True,
+                headers={"User-Agent": "BIONIC-Engine/2.0"}
+            )
         return self._client
     
     async def close(self):
         """Close HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()
+    
+    def get_stats(self) -> Dict[str, Any]:
+        """Get fetcher statistics."""
+        return {
+            "requests": self._request_count,
+            "errors": self._error_count,
+            "error_rate": self._error_count / max(1, self._request_count)
+        }
     
     # ==========================================
     # WEATHER DATA (Open-Meteo)
