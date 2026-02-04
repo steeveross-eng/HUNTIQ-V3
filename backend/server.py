@@ -4632,6 +4632,8 @@ except ImportError as e:
 
 # Include BIONIC™ Main Engine (POST /api/bionic/analyze)
 try:
+    import sys
+    sys.path.insert(0, '/app/bionic/engines')
     from bionic_engine import bionic_engine_router
     app.include_router(bionic_engine_router)
     print("BIONIC™ Engine loaded - Main analysis endpoint active")
