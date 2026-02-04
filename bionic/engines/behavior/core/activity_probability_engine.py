@@ -3,13 +3,13 @@ BIONIC™ Activity Probability Engine
 =====================================
 Moteur de calcul de probabilité d'activité animale.
 
-Version: 1.0 - P0 Étape 1 (Fondations)
+Version: 2.0 - P0-2 (Données Réelles)
 
-TODO Phase P0-2:
-- Implémenter modèle ML probabiliste
-- Intégrer données météo horaires
-- Ajouter calcul précis phase lunaire
-- Calibrer avec données de télémétrie
+Intègre:
+- Météo temps réel (Open-Meteo)
+- Phase lunaire précise (algorithme astronomique)
+- Pression barométrique
+- Photopériode réelle
 """
 
 import logging
@@ -29,6 +29,14 @@ from behavior.models.schemas import (
     ActivityLevel,
     TimeWindow
 )
+
+# Import weather fetcher
+try:
+    from behavior.core.weather_fetcher import behavior_weather_fetcher
+    WEATHER_FETCHER_AVAILABLE = True
+except ImportError:
+    WEATHER_FETCHER_AVAILABLE = False
+    behavior_weather_fetcher = None
 
 logger = logging.getLogger(__name__)
 
