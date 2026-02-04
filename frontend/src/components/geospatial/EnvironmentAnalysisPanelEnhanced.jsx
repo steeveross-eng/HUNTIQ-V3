@@ -203,8 +203,8 @@ const SentinelTab = ({ data, loading, error }) => {
             {Math.round(scoreValue)}/100
           </Badge>
         </div>
-        {hunting_score?.interpretation && (
-          <p className="text-xs text-gray-400 mt-1">{hunting_score.interpretation}</p>
+        {scoreData?.interpretation && (
+          <p className="text-xs text-gray-400 mt-1">{scoreData.interpretation}</p>
         )}
       </div>
       
