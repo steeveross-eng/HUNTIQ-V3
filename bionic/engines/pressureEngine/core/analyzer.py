@@ -113,10 +113,11 @@ class PressureAnalyzer:
         """
         Analyze human pressure at a specific point (async version).
         """
-        cache_key = cache_manager.make_geo_key(lat, lon)
+        cache_key = None
         
         # Check cache first
-        if use_cache:
+        if use_cache and CACHE_AVAILABLE and cache_manager:
+            cache_key = cache_manager.make_geo_key(lat, lon)
             cached = cache_manager.get(self._cache_namespace, cache_key)
             if cached:
                 self._cache_hits += 1
@@ -126,7 +127,7 @@ class PressureAnalyzer:
         
         # Fetch real pressure data
         pressure_data = None
-        if use_real_data:
+        if use_real_data and CACHE_AVAILABLE and real_data_fetcher:
             try:
                 pressure_data = await real_data_fetcher.fetch_pressure_analysis(lat, lon, radius_km)
             except Exception as e:
