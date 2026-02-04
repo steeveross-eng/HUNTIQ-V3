@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 3.16 (P0-1 Behavior Suite TERMINÉE)
+## Version: 3.17 (Phase 3 Étape 2 - Standardisation TERMINÉE)
 ## Dernière mise à jour: 2026-02-04
 
 ---
