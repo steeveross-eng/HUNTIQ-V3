@@ -455,27 +455,32 @@ REACT_APP_BACKEND_URL="https://xxx.emergent.sh"
 - `/app/bionic/engines/environmentEngine/api/__init__.py`
 - `/app/bionic/engines/environmentEngine/api/endpoints.py`
 
-### 2026-02-04 - BIONIC™ Stats Engine Module
-- ✅ Créé hook `useStatsEngine()` dans `/app/frontend/src/hooks/useStatsEngine.js`
-- ✅ Créé composants `StatsPanel`, `StatBlock`, `CompactStatsBar` dans `/app/frontend/src/components/frontpage/StatsEngine.jsx`
-- ✅ Créé endpoint API `GET /api/stats` dans `/app/backend/routes/stats_router.py`
-- ✅ Intégré `StatsPanel` sur la page d'accueil (après Hero)
-- ✅ Animation count-up progressive avec easing
-- ✅ Logique de seuils (affiche valeurs minimum jusqu'à ce que les vraies valeurs les dépassent)
+### 2026-02-04 - BIONIC™ CORE Engine (TerritoryFullAnalysis)
+- ✅ Créé modèle Pydantic complet `TerritoryFullAnalysis` dans `/app/bionic/engines/core/models.py`
+- ✅ Créé endpoints API dans `/app/bionic/engines/core/api/endpoints.py`
+- ✅ Intégré dans `server.py`
 
-**Fonctionnalités Stats Engine:**
-- Récupération API avec fallback
-- Animation progressive (1.2s, ease-out-cubic)
-- Seuils configurables : subscribers=20017, zones=2901, territories=2547
-- Refresh automatique (60s)
-- Valeurs formatées fr-CA
+**Modèles créés (22 propriétés):**
+- `TerritoryFullAnalysis` - Modèle principal consolidé
+- `ModuleResult`, `ThermalModuleResult`, `WetnessModuleResult`, `FoodModuleResult`, `CoverModuleResult`
+- `SpeciesResult`, `HabitatSuitability`, `ActivityPattern`
+- `PredictionResult`, `SinglePrediction` (24h, 72h, 7j)
+- `TemporalResult`, `NDVITimeSeries`, `SnowAnalysis`, `PhenologyData`
+- `Recommendation`, `ScoreBreakdown`, `BoundingBox`, `GeoPoint`
 
-**Statistiques affichées:**
-- Membres Abonnés (20K+)
-- Territoires Analysés (2,547+)
-- Attractants Testés (850+)
-- Zones de Chasse (2,901)
-- Satisfaction (98%)
+**Endpoints BIONIC CORE:**
+- `GET /api/bionic/core/status` - Statut du moteur
+- `POST /api/bionic/core/analyze` - Analyse complète territoire
+- `GET /api/bionic/core/quick` - Analyse rapide
+- `GET /api/bionic/core/schema` - Schéma JSON du modèle
+
+**Fonctionnalités:**
+- Modules thématiques (thermal, wetness, food, cover, terrain, hydrology, vegetation, geology, weather, human_activity)
+- Espèces supportées (moose, deer, bear, elk, waterfowl, turkey, smallgame)
+- Prédictions IA avec horizons temporels
+- Analyse temporelle NDVI/NDWI/neige/phénologie
+- GeoJSON output
+- Recommandations consolidées
 
 ---
 
