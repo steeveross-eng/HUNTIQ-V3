@@ -455,6 +455,43 @@ REACT_APP_BACKEND_URL="https://xxx.emergent.sh"
 - `/app/bionic/engines/environmentEngine/api/__init__.py`
 - `/app/bionic/engines/environmentEngine/api/endpoints.py`
 
+### 2026-02-04 - Stats Engine & WMS Proxy Robustesse
+
+#### Stats Engine - Vérification Complète ✅
+- ✅ Endpoint `GET /api/bionic/stats` - Agrégation MongoDB fonctionnelle
+- ✅ Endpoint `GET /api/stats` - Statistiques frontend avec seuils
+- ✅ Hook `useStatsEngine.js` - Animation count-up fonctionnelle
+- ✅ Intégration HeroSection - Affichage correct des 4 statistiques
+
+**Statistiques affichées:**
+- Membres abonnés: 20 017+
+- Territoires analysés: 2 547+
+- Attractants testés: 850+
+- Satisfaction: 98%
+
+#### WMS Proxy - Amélioration Robustesse ✅
+- ✅ **Retries automatiques** (3 tentatives avec délai)
+- ✅ **Circuit breaker** pour sources instables
+- ✅ **Tracking des erreurs** par source WMS
+- ✅ **Réponses JSON structurées** pour les erreurs (non-bloquant)
+- ✅ **Nouveaux endpoints de monitoring:**
+  - `GET /api/wms-proxy/status` - État de santé de toutes les sources
+  - `POST /api/wms-proxy/reset-circuit-breaker` - Réinitialisation manuelle
+
+**Configuration:**
+- Timeout: 15s
+- Max retries: 3
+- Retry delay: 1s
+- Error threshold (circuit breaker): 5 erreurs / 10 min
+
+#### Plan de Refactorisation Backend ✅
+- ✅ Créé `/app/memory/REFACTORING_PLAN.md` avec 3 phases:
+  1. Phase 1: Orchestrateur léger (transformer bionic_engine.py)
+  2. Phase 2: Consolidation des modèles Pydantic
+  3. Phase 3: Implémentation réelle des moteurs simulés
+
+---
+
 ### 2026-02-04 - BIONIC™ CORE Engine (TerritoryFullAnalysis)
 - ✅ Créé modèle Pydantic complet `TerritoryFullAnalysis` dans `/app/bionic/engines/core/models.py`
 - ✅ Créé endpoints API dans `/app/bionic/engines/core/api/endpoints.py`
