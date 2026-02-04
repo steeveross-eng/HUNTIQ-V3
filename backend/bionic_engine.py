@@ -182,6 +182,21 @@ class TemporalResult(BaseModel):
     anomalies: List[Dict]
 
 
+class BionicGlobalStats(BaseModel):
+    """Statistiques globales BIONIC_CORE pour les compteurs animés"""
+    total_analyses: int = 0
+    total_species_models: int = 0
+    total_zones_generated: int = 0
+    total_waypoints: int = 0
+    total_favorites: int = 0
+    average_global_score: float = 0.0
+    top_species_frequency: Dict[str, int] = {}
+    modules_usage: Dict[str, int] = {}
+    rating_distribution: Dict[str, int] = {}
+    engine_version: str = "BIONIC_CORE 1.0"
+    last_update: Optional[datetime] = None
+
+
 # ============================================
 # MODULE CONFIGURATIONS
 # ============================================
