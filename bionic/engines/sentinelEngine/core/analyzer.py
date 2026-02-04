@@ -281,7 +281,8 @@ class SentinelAnalyzer:
         }
         
         # Store in cache
-        cache_manager.set(self._cache_namespace, cache_key, result)
+        if CACHE_AVAILABLE and cache_manager and cache_key:
+            cache_manager.set(self._cache_namespace, cache_key, result)
         
         return result
     
