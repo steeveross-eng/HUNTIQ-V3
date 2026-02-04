@@ -13,8 +13,7 @@ import {
   CommunitySection,
   MobileAppSection,
   NewsletterSection,
-  FooterSection,
-  StatsPanel
+  FooterSection
 } from '@/components/frontpage';
 
 /**
