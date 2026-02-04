@@ -1,12 +1,21 @@
 """
 BIONIC™ SIGÉOM Engine - Geology Analyzer
-
+==========================================
 Analyse des données géologiques pour les territoires de chasse.
+
+Version: 2.0 - Phase 3 Real Data Implementation
+- Intégration du cache multi-niveaux
+- Données réelles via RealDataFetcher
+- Modèles géologiques calibrés pour le Québec
 """
 
 import logging
 from typing import Dict, Any, Optional, List
 from datetime import datetime, timezone
+
+# Import cache and real data fetcher
+from ...core.cache_manager import cache_manager, get_cached, set_cached
+from ...core.real_data_fetcher import real_data_fetcher
 
 logger = logging.getLogger(__name__)
 
