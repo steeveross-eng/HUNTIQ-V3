@@ -586,11 +586,26 @@ const TerritoryPage = () => {
               </TabsContent>
 
               <TabsContent value="score" className="mt-4 space-y-4">
-                {/* Territory scoring */}
-                <TerritoryScoring
-                  selectedLocation={selectedLocation}
-                  onCalculate={setTerritoryScore}
-                />
+                {/* BIONIC™ Global Environment Score */}
+                {selectedLocation && (
+                  <Card className="bg-[#1a1a1a] border-white/10">
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center gap-2">
+                        <Target className="h-5 w-5 text-emerald-400" />
+                        <CardTitle className="text-sm text-white">Score Global BIONIC™</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <EnvironmentAnalysisPanel
+                        bbox={currentBbox}
+                        location={selectedLocation}
+                        position="inline"
+                        showDetailedBreakdown={true}
+                        onAnalysisComplete={setGlobalEnvironmentScore}
+                      />
+                    </CardContent>
+                  </Card>
+                )}
 
                 {/* Hydro Analysis Panel - BIONIC™ HydroEngine */}
                 {currentBbox && (
@@ -598,7 +613,7 @@ const TerritoryPage = () => {
                     <CardHeader className="pb-2">
                       <div className="flex items-center gap-2">
                         <Droplets className="h-5 w-5 text-blue-400" />
-                        <CardTitle className="text-sm text-white">Analyse Hydrologique</CardTitle>
+                        <CardTitle className="text-sm text-white">Détail Hydrologique</CardTitle>
                       </div>
                     </CardHeader>
                     <CardContent className="p-0">
@@ -622,7 +637,7 @@ const TerritoryPage = () => {
                 {/* Equipment recommendations */}
                 <EquipmentRecommendations
                   waypoints={waypoints}
-                  score={territoryScore}
+                  score={globalEnvironmentScore || territoryScore}
                 />
               </TabsContent>
             </Tabs>
