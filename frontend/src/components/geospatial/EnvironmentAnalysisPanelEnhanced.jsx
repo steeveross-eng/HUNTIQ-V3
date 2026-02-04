@@ -165,9 +165,27 @@ const SentinelTab = ({ data, loading, error }) => {
   }
   
   const { indices, habitat, hunting_score, classification, recommendations } = data;
-  const score = hunting_score || 0;
-  const category = getRatingCategory(score);
+  
+  // Extract score value - handle both direct value and nested object
+  const scoreValue = typeof hunting_score === 'object' 
+    ? hunting_score?.score || 0 
+    : hunting_score || 0;
+  const category = getRatingCategory(scoreValue);
   const colors = CLASSIFICATION_COLORS[category];
+  
+  // Extract NDVI value
+  const ndviValue = typeof indices?.ndvi === 'object' ? indices.ndvi.value : indices?.ndvi;
+  const ndviDesc = typeof indices?.ndvi === 'object' ? indices.ndvi.description : '';
+  
+  // Extract NDWI value
+  const ndwiValue = typeof indices?.ndwi === 'object' ? indices.ndwi.value : indices?.ndwi;
+  const ndwiDesc = typeof indices?.ndwi === 'object' ? indices.ndwi.description : '';
+  
+  // Extract EVI value
+  const eviValue = typeof indices?.evi === 'object' ? indices.evi.value : indices?.evi;
+  
+  // Extract SAVI value
+  const saviValue = typeof indices?.savi === 'object' ? indices.savi.value : indices?.savi;
   
   return (
     <div className="space-y-4">
@@ -179,9 +197,12 @@ const SentinelTab = ({ data, loading, error }) => {
             <span className="text-sm font-medium text-white">Score Végétation</span>
           </div>
           <Badge className={`${colors.bg}/20 ${colors.text}`}>
-            {Math.round(score)}/100
+            {Math.round(scoreValue)}/100
           </Badge>
         </div>
+        {hunting_score?.interpretation && (
+          <p className="text-xs text-gray-400 mt-1">{hunting_score.interpretation}</p>
+        )}
       </div>
       
       {/* Indices */}
@@ -189,33 +210,37 @@ const SentinelTab = ({ data, loading, error }) => {
         <div className="space-y-2">
           <span className="text-xs text-gray-500 uppercase tracking-wider">Indices</span>
           <div className="grid grid-cols-2 gap-2">
-            <div className="p-2 bg-black/20 rounded-sm">
-              <span className="text-xs text-gray-400">NDVI</span>
-              <p className="text-lg font-bold text-green-400">
-                {indices.ndvi?.toFixed(2) || 'N/A'}
-              </p>
-              <p className="text-xs text-gray-500">{indices.ndvi_interpretation || ''}</p>
-            </div>
-            <div className="p-2 bg-black/20 rounded-sm">
-              <span className="text-xs text-gray-400">NDWI</span>
-              <p className="text-lg font-bold text-blue-400">
-                {indices.ndwi?.toFixed(2) || 'N/A'}
-              </p>
-              <p className="text-xs text-gray-500">{indices.ndwi_interpretation || ''}</p>
-            </div>
-            {indices.evi !== undefined && (
+            {ndviValue !== undefined && (
+              <div className="p-2 bg-black/20 rounded-sm">
+                <span className="text-xs text-gray-400">NDVI</span>
+                <p className="text-lg font-bold text-green-400">
+                  {typeof ndviValue === 'number' ? ndviValue.toFixed(2) : 'N/A'}
+                </p>
+                <p className="text-xs text-gray-500 truncate">{ndviDesc || ''}</p>
+              </div>
+            )}
+            {ndwiValue !== undefined && (
+              <div className="p-2 bg-black/20 rounded-sm">
+                <span className="text-xs text-gray-400">NDWI</span>
+                <p className="text-lg font-bold text-blue-400">
+                  {typeof ndwiValue === 'number' ? ndwiValue.toFixed(2) : 'N/A'}
+                </p>
+                <p className="text-xs text-gray-500 truncate">{ndwiDesc || ''}</p>
+              </div>
+            )}
+            {eviValue !== undefined && (
               <div className="p-2 bg-black/20 rounded-sm">
                 <span className="text-xs text-gray-400">EVI</span>
                 <p className="text-lg font-bold text-lime-400">
-                  {indices.evi?.toFixed(2) || 'N/A'}
+                  {typeof eviValue === 'number' ? eviValue.toFixed(2) : 'N/A'}
                 </p>
               </div>
             )}
-            {indices.savi !== undefined && (
+            {saviValue !== undefined && (
               <div className="p-2 bg-black/20 rounded-sm">
                 <span className="text-xs text-gray-400">SAVI</span>
                 <p className="text-lg font-bold text-yellow-400">
-                  {indices.savi?.toFixed(2) || 'N/A'}
+                  {typeof saviValue === 'number' ? saviValue.toFixed(2) : 'N/A'}
                 </p>
               </div>
             )}
@@ -227,7 +252,7 @@ const SentinelTab = ({ data, loading, error }) => {
       {habitat && (
         <div className="p-2 bg-black/20 rounded-sm">
           <span className="text-xs text-gray-400">Type d'habitat</span>
-          <p className="text-sm font-medium text-white">{habitat.type || 'N/A'}</p>
+          <p className="text-sm font-medium text-white">{habitat.type || habitat.name || 'N/A'}</p>
           <p className="text-xs text-gray-500 mt-1">{habitat.description || ''}</p>
         </div>
       )}
@@ -236,8 +261,10 @@ const SentinelTab = ({ data, loading, error }) => {
       {classification && (
         <div className="p-2 bg-black/20 rounded-sm">
           <span className="text-xs text-gray-400">Classification forestière</span>
-          <p className="text-sm font-medium text-white">{classification.forest_type || 'N/A'}</p>
-          <p className="text-xs text-gray-500 mt-1">{classification.cover_type || ''}</p>
+          <p className="text-sm font-medium text-white">
+            {classification.forest_type || classification.type || 'N/A'}
+          </p>
+          <p className="text-xs text-gray-500 mt-1">{classification.cover_type || classification.description || ''}</p>
         </div>
       )}
       
@@ -247,7 +274,7 @@ const SentinelTab = ({ data, loading, error }) => {
           <span className="text-xs text-gray-500">Recommandations</span>
           {recommendations.slice(0, 3).map((rec, i) => (
             <p key={i} className="text-xs text-gray-300 pl-2 border-l border-green-500/30">
-              {typeof rec === 'string' ? rec : rec.message}
+              {typeof rec === 'string' ? rec : (rec?.message || rec?.text || JSON.stringify(rec))}
             </p>
           ))}
         </div>
