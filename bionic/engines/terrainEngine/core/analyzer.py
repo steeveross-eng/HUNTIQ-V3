@@ -138,7 +138,7 @@ class TerrainAnalyzer:
         }
         
         # Store in cache
-        if use_cache:
+        if use_cache and CACHE_AVAILABLE and cache_manager and cache_key:
             cache_manager.set(self._cache_namespace, cache_key, result, ttl=86400)  # 24h
         
         return result
