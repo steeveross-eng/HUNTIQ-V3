@@ -60,13 +60,13 @@ from .geojson_builder import (
 # Import orchestrator
 from .orchestrator import BionicOrchestrator, bionic_orchestrator
 
-# Import models (for backward compatibility)
+# Import Pydantic models for API responses
 try:
     from .models import (
-        # Enums from models
+        # Enums additionnels (spécifiques aux modèles)
         ScoreRating,
         PredictionHorizon,
-        Season,
+        Season,  # Alias de SeasonType
         
         # Sub-models
         GeoPoint,
