@@ -119,9 +119,9 @@ const HeroSection = () => {
           className="flex flex-wrap items-center justify-center gap-8 md:gap-12"
         >
           {[
+            { value: stats.displayedSubscribers, label: 'Membres abonnés' },
             { value: stats.displayedTerritories, label: 'Territoires analysés' },
             { value: '850+', label: 'Attractants testés' },
-            { value: stats.displayedZones, label: 'Zones de chasse' },
             { value: `${stats.satisfaction}%`, label: 'Satisfaction' },
           ].map((stat, i) => (
             <div key={i} className="text-center">
