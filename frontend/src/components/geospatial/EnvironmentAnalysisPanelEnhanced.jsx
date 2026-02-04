@@ -166,10 +166,13 @@ const SentinelTab = ({ data, loading, error }) => {
   
   const { indices, habitat, hunting_score, classification, recommendations } = data;
   
+  // Support both new standardized format (overall_score) and legacy (hunting_score)
+  const scoreData = data.overall_score || hunting_score;
+  
   // Extract score value - handle both direct value and nested object
-  const scoreValue = typeof hunting_score === 'object' 
-    ? hunting_score?.score || 0 
-    : hunting_score || 0;
+  const scoreValue = typeof scoreData === 'object' 
+    ? scoreData?.score || 0 
+    : scoreData || 0;
   const category = getRatingCategory(scoreValue);
   const colors = CLASSIFICATION_COLORS[category];
   
