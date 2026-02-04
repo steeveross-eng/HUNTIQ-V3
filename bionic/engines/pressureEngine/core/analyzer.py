@@ -103,6 +103,8 @@ class PressureAnalyzer:
         self._cache_namespace = "pressure"
         self._cache_hits = 0
         self._cache_misses = 0
+        # Standardized output formatter
+        self._formatter = get_formatter("PressureEngine", "1.0.0", "pressure") if get_formatter else None
     
     async def analyze_point_async(
         self,
