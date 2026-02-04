@@ -529,9 +529,9 @@ class TerritoryAnalysisRequest(BaseModel):
     # Options d'analyse
     target_species: List[SpeciesType] = [SpeciesType.DEER]
     include_modules: List[ModuleType] = [
-        ModuleType.VEGETATION,
-        ModuleType.HYDROLOGY,
-        ModuleType.TERRAIN
+        ModuleType.FOOD,
+        ModuleType.WETNESS,
+        ModuleType.CANOPY
     ]
     include_predictions: bool = True
     include_temporal: bool = False
