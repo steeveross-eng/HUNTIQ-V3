@@ -1688,4 +1688,371 @@ def _fallback_adjustment(request: HybridAIRequest) -> HybridAIResponse:
         recommendations=recommendations[:5] if recommendations else ["Analyse basée sur les règles"],
         confidence=0.6,
         reasoning="Ajustement basé sur le moteur de règles (IA indisponible)"
+
+
+# =============================================================================
+# GET /api/bionic/analysis/{territory_id}
+# Retrieve a persisted territory analysis
+# =============================================================================
+
+@router.get("/analysis/{territory_id}")
+async def get_territory_analysis(
+    territory_id: str = Path(..., description="Identifiant unique du territoire analysé")
+):
+    """
+    Récupère une analyse de territoire persistée.
+    
+    Ce endpoint est en lecture seule et ne recalcule jamais l'analyse.
+    Il retourne uniquement la version sauvegardée dans MongoDB.
+    
+    Args:
+        territory_id: Identifiant unique de l'analyse
+        
+    Returns:
+        TerritoryFullAnalysis: L'analyse complète conforme au modèle consolidé
+        
+    Raises:
+        HTTPException 404: Si l'analyse n'est pas trouvée
+        HTTPException 503: Si la base de données est indisponible
+    """
+    # a. Récupérer la connexion à MongoDB
+    database = await get_db()
+    if database is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Database unavailable"
+        )
+    
+    # b. Chercher le document dans la collection territory_analyses
+    collection = database["territory_analyses"]
+    document = await collection.find_one(
+        {"territory_id": territory_id},
+        {"_id": 0}  # Exclure l'ID MongoDB
+    )
+    
+    # c. Si aucun document trouvé, retourner 404
+    if document is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Analysis not found"
+        )
+    
+    # d. Convertir les champs datetime ISO en objets datetime si nécessaire
+    datetime_fields = ["created_at", "updated_at", "analyzed_at", "generated_at", 
+                       "analysis_period_start", "analysis_period_end", "timestamp"]
+    
+    def convert_datetime_fields(obj: Any) -> Any:
+        """Convertit récursivement les chaînes ISO en datetime"""
+        if isinstance(obj, dict):
+            for key, value in obj.items():
+                if key in datetime_fields and isinstance(value, str):
+                    try:
+                        obj[key] = datetime.fromisoformat(value.replace('Z', '+00:00'))
+                    except (ValueError, AttributeError):
+                        pass
+                elif isinstance(value, (dict, list)):
+                    convert_datetime_fields(value)
+        elif isinstance(obj, list):
+            for item in obj:
+                convert_datetime_fields(item)
+        return obj
+    
+    document = convert_datetime_fields(document)
+    
+    # e. Construire et retourner l'objet TerritoryFullAnalysis
+    # Si le modèle consolidé est disponible, l'utiliser pour la validation
+    if CORE_MODELS_AVAILABLE:
+        try:
+            # Mapper les champs du document vers le modèle consolidé
+            analysis_data = {
+                "territory_id": document.get("territory_id"),
+                "latitude": document.get("location", {}).get("latitude", document.get("latitude", 0)),
+                "longitude": document.get("location", {}).get("longitude", document.get("longitude", 0)),
+                "radius_km": document.get("location", {}).get("radius_km", document.get("radius_km", 5.0)),
+                "created_at": document.get("created_at", document.get("timestamp")),
+                "updated_at": document.get("updated_at"),
+                "data_sources": document.get("data_sources", []),
+                "modules": _convert_modules_to_core(document.get("modules", {})),
+                "species": _convert_species_to_core(document.get("species", {})),
+                "predictions": _convert_predictions_to_core(document.get("predictions")),
+                "temporal": _convert_temporal_to_core(document.get("temporal")),
+                "global_score": document.get("overall_score", document.get("global_score", 0)),
+                "global_rating": document.get("overall_rating", document.get("global_rating", "C")),
+                "recommendations": _extract_all_recommendations(document),
+                "geojson": document.get("geojson"),
+                "engine_version": document.get("engine_version", "BIONIC_CORE 1.0")
+            }
+            
+            # Valider avec le modèle Pydantic
+            return TerritoryFullAnalysis(**analysis_data)
+        except Exception as e:
+            logger.warning(f"Failed to convert to TerritoryFullAnalysis: {e}")
+            # Fallback: retourner le document brut formaté
+            return _format_raw_analysis(document)
+    else:
+        # Si le modèle n'est pas disponible, retourner le document formaté
+        return _format_raw_analysis(document)
+
+
+def _convert_modules_to_core(modules_dict: Dict) -> List:
+    """Convertit les modules du format stocké vers CoreModuleResult"""
+    if not CORE_MODELS_AVAILABLE:
+        return []
+    
+    results = []
+    for module_name, module_data in modules_dict.items():
+        if isinstance(module_data, dict):
+            try:
+                results.append(CoreModuleResult(
+                    module_type=module_name,
+                    module_name=module_data.get("module", module_name),
+                    score=module_data.get("score", 50),
+                    rating=module_data.get("rating", "C"),
+                    details=module_data.get("factors", {}),
+                    indicators=module_data.get("factors", {}),
+                    recommendations=module_data.get("recommendations", []),
+                    analyzed_at=module_data.get("timestamp", datetime.now(timezone.utc))
+                ))
+            except Exception as e:
+                logger.debug(f"Module conversion error for {module_name}: {e}")
+    return results
+
+
+def _convert_species_to_core(species_dict: Dict) -> List:
+    """Convertit les espèces du format stocké vers CoreSpeciesResult"""
+    if not CORE_MODELS_AVAILABLE:
+        return []
+    
+    from bionic_core_models import HabitatSuitability
+    
+    results = []
+    for species_name, species_data in species_dict.items():
+        if isinstance(species_data, dict):
+            try:
+                habitat = HabitatSuitability(
+                    food_score=species_data.get("food_availability", 50),
+                    water_score=species_data.get("water_access", 50),
+                    cover_score=species_data.get("cover_quality", 50),
+                    terrain_score=species_data.get("habitat_suitability", 50),
+                    disturbance_score=species_data.get("disturbance_level", 50)
+                )
+                
+                results.append(CoreSpeciesResult(
+                    species=species_name,
+                    species_name_fr=species_data.get("common_name", species_name),
+                    suitability_score=species_data.get("score", 50),
+                    rating=species_data.get("rating", "C"),
+                    habitat_suitability=habitat,
+                    estimated_density="medium",
+                    recommendations=species_data.get("recommendations", []),
+                    best_hunting_period=None
+                ))
+            except Exception as e:
+                logger.debug(f"Species conversion error for {species_name}: {e}")
+    return results
+
+
+def _convert_predictions_to_core(predictions_data: Optional[Dict]) -> Optional[Any]:
+    """Convertit les prédictions vers CorePredictionResult"""
+    if not CORE_MODELS_AVAILABLE or not predictions_data:
+        return None
+    
+    from bionic_core_models import SinglePrediction, PredictionHorizon
+    
+    try:
+        predictions_list = []
+        now = datetime.now(timezone.utc)
+        
+        # Forecast 24h
+        if "forecast_24h" in predictions_data:
+            avg_24h = sum(predictions_data["forecast_24h"].values()) / len(predictions_data["forecast_24h"]) if predictions_data["forecast_24h"] else 50
+            predictions_list.append(SinglePrediction(
+                horizon=PredictionHorizon.H24,
+                timestamp=now + timedelta(hours=24),
+                predicted_score=avg_24h,
+                confidence=predictions_data.get("confidence", 0.8),
+                key_factors={}
+            ))
+        
+        # Forecast 72h
+        if "forecast_72h" in predictions_data:
+            avg_72h = sum(predictions_data["forecast_72h"].values()) / len(predictions_data["forecast_72h"]) if predictions_data["forecast_72h"] else 50
+            predictions_list.append(SinglePrediction(
+                horizon=PredictionHorizon.H72,
+                timestamp=now + timedelta(hours=72),
+                predicted_score=avg_72h,
+                confidence=predictions_data.get("confidence", 0.7) * 0.9,
+                key_factors={}
+            ))
+        
+        # Forecast 7d
+        if "forecast_7d" in predictions_data:
+            avg_7d = sum(predictions_data["forecast_7d"].values()) / len(predictions_data["forecast_7d"]) if predictions_data["forecast_7d"] else 50
+            predictions_list.append(SinglePrediction(
+                horizon=PredictionHorizon.D7,
+                timestamp=now + timedelta(days=7),
+                predicted_score=avg_7d,
+                confidence=predictions_data.get("confidence", 0.6) * 0.8,
+                key_factors={}
+            ))
+        
+        return CorePredictionResult(
+            model_name="BIONIC_PREDICTOR",
+            model_version="1.0",
+            predictions=predictions_list,
+            trend="stable",
+            best_window=predictions_data.get("movement_prediction"),
+            alerts=[],
+            generated_at=now
+        )
+    except Exception as e:
+        logger.debug(f"Predictions conversion error: {e}")
+        return None
+
+
+def _convert_temporal_to_core(temporal_data: Optional[Dict]) -> Optional[Any]:
+    """Convertit l'analyse temporelle vers CoreTemporalResult"""
+    if not CORE_MODELS_AVAILABLE or not temporal_data:
+        return None
+    
+    try:
+        from bionic_core_models import NDVITimeSeries, SnowAnalysis, PhenologyData
+        
+        now = datetime.now(timezone.utc)
+        
+        return CoreTemporalResult(
+            analysis_period_start=now - timedelta(days=30),
+            analysis_period_end=now,
+            current_season=temporal_data.get("season", _get_current_season()),
+            ndvi_series=None,
+            ndwi_series=None,
+            snow_analysis=None,
+            phenology=None,
+            compared_to_average="normal",
+            year_over_year_change=None,
+            detected_events=[]
+        )
+    except Exception as e:
+        logger.debug(f"Temporal conversion error: {e}")
+        return None
+
+
+def _extract_all_recommendations(document: Dict) -> List[str]:
+    """Extrait toutes les recommandations du document"""
+    recommendations = []
+    
+    # Recommandations des modules
+    modules = document.get("modules", {})
+    for module_data in modules.values():
+        if isinstance(module_data, dict):
+            recommendations.extend(module_data.get("recommendations", []))
+    
+    # Recommandations des espèces
+    species = document.get("species", {})
+    for species_data in species.values():
+        if isinstance(species_data, dict):
+            recommendations.extend(species_data.get("recommendations", []))
+    
+    # Dédupliquer et retourner
+    return list(dict.fromkeys(recommendations))
+
+
+def _format_raw_analysis(document: Dict) -> Dict:
+    """Formate le document brut en structure TerritoryFullAnalysis"""
+    location = document.get("location", {})
+    
+    return {
+        "territory_id": document.get("territory_id"),
+        "latitude": location.get("latitude", document.get("latitude", 0)),
+        "longitude": location.get("longitude", document.get("longitude", 0)),
+        "radius_km": location.get("radius_km", document.get("radius_km", 5.0)),
+        "created_at": document.get("timestamp", document.get("created_at")),
+        "updated_at": document.get("updated_at"),
+        "data_sources": document.get("data_sources", []),
+        "modules": list(document.get("modules", {}).values()),
+        "species": list(document.get("species", {}).values()),
+        "predictions": document.get("predictions"),
+        "temporal": document.get("temporal"),
+        "global_score": document.get("overall_score", document.get("global_score", 0)),
+        "global_rating": document.get("overall_rating", document.get("global_rating", "C")),
+        "recommendations": _extract_all_recommendations(document),
+        "geojson": document.get("geojson"),
+        "engine_version": document.get("engine_version", "BIONIC_CORE 1.0")
+    }
+
+
+def _get_current_season() -> str:
+    """Détermine la saison actuelle"""
+    month = datetime.now().month
+    if month in [3, 4, 5]:
+        return "spring"
+    elif month in [6, 7, 8]:
+        return "summer"
+    elif month in [9, 10, 11]:
+        return "fall"
+    else:
+        return "winter"
+
+
+# =============================================================================
+# GET /api/bionic/analyses - List recent analyses
+# =============================================================================
+
+@router.get("/analyses")
+async def list_territory_analyses(
+    limit: int = Query(default=20, ge=1, le=100, description="Nombre maximum de résultats"),
+    skip: int = Query(default=0, ge=0, description="Nombre de résultats à ignorer"),
+    species: Optional[str] = Query(default=None, description="Filtrer par espèce")
+):
+    """
+    Liste les analyses de territoire récentes.
+    
+    Args:
+        limit: Nombre maximum de résultats (défaut: 20)
+        skip: Pagination offset
+        species: Filtre optionnel par espèce
+        
+    Returns:
+        Liste des analyses avec métadonnées de pagination
+    """
+    database = await get_db()
+    if database is None:
+        raise HTTPException(status_code=503, detail="Database unavailable")
+    
+    collection = database["territory_analyses"]
+    
+    # Construire le filtre
+    query_filter = {}
+    if species:
+        query_filter[f"species.{species}"] = {"$exists": True}
+    
+    # Compter le total
+    total = await collection.count_documents(query_filter)
+    
+    # Récupérer les documents
+    cursor = collection.find(
+        query_filter,
+        {
+            "_id": 0,
+            "territory_id": 1,
+            "location": 1,
+            "overall_score": 1,
+            "overall_rating": 1,
+            "timestamp": 1,
+            "data_sources": 1,
+            "season": 1
+        }
+    ).sort("timestamp", -1).skip(skip).limit(limit)
+    
+    analyses = await cursor.to_list(length=limit)
+    
+    return {
+        "success": True,
+        "total": total,
+        "limit": limit,
+        "skip": skip,
+        "has_more": total > skip + limit,
+        "analyses": analyses
+    }
+
     )
