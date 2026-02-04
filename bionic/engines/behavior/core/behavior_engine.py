@@ -481,7 +481,7 @@ class BehaviorEngine:
         start_time: datetime
     ) -> BehaviorAnalysisOutput:
         """
-        Formate la sortie pour BIONIC_CORE.
+        Formate la sortie pour BIONIC_CORE avec données temps réel.
         """
         # Convertir les fenêtres d'activité
         peak_windows = []
@@ -490,14 +490,18 @@ class BehaviorEngine:
                 start_hour=window["start"],
                 end_hour=window["end"],
                 probability=window["probability"],
-                activity_level=ActivityLevel(window["level"]),
+                activity_level=ActivityLevel(window["level"]) if window["level"] in [e.value for e in ActivityLevel] else ActivityLevel.MODERATE,
                 notes=window.get("notes")
             ))
         
-        # Générer les recommandations
-        recommendations = self._generate_recommendations(
+        # Générer les recommandations enrichies
+        recommendations = self._generate_recommendations_enhanced(
             processed, input_data.species
         )
+        
+        # Calculer la confiance basée sur la qualité des données
+        data_source = processed.get("real_time_data", {}).get("data_source", "unknown")
+        confidence = 0.85 if data_source == "real_time" else 0.70
         
         return BehaviorAnalysisOutput(
             analysis_id=analysis_id,
@@ -505,17 +509,151 @@ class BehaviorEngine:
             species_name_fr=self.SPECIES_NAMES_FR.get(input_data.species, "Inconnu"),
             location={"lat": input_data.latitude, "lon": input_data.longitude},
             analyzed_at=datetime.now(timezone.utc),
-            data_source="BIONIC Behavior Engine v1.0",
+            data_source=f"BIONIC Behavior Engine v{self.version} ({data_source})",
             overall_activity_score=round(processed["activity_score"], 1),
             hunting_opportunity_score=round(processed["hunting_opportunity_score"], 1),
-            confidence=0.75,  # TODO: Calculer vraie confiance
+            confidence=confidence,
             peak_activity_windows=peak_windows,
             current_activity_level=processed["activity_level"],
             behavioral_factors=processed.get("factors", {}),
-            predictions_24h=self._generate_24h_predictions(processed, input_data),
+            predictions_24h=self._generate_24h_predictions_enhanced(processed, input_data),
             recommendations=recommendations,
             from_cache=False
         )
+    
+    def _generate_recommendations_enhanced(
+        self,
+        processed: Dict[str, Any],
+        species: SpeciesCode
+    ) -> List[str]:
+        """Génère des recommandations enrichies avec données temps réel."""
+        recs = []
+        
+        activity_score = processed.get("activity_score", 50)
+        factors = processed.get("factors", {})
+        real_time = processed.get("real_time_data", {})
+        
+        # Recommandation principale basée sur le score
+        if activity_score >= 75:
+            recs.append("🎯 Conditions exceptionnelles - Maximisez votre temps de chasse aujourd'hui")
+        elif activity_score >= 60:
+            recs.append("✅ Bonnes conditions pour la chasse - Activité attendue significative")
+        elif activity_score >= 45:
+            recs.append("⚠️ Conditions moyennes - Patience requise, concentrez-vous sur les fenêtres optimales")
+        else:
+            recs.append("❌ Conditions difficiles - Envisagez de reporter votre sortie")
+        
+        # Recommandations météo
+        temp = real_time.get("temperature_c", 15)
+        weather = real_time.get("weather", "")
+        if temp < 0:
+            recs.append(f"🌡️ Température froide ({temp}°C) - Le gibier cherchera des zones ensoleillées")
+        elif temp > 25:
+            recs.append(f"🌡️ Chaleur ({temp}°C) - Activité concentrée tôt le matin et tard le soir")
+        
+        if "pluie" in weather.lower() or "rain" in weather.lower():
+            recs.append("🌧️ Précipitations - Le gibier sera abrité, surveillez les bordures de couvert")
+        
+        # Recommandations lunaires avec données réelles
+        lunar_phase = factors.get("lunar_phase", "")
+        lunar_illum = factors.get("lunar_illumination", 50)
+        
+        if "pleine" in lunar_phase.lower() or "full" in lunar_phase.lower():
+            recs.append(f"🌕 {lunar_phase} ({lunar_illum}% illumination) - Arrivez TRÈS tôt, activité nocturne élevée")
+        elif "nouvelle" in lunar_phase.lower() or "new" in lunar_phase.lower():
+            recs.append(f"🌑 {lunar_phase} - Nuits sombres, activité concentrée aube/crépuscule")
+        elif lunar_phase:
+            recs.append(f"🌙 {lunar_phase} ({lunar_illum}% illumination)")
+        
+        # Recommandations pression
+        pressure_trend = factors.get("pressure_trend", "stable")
+        if pressure_trend == "rising_fast":
+            recs.append("📈 Pression en forte hausse - Excellentes 24h à venir, gibier actif")
+        elif pressure_trend == "rising":
+            recs.append("📈 Pression en hausse - Conditions favorables")
+        elif pressure_trend == "falling_fast":
+            recs.append("📉 Pression en chute - Possible activité frénétique avant la tempête!")
+        elif pressure_trend == "falling":
+            recs.append("📉 Pression en baisse - Système météo approche, anticipez les mouvements")
+        
+        # Recommandations horaires avec données photoperiod réelles
+        sunrise = real_time.get("sunrise", "06:00")
+        sunset = real_time.get("sunset", "18:00")
+        recs.append(f"⏰ Fenêtres optimales: {sunrise} (lever) et {sunset} (coucher)")
+        
+        # Recommandations spécifiques à l'espèce
+        species_tips = {
+            SpeciesCode.DEER: "🦌 Concentrez-vous sur les corridors entre zones de gagnage et de repos",
+            SpeciesCode.MOOSE: "🫎 Surveillez les zones de saules et les bordures de tourbières",
+            SpeciesCode.BEAR: "🐻 Recherchez les sources de nourriture actives",
+            SpeciesCode.TURKEY: "🦃 Écoutez les premiers gloussements à l'aube"
+        }
+        
+        if species in species_tips:
+            recs.append(species_tips[species])
+        
+        return recs[:7]  # Max 7 recommandations
+    
+    def _generate_24h_predictions_enhanced(
+        self,
+        processed: Dict[str, Any],
+        input_data: BehaviorAnalysisInput
+    ) -> Dict[str, Any]:
+        """Génère les prédictions sur 24h avec données réelles."""
+        if not input_data.include_predictions:
+            return None
+        
+        base_score = processed.get("activity_score", 50)
+        factors = processed.get("factors", {})
+        real_time = processed.get("real_time_data", {})
+        
+        # Extraire heures réelles de lever/coucher
+        try:
+            sunrise_str = real_time.get("sunrise", "06:00")
+            sunset_str = real_time.get("sunset", "18:00")
+            sunrise_hour = int(sunrise_str.split(":")[0]) if isinstance(sunrise_str, str) else 6
+            sunset_hour = int(sunset_str.split(":")[0]) if isinstance(sunset_str, str) else 18
+        except:
+            sunrise_hour = 6
+            sunset_hour = 18
+        
+        # Prédictions horaires basées sur les heures réelles
+        hourly = {}
+        best_hours = []
+        
+        for hour in range(24):
+            # Calculer le facteur horaire basé sur photoperiod réel
+            hours_from_sunrise = abs(hour - sunrise_hour)
+            hours_from_sunset = abs(hour - sunset_hour)
+            min_distance = min(hours_from_sunrise, hours_from_sunset)
+            
+            # Score maximum proche du lever/coucher
+            if min_distance <= 1:
+                hour_factor = 1.0
+            elif min_distance <= 2:
+                hour_factor = 0.8
+            elif min_distance <= 3:
+                hour_factor = 0.5
+            elif 10 <= hour <= 14:
+                hour_factor = 0.2  # Milieu de journée
+            else:
+                hour_factor = 0.3
+            
+            hourly_score = base_score * (0.3 + 0.7 * hour_factor)
+            hourly[f"{hour:02d}:00"] = round(hourly_score, 1)
+            
+            if hourly_score >= 60:
+                best_hours.append(f"{hour:02d}:00")
+        
+        return {
+            "hourly_scores": hourly,
+            "best_hours": best_hours[:6],
+            "sunrise": real_time.get("sunrise", "06:00"),
+            "sunset": real_time.get("sunset", "18:00"),
+            "lunar_phase": factors.get("lunar_phase", ""),
+            "pressure_trend": factors.get("pressure_trend", "stable"),
+            "data_quality": "real_time" if real_time.get("data_source") == "real_time" else "estimated"
+        }
     
     # =========================================================================
     # HELPER METHODS
