@@ -502,7 +502,7 @@ def generate_species_recommendations(species, score: float) -> List[str]:
     return recs
 
 
-def generate_predictions(modules: List[ModuleResult], species: SpeciesType) -> PredictionResult:
+def generate_predictions(modules: List[ModuleResult], species) -> PredictionResult:
     """Generate AI predictions"""
     base_score = sum(m.score for m in modules) / len(modules) if modules else 50
     
@@ -510,19 +510,19 @@ def generate_predictions(modules: List[ModuleResult], species: SpeciesType) -> P
         SinglePrediction(
             horizon=PredictionHorizon.H24,
             timestamp=datetime.now(timezone.utc) + timedelta(hours=24),
-            predicted_score=base_score * 1.05,
+            predicted_score=min(100, base_score * 1.05),
             confidence=0.85
         ),
         SinglePrediction(
             horizon=PredictionHorizon.H72,
             timestamp=datetime.now(timezone.utc) + timedelta(hours=72),
-            predicted_score=base_score * 0.98,
+            predicted_score=min(100, base_score * 0.98),
             confidence=0.75
         ),
         SinglePrediction(
             horizon=PredictionHorizon.D7,
             timestamp=datetime.now(timezone.utc) + timedelta(days=7),
-            predicted_score=base_score * 0.95,
+            predicted_score=min(100, base_score * 0.95),
             confidence=0.60
         )
     ]
