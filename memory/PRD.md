@@ -616,6 +616,58 @@ Implémentation complète de la Phase 3 avec intégration des données réelles 
 #### Documentation
 - `/app/memory/ENGINES_DOCUMENTATION.md` - Guide complet des 4 moteurs
 
+### 2026-02-04 - P0-1: Behavior Suite (Intelligence Faunique) ✅
+
+#### Résumé
+Implémentation complète de la Behavior Suite avec 6 moteurs d'intelligence faunique. Architecture de fondation pour les modèles comportementaux et prédictifs.
+
+#### Nouveaux Moteurs Créés (6)
+```
+/app/bionic/engines/behavior/
+├── models/
+│   └── schemas.py              # 600+ lignes de modèles Pydantic
+├── core/
+│   ├── behavior_engine.py           # Analyse comportementale globale
+│   ├── seasonal_attractiveness_engine.py  # Attractivité saisonnière  
+│   ├── activity_probability_engine.py     # Probabilité d'activité
+│   ├── rut_prediction_engine.py           # Prédiction du rut
+│   ├── movement_engine.py                 # Mouvements & corridors
+│   └── species_model_engine.py            # Modèle par espèce
+└── api/
+    └── endpoints.py            # 8 endpoints API
+```
+
+#### Endpoints API Behavior Suite
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/bionic/behavior/status` | Statut de la suite |
+| `GET /api/bionic/behavior/analyze` | Analyse comportementale |
+| `GET /api/bionic/behavior/seasonal` | Attractivité saisonnière |
+| `GET /api/bionic/behavior/activity` | Probabilité d'activité |
+| `GET /api/bionic/behavior/rut` | Prédiction du rut |
+| `GET /api/bionic/behavior/movement` | Analyse mouvements |
+| `GET /api/bionic/behavior/species-model` | Modèle par espèce |
+| `GET /api/bionic/behavior/full` | Analyse complète (6 moteurs) |
+
+#### Fonctionnalités Implémentées
+- **Profils circadiens** par espèce (24h)
+- **Phases saisonnières** (7 phases de cycle de vie)
+- **Phases du rut** avec dates par latitude
+- **Home range** et corridors de déplacement
+- **Profils détaillés** des 8 espèces québécoises
+- **Recommandations** tactiques et équipement
+
+#### Espèces Supportées
+deer, moose, bear, caribou, wolf, turkey, waterfowl, smallgame
+
+#### Tests
+- Tous les endpoints testés manuellement
+- Behavior Suite status: 6/6 engines active
+- Full analysis: ~0ms (parallel execution)
+
+#### Documentation
+- `/app/memory/behavior_docs/BEHAVIOR_SUITE.md` - Guide complet
+
 ---
 
 ## 4. Prochaines Étapes (Phase 4+)
