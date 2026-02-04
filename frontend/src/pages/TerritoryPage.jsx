@@ -28,6 +28,7 @@ import TerritoryMap from '@/components/geospatial/TerritoryMap';
 import WeatherPanel from '@/components/geospatial/WeatherPanel';
 import HydroAnalysisPanel from '@/components/geospatial/HydroAnalysisPanel';
 import EnvironmentAnalysisPanelEnhanced from '@/components/geospatial/EnvironmentAnalysisPanelEnhanced';
+import CurrentConditionsPanel from '@/components/geospatial/CurrentConditionsPanel';
 import { HuntingPotentialAnalysis } from '@/components/geospatial';
 import { api } from '@/services/api.client';
 
