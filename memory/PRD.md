@@ -455,22 +455,27 @@ REACT_APP_BACKEND_URL="https://xxx.emergent.sh"
 - `/app/bionic/engines/environmentEngine/api/__init__.py`
 - `/app/bionic/engines/environmentEngine/api/endpoints.py`
 
-### 2026-02-04 - Intégration Frontend EnvironmentEngine
-- ✅ Créé `/app/frontend/src/components/geospatial/EnvironmentAnalysisPanel.jsx`
-- ✅ Intégré le Score Global BIONIC™ dans la page `/territoire`
-- ✅ Affichage du score circulaire avec classification (Exceptionnel/Excellent/Bon/Modéré/Faible)
-- ✅ Détail par composante avec barres de progression (Végétation, Hydrologie, Géologie, Météo)
-- ✅ Recommandations contextuelles et saisonnières
-- ✅ Corrigé bug de paramètres URL dans HydroAnalysisPanel (422 errors)
-- ✅ Export ajouté dans `/app/frontend/src/components/geospatial/index.js`
+### 2026-02-04 - BIONIC™ Stats Engine Module
+- ✅ Créé hook `useStatsEngine()` dans `/app/frontend/src/hooks/useStatsEngine.js`
+- ✅ Créé composants `StatsPanel`, `StatBlock`, `CompactStatsBar` dans `/app/frontend/src/components/frontpage/StatsEngine.jsx`
+- ✅ Créé endpoint API `GET /api/stats` dans `/app/backend/routes/stats_router.py`
+- ✅ Intégré `StatsPanel` sur la page d'accueil (après Hero)
+- ✅ Animation count-up progressive avec easing
+- ✅ Logique de seuils (affiche valeurs minimum jusqu'à ce que les vraies valeurs les dépassent)
 
-**Interface Score Global:**
-- Jauge circulaire animée avec score /100
-- Badge de classification coloré
-- Modificateur saisonnier affiché
-- Sélecteur d'espèce (Cerf, Orignal, Ours, Wapiti, Sauvagine)
-- Détail par composante extensible
-- Recommandations personnalisées
+**Fonctionnalités Stats Engine:**
+- Récupération API avec fallback
+- Animation progressive (1.2s, ease-out-cubic)
+- Seuils configurables : subscribers=20017, zones=2901, territories=2547
+- Refresh automatique (60s)
+- Valeurs formatées fr-CA
+
+**Statistiques affichées:**
+- Membres Abonnés (20K+)
+- Territoires Analysés (2,547+)
+- Attractants Testés (850+)
+- Zones de Chasse (2,901)
+- Satisfaction (98%)
 
 ---
 
