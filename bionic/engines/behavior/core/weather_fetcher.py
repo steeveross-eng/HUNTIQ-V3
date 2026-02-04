@@ -680,7 +680,3 @@ class BehaviorWeatherFetcher:
 
 # Singleton instance
 behavior_weather_fetcher = BehaviorWeatherFetcher()
-
-
-# Import timedelta at top level
-from datetime import timedelta
