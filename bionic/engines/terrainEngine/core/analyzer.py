@@ -23,11 +23,13 @@ if '/app/bionic/engines' not in sys.path:
 try:
     from core.cache_manager import cache_manager
     from core.real_data_fetcher import real_data_fetcher
+    from core.standardized_models import get_formatter
     CACHE_AVAILABLE = True
 except ImportError:
     CACHE_AVAILABLE = False
     cache_manager = None
     real_data_fetcher = None
+    get_formatter = None
 
 logger = logging.getLogger(__name__)
 
