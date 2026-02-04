@@ -411,7 +411,7 @@ class TerritoryFullAnalysis(BaseModel):
     warnings: List[str] = []
     
     # Version du moteur BIONIC
-    engine_version: str = "BIONIC_CORE 1.0"
+    engine_version: str = "BIONIC_CORE 2.0"
     
     model_config = ConfigDict(
         use_enum_values=True,
