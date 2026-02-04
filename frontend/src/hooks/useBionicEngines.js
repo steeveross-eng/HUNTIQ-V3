@@ -410,6 +410,11 @@ export const useBionicEngines = () => {
     fetchCombinedAnalysis,
     fetchGeospatialData,
     
+    // Phase 3 - Real Data fetchers
+    fetchRealDataAnalysis,
+    fetchTerrainAnalysis,
+    fetchPressureAnalysis,
+    
     // Combined fetcher
     fetchAllAnalyses,
     
