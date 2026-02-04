@@ -542,8 +542,29 @@ models.py (importe depuis configs.py)
 ├── ScoreRating: exceptional, excellent, good, moderate, low, poor
 └── PredictionHorizon: 24h, 72h, 7d
 ```
-- GeoJSON output
-- Recommandations consolidées
+
+### 2026-02-04 - Intégration Sentinel & SIGÉOM Frontend ✅
+
+#### Travail accompli
+- ✅ **Nouveau composant** : `EnvironmentAnalysisPanelEnhanced.jsx` (550 lignes)
+- ✅ **Nouveau hook** : `useBionicEngines.js` - Centralise les appels API aux moteurs
+- ✅ **3 onglets** : Global, Végétation (Sentinel-2), Géologie (SIGÉOM)
+- ✅ **Sélecteur d'espèce** : 6 espèces (Cerf, Orignal, Ours, Caribou, Loup, Dindon)
+- ✅ **Intégration TerritoryPage.jsx** mise à jour
+
+#### Fonctionnalités Frontend
+- **Onglet Global** : Score BIONIC™ combiné, conditions météo temps réel, prédictions
+- **Onglet Végétation** : Indices NDVI, NDWI, EVI, SAVI, classification forestière
+- **Onglet Géologie** : Province géologique, socle rocheux, dépôts de surface
+
+#### APIs Intégrées
+- `GET /api/bionic/sentinel/analyze/point` → Indices végétation
+- `POST /api/bionic/sigeom/analyze` → Analyse géologique
+- `POST /api/bionic/analyze` → Analyse BIONIC™ complète
+
+#### Tests
+- **Backend** : 100% - Sentinel et SIGÉOM APIs fonctionnelles
+- **Frontend** : 100% - 18 tests passés
 
 ---
 
