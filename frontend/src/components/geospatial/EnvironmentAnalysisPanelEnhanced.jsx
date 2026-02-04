@@ -321,11 +321,13 @@ const SigeomTab = ({ data, loading, error }) => {
   }
   
   // Extract data from response
-  const province = data.geological_province;
-  const bedrock = data.bedrock_analysis;
-  const surficial = data.surficial_analysis;
-  const huntingScore = data.hunting_score;
+  const province = data.geological_province || data.data?.geological_province;
+  const bedrock = data.bedrock_analysis || data.data?.bedrock;
+  const surficial = data.surficial_analysis || data.data?.surficial_deposit;
   const recommendations = data.recommendations;
+  
+  // Support both new standardized format (overall_score) and legacy (hunting_score)
+  const huntingScore = data.overall_score || data.hunting_score;
   
   // Get score value
   const scoreValue = typeof huntingScore === 'object' 
