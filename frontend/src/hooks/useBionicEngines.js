@@ -67,10 +67,10 @@ export const useBionicEngines = () => {
    * Fetch Sentinel-2 vegetation analysis
    */
   const fetchSentinelAnalysis = useCallback(async (lat, lon, options = {}) => {
-    const params = { lat, lon, ...options };
+    const cacheParams = { lat, lon, ...options };
     
     // Check cache
-    const cached = checkCache('sentinel', params);
+    const cached = checkCache('sentinel', cacheParams);
     if (cached) {
       setData(prev => ({ ...prev, sentinel: cached }));
       return cached;
@@ -80,11 +80,11 @@ export const useBionicEngines = () => {
     setErrors(prev => ({ ...prev, sentinel: null }));
     
     try {
-      // Get point analysis
-      const response = await api.get('/api/bionic/sentinel/analyze/point', { params });
+      // Get point analysis - params directly in query string
+      const response = await api.get(`/api/bionic/sentinel/analyze/point?lat=${lat}&lon=${lon}`);
       
       const result = response.data;
-      setCache('sentinel', params, result);
+      setCache('sentinel', cacheParams, result);
       setData(prev => ({ ...prev, sentinel: result }));
       
       return result;
