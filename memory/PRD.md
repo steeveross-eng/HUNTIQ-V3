@@ -670,25 +670,34 @@ deer, moose, bear, caribou, wolf, turkey, waterfowl, smallgame
 
 ---
 
-## 4. Prochaines Étapes (Phase 4+)
+## 4. Prochaines Étapes (P0-2+)
 
-### P0 - Intelligence Faunique
-- Modèles de comportement animal par espèce
-- Prédictions ML 24h/72h/7j
+### P0-2 - Données Réelles Behavior Suite (En cours)
+- Intégrer météo temps réel (Open-Meteo) aux moteurs comportementaux
+- Calcul précis phase lunaire avec ephemeris
+- Pression barométrique et son impact sur l'activité
+- Calibration avec données de télémétrie historiques
 
-### P1 - Nouveaux Moteurs
-- **corridorEngine** : Analyse de connectivité faunique
+### P0-3 - Modèles ML
+- Entraînement modèles prédictifs sur données Québec
+- Prédictions 24h/72h/7j
+- Calibration avec données de récolte MFFP
+
+### P1 - Nouveaux Moteurs Géospatiaux
+- **corridorEngine** : Analyse de connectivité faunique (LiDAR)
 - **landcoverEngine** : Classification NLCD/CanLandCover
-- **nutritionEngine** : Migration vers Python
+- **nutritionEngine** : Fondations continentales (migration Python)
 
-### P2 - Cache Cloud
-- Cache L3 distribué (Redis/Memcached)
-- Support multi-utilisateurs
+### P2 - Cache & Performance
+- Cache L3 cloud distribué (Redis)
+- Invalidation intelligente
+- Pre-caching prédictif des zones populaires
 
 ### P3 - Fonctionnalités Utilisateur
-- Sauvegarde de zones géographiques
-- Export PDF des rapports
-- Graphiques de statistiques
+- Sauvegarde de zones géographiques personnalisées
+- Export PDF des rapports d'analyse
+- Graphiques de statistiques dans le temps
+- Intégration frontend Behavior Suite (onglets)
 
 ---
 
