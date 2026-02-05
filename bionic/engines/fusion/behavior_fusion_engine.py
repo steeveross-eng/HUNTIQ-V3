@@ -746,6 +746,16 @@ class BehaviorFusionEngine:
                 breakdown[f"{prefix}_{engine}"] = 0.0
                 continue
             
+            # Handle direct numeric values
+            if isinstance(engine_data, (int, float)):
+                breakdown[f"{prefix}_{engine}"] = round(float(engine_data), 1)
+                continue
+            
+            # Handle non-dict types
+            if not isinstance(engine_data, dict):
+                breakdown[f"{prefix}_{engine}"] = 50.0
+                continue
+            
             score = self._extract_score(engine_data)
             if score is not None:
                 breakdown[f"{prefix}_{engine}"] = round(score, 1)
