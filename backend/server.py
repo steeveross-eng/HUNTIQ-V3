@@ -4686,6 +4686,14 @@ try:
 except ImportError as e:
     print(f"P1 Géo-Suite not available: {e}")
 
+# Include BIONIC™ P2 BehaviorFusionEngine
+try:
+    from fusion.api.endpoints import fusion_router
+    app.include_router(fusion_router)
+    print("BIONIC™ P2 BehaviorFusionEngine loaded - Geo+Behavior fusion active")
+except ImportError as e:
+    print(f"P2 BehaviorFusionEngine not available: {e}")
+
 # Include BIONIC™ Main Engine (POST /api/bionic/analyze)
 try:
     import sys
