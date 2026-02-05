@@ -709,22 +709,31 @@ class BehaviorFusionEngine:
             return weighted_sum / total_weight
         return 50.0
     
-    def _extract_score(self, data: Dict) -> Optional[float]:
+    def _extract_score(self, data: Any) -> Optional[float]:
         """Extract score from various data formats."""
         if data is None:
+            return None
+        
+        # Handle direct numeric values
+        if isinstance(data, (int, float)):
+            return float(data)
+        
+        # Handle non-dict types
+        if not isinstance(data, dict):
             return None
         
         # Try common score keys
         for key in ["score", "value", "overall_score", "hunting_score"]:
             if key in data:
                 score = data[key]
+                if isinstance(score, (int, float)):
+                    return float(score)
                 if isinstance(score, dict):
-                    return score.get("value", 50.0)
-                return float(score)
+                    return float(score.get("value", 50.0))
         
         # Check nested score structure
         if "score" in data and isinstance(data["score"], dict):
-            return data["score"].get("value", 50.0)
+            return float(data["score"].get("value", 50.0))
         
         return None
     
