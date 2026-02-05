@@ -1376,7 +1376,33 @@ Implémentation complète du **BehaviorEngine v3.0** avec Machine Learning super
 
 ---
 
-## 10. Prochaines Étapes (Après P3)
+## 10. Bugs Résolus - Session 2026-02-05
+
+### WMS Proxy - Bug Critique (RÉSOLU ✅)
+
+**Problème signalé**: "Impossible de charger les couches WMS"
+
+**Cause racine**:
+1. **Conflit de namespace Python** - Le module `/app/backend/geospatial/` n'était pas chargé car `/app/bionic/engines/geospatial/` prenait la priorité dans `sys.path`
+2. **Sources WMS indisponibles** - Les sources gouvernementales du Québec (SIGÉOM, LiDAR, GRHQ, MFFP) nécessitent maintenant une authentification
+
+**Solution**:
+1. Ajout de `__init__.py` dans `/app/backend/geospatial/`
+2. Utilisation de `importlib` dans `server.py` pour charger le bon module
+3. Marquage des sources indisponibles avec `status: "unavailable"` dans `WMS_SOURCES`
+4. Le frontend filtre automatiquement les sources indisponibles
+
+**Sources WMS fonctionnelles**:
+- OSM (https://ows.terrestris.de/osm/service)
+- CanVec NRCan (https://maps.geogratis.gc.ca/wms/canvec_en)
+- USGS (https://basemap.nationalmap.gov/arcgis/services/USGSTopo/MapServer/WMSServer)
+- NASA GIBS (https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi)
+
+**Test**: `/app/test_reports/iteration_22.json` - 31/31 tests passés
+
+---
+
+## 11. Prochaines Étapes (Après P3)
 
 ### P1 - Marketplace MVP (PROCHAINE PRIORITÉ)
 - CRUD produits isolé
@@ -1392,6 +1418,10 @@ Implémentation complète du **BehaviorEngine v3.0** avec Machine Learning super
 - Export PDF des rapports
 - Sauvegarde de zones personnalisées
 - Graphiques avancés
+
+### Recommandations Techniques
+- Implémenter le cache Redis pour le WMS Proxy (actuellement en mémoire)
+- Jour 3 du plan de solidification: schéma d'architecture final et certificat de conformité
 
 ---
 
