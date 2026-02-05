@@ -23,8 +23,9 @@ CACHE_DIR = Path("/tmp/bionic_wms_cache")
 CACHE_DIR.mkdir(exist_ok=True)
 
 # WMS Sources Registry
+# status: "available" = working, "unavailable" = requires auth/down, "limited" = rate limited
 WMS_SOURCES = {
-    # SIGÉOM - Géologie Québec
+    # SIGÉOM - Géologie Québec (requires authentication since 2024)
     "sigeom": {
         "name": "SIGÉOM",
         "base_url": "https://sigeom.mines.gouv.qc.ca/geoserver/SIGEOM_GEOSCIENCES/wms",
@@ -35,7 +36,9 @@ WMS_SOURCES = {
         },
         "srs": "EPSG:3857",
         "format": "image/png",
-        "version": "1.1.1"
+        "version": "1.1.1",
+        "status": "unavailable",
+        "status_reason": "Authentification requise"
     },
     # LiDAR Québec - Élévation
     "lidar": {
