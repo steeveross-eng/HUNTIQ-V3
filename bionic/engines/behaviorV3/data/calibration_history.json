@@ -1,0 +1,43 @@
+{
+  "total_calibrations": 1,
+  "active_calibration_id": "cal_c1ae7ee83499",
+  "records": [
+    {
+      "id": "cal_c1ae7ee83499",
+      "timestamp": "2026-02-05T17:00:40.318953+00:00",
+      "status": "completed",
+      "species": "moose",
+      "territory": "quebec",
+      "season": "winter",
+      "weights_before": {
+        "activity": 0.2,
+        "seasonal": 0.2,
+        "movement": 0.15,
+        "environmental": 0.2,
+        "temporal": 0.15,
+        "pressure": 0.1
+      },
+      "weights_after": {
+        "activity": 0.06250000000000001,
+        "seasonal": 0.06250000000000001,
+        "movement": 0.0625,
+        "environmental": 0.43749999999999994,
+        "temporal": 0.0625,
+        "pressure": 0.3125
+      },
+      "improvement_score": 25.0,
+      "confidence": 0.927,
+      "training_samples": 500,
+      "feedback_samples": 0,
+      "ml_model_version": "gradient_boosting_v1",
+      "notes": "Auto-calibration for moose/quebec",
+      "error_message": null,
+      "is_active": true,
+      "rolled_back_at": null,
+      "rollback_reason": null
+    }
+  ],
+  "avg_improvement": 25.0,
+  "total_rollbacks": 0,
+  "success_rate": 100.0
+}
