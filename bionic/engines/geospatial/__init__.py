@@ -245,20 +245,28 @@ class NorthAmericaDataSources:
     def determine_region(cls, lat: float, lon: float) -> Region:
         """
         Détermine la région nord-américaine pour des coordonnées.
+        Ordre de vérification: Québec -> USA -> Canada (pour éviter chevauchement)
         """
-        # Québec bounds (approximatif)
+        # Québec bounds (approximatif) - Vérifié en premier
         if 45.0 <= lat <= 62.0 and -79.5 <= lon <= -57.0:
             return Region.QUEBEC
         
-        # Reste du Canada
-        if 42.0 <= lat <= 83.0 and -141.0 <= lon <= -52.0:
-            return Region.CANADA_OTHER
-        
-        # USA (continental + Alaska + Hawaii)
-        if (24.0 <= lat <= 49.5 and -125.0 <= lon <= -66.0) or \
-           (51.0 <= lat <= 71.5 and -180.0 <= lon <= -129.0) or \
-           (18.5 <= lat <= 22.5 and -160.5 <= lon <= -154.5):
+        # USA (continental) - Vérifié AVANT Canada car bounds se chevauchent
+        # Sud du 49e parallèle = USA continental
+        if lat <= 49.0 and 24.0 <= lat and -125.0 <= lon <= -66.0:
             return Region.USA
+        
+        # Alaska
+        if 51.0 <= lat <= 71.5 and -180.0 <= lon <= -129.0:
+            return Region.USA
+        
+        # Hawaii
+        if 18.5 <= lat <= 22.5 and -160.5 <= lon <= -154.5:
+            return Region.USA
+        
+        # Reste du Canada (nord du 49e parallèle, hors Québec)
+        if 49.0 <= lat <= 83.0 and -141.0 <= lon <= -52.0:
+            return Region.CANADA_OTHER
         
         return Region.UNKNOWN
 
