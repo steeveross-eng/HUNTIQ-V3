@@ -129,3 +129,10 @@ export {
 
 // Advanced Visualization Panel (Main P1.5 Component)
 export { default as AdvancedVisualizationPanel } from './AdvancedVisualizationPanel';
+
+// =============================================================================
+// BIONIC™ P2 BehaviorFusionEngine Components
+// =============================================================================
+
+// Fusion Score Panel (Main P2 Component)
+export { default as FusionScorePanel } from './FusionScorePanel';
