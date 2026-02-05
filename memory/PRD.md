@@ -1400,6 +1400,27 @@ Implémentation complète du **BehaviorEngine v3.0** avec Machine Learning super
 
 **Test**: `/app/test_reports/iteration_22.json` - 31/31 tests passés
 
+### Carte Sombre et Markers Waypoints (RÉSOLU ✅)
+
+**Problèmes signalés**:
+1. "Carte extrêmement sombre et difficile à lire"
+2. "Waypoints ajoutés mais aucun symbole n'apparaît sur la carte"
+
+**Solutions**:
+1. **Thème de carte**: Changement de Carto Dark vers Carto Voyager (coloré et lisible)
+2. **Sélecteur fond de carte**: Ajout de 6 thèmes (Voyager, Light, Dark, Satellite, OSM, Terrain)
+3. **Markers waypoints**: Ajout d'un useEffect dans TerritoryMap.jsx pour rendre les markers avec couleurs selon le type
+
+**Couleurs des types de waypoints**:
+- Caméra: #22c55e (vert)
+- Mirador: #f5a623 (orange)
+- Affût: #ef4444 (rouge)
+- Saline: #3b82f6 (bleu)
+- Sentier: #8b5cf6 (violet)
+- Observation: #ec4899 (rose)
+
+**Test**: `/app/test_reports/iteration_23.json` - 100% frontend tests passés
+
 ---
 
 ## 11. Prochaines Étapes (Après P3)
