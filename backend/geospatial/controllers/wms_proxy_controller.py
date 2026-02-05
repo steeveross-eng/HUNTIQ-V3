@@ -86,7 +86,7 @@ WMS_SOURCES = {
         "status": "unavailable",
         "status_reason": "Authentification requise"
     },
-    # HydroSHEDS
+    # HydroSHEDS - requires authentication
     "hydrosheds": {
         "name": "HydroSHEDS",
         "base_url": "https://hydrosheds.org/arcgis/services/HydroSHEDS/HydroSHEDS/MapServer/WMSServer",
@@ -96,9 +96,11 @@ WMS_SOURCES = {
         },
         "srs": "EPSG:4326",
         "format": "image/png",
-        "version": "1.1.1"
+        "version": "1.1.1",
+        "status": "unavailable",
+        "status_reason": "Service non disponible"
     },
-    # OSM WMS
+    # OSM WMS - Fully available
     "osm": {
         "name": "OpenStreetMap WMS",
         "base_url": "https://ows.terrestris.de/osm/service",
@@ -107,9 +109,10 @@ WMS_SOURCES = {
         },
         "srs": "EPSG:3857",
         "format": "image/png",
-        "version": "1.1.1"
+        "version": "1.1.1",
+        "status": "available"
     },
-    # CanVec - Natural Resources Canada
+    # CanVec - Natural Resources Canada - Fully available
     "canvec": {
         "name": "CanVec NRCan",
         "base_url": "https://maps.geogratis.gc.ca/wms/canvec_en",
@@ -120,9 +123,10 @@ WMS_SOURCES = {
         },
         "srs": "EPSG:3857",
         "format": "image/png",
-        "version": "1.3.0"
+        "version": "1.3.0",
+        "status": "available"
     },
-    # USGS National Map
+    # USGS National Map - Fully available
     "usgs": {
         "name": "USGS National Map",
         "base_url": "https://basemap.nationalmap.gov/arcgis/services/USGSTopo/MapServer/WMSServer",
@@ -131,9 +135,10 @@ WMS_SOURCES = {
         },
         "srs": "EPSG:3857",
         "format": "image/png",
-        "version": "1.1.1"
+        "version": "1.1.1",
+        "status": "available"
     },
-    # NOAA Weather
+    # NOAA Weather - requires authentication
     "noaa": {
         "name": "NOAA NowCOAST",
         "base_url": "https://nowcoast.noaa.gov/arcgis/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/WMSServer",
@@ -142,7 +147,9 @@ WMS_SOURCES = {
         },
         "srs": "EPSG:3857",
         "format": "image/png",
-        "version": "1.3.0"
+        "version": "1.3.0",
+        "status": "unavailable",
+        "status_reason": "Accès refusé (403)"
     },
     # Sentinel Hub (requires API key for full access)
     "sentinel_hub": {
