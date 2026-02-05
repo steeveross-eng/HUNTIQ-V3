@@ -7,7 +7,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://ecomap-viz.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://territory-hunter.preview.emergentagent.com')
 
 # Test coordinates for Quebec City
 TEST_LAT = 46.8139
