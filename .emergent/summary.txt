@@ -1,61 +1,61 @@
 <analysis>**original_problem_statement:**
-L'utilisateur a demandé le développement de la Phase P1 pour son application géospatiale BIONIC. Cette phase consiste à créer une nouvelle suite de moteurs géospatiaux (Géo-Suite) conçus pour être fonctionnels à l'échelle de l'Amérique du Nord (North America Ready).
+L'utilisateur a demandé le développement de l'application géospatiale BIONIC en plusieurs phases.
 
-**PRODUCT REQUIREMENTS (Phase P1):**
-1.  **Exigence Critique :** Tous les moteurs, pipelines de données et couches géospatiales doivent être construits **exclusivement à partir de sources de données 100% gratuites, ouvertes et publiques**. Aucune dépendance à des API payantes ou à des licences commerciales ne doit être introduite. Les sources validées incluent SIGÉOM, CanVec, NLCD, USGS, USDA, MFFP, USFWS, OSM, NOAA, et NASA.
-2.  ****: Détecter les corridors de déplacement pour plusieurs espèces en utilisant les données de SIGÉOM (Québec), CanVec (Canada), et USGS (USA), avec une pondération saisonnière.
-3.  ****: Analyser le couvert végétal et la structure forestière en utilisant SIGÉOM (Québec), CanVec (Canada), et NLCD (USA).
-4.  ****: Calculer un indice nutritionnel par espèce et par saison basé sur les données de SIGÉOM, USDA, et NLCD.
-5.  ** (Nouveau)**: Estimer la densité de population animale et la pression de chasse en utilisant les données du MFFP (Québec), les données provinciales (Canada), et les rapports de l'USFWS (USA).
-6.  ****: Modéliser la pression de chasse pour le Québec, le Canada et les États-Unis.
-7.  **Pipelines de Données**: Mettre en place les pipelines de traitement (normalisation, tuilage, indexation) pour toutes les nouvelles sources de données.
-8.  **Style de Carte**: Implémenter un style de carte clair (ex: MapLibre Light / OSM Bright) pour améliorer la lisibilité des superpositions de données.
-
-L'agent doit préparer les spécifications techniques complètes, les formats JSON, les tests, les KPIs et les endpoints pour chacun de ces moteurs avant de commencer l'implémentation.
+**PRODUCT REQUIREMENTS:**
+1.  **Phase P1 (Géo-Suite Nord-Américaine)**: Créer une suite de 5 moteurs géospatiaux (, , , , ) fonctionnels à l'échelle de l'Amérique du Nord.
+    *   **Contrainte Critique**: Utiliser exclusivement des sources de données 100% gratuites, ouvertes et publiques (SIGÉOM, CanVec, NLCD, USGS, USDA, MFFP, USFWS, OSM, NOAA, NASA).
+    *   **Architecture**: Centraliser la logique commune (chargement, normalisation, tuilage) dans un module .
+    *   **Sorties Standardisées**: Implémenter des  (formats JSON unifiés) pour garantir la compatibilité avec les phases futures.
+    *   **Documentation**: Créer un  regroupant toutes les spécifications.
+    *   **Style de Carte**: Intégrer un style de carte clair (ex: MapLibre Light) pour la lisibilité.
+2.  **Phase P1 (Intégration Frontend)**: Créer les composants React, hooks, et services nécessaires pour afficher les analyses de la Géo-Suite dans l'interface utilisateur. Intégrer un gestionnaire d'état (UI State Manager), un mode de données factices (Mock Data Mode) et un moteur de préréglages (Preset Engine).
+3.  **Phase P1.5 (Visualisations Avancées)**: Implémenter des fonctionnalités de visualisation avancées.
+    *   Heatmaps dynamiques multi-moteurs.
+    *   Superposition de couches (corridor + densité + landcover).
+    *   Légendes interactives.
+    *   Modes Espèce et Territoire avec préréglages automatiques.
+    *   Contrôles UI pour la transparence des couches, le rayon d'analyse et la profondeur temporelle.
+    *   **Architecture**: Intégrer un , un  et un .
+4.  **Structure de Communication**: L'utilisateur exige que toutes les réponses et tous les livrables suivent une structure stricte en 6 points (Réponse professionnelle, Commande opérationnelle, Ajout stratégique, Verrouillage d'architecture, Clarification, Anticipation de la phase suivante).
 
 **User's preferred language**: Français
 
 **what currently exists?**
-L'application est une stack React/FastAPI/MongoDB fonctionnelle avec une architecture modulaire de micro-moteurs.
-- **Moteurs Géospatiaux de Base**: Les moteurs , ,  et  sont fonctionnels et leurs formats de sortie ont été standardisés.
-- **Behavior Suite (IA Faunique)**: La suite complète de 6 moteurs d'analyse comportementale est **terminée et fonctionnelle**. Elle utilise des données en temps réel (météo, pression, phase lunaire) via un  dédié.
-- **Calibration & Cohérence**: La  a été testée, calibrée avec des données du Québec, et optimisée pour atteindre une cohérence inter-moteurs élevée. Des hooks ont été préparés en prévision de l'intégration avec la future Géo-Suite (P1).
-- **Frontend**: Un nouveau panneau Conditions Actuelles a été ajouté à la page principale pour afficher les données temps réel qui alimentent la .
-- **Fondations P1**: L'agent a créé le répertoire de base pour la nouvelle Géo-Suite : .
+- **Backend**: La Phase P1 côté backend est terminée. Les 5 moteurs de la Géo-Suite (, , , , ) sont implémentés, fonctionnels et testés. Ils s'appuient sur un module  pour la logique partagée et exposent des API via un nouveau routeur FastAPI.
+- **Frontend**: L'intégration de base de la Géo-Suite (Phase P1) est terminée. Des composants React ont été créés pour afficher les résultats de chaque moteur (, etc.), orchestrés par un . Un hook  et un service  gèrent la récupération des données. L'état est géré par un store Zustand ().
+- **Phase P1.5**: La structure de base pour les visualisations avancées a été initiée avec la création des fichiers ,  et .
 
 **Last working item**:
-    - Last item agent was working: Démarrage de la Phase P1. L'agent a reçu les spécifications détaillées pour la création de la Géo-Suite, a confirmé la contrainte d'utiliser uniquement des données publiques et gratuites, et a créé le répertoire parent  pour héberger les nouveaux moteurs. La prochaine action concrète était de commencer la création du .
-    - Status: NOT STARTED
+    - Last item agent was working: Démarrage de l'implémentation de la **Phase P1.5 (Visualisations Avancées)**. L'agent a créé les fichiers pour les modules d'architecture stratégique (, , ) et s'apprêtait à créer les composants React de visualisation (, , etc.).
+    - Status: IN PROGRESS
     - Agent Testing Done: N
-    - Which testing method agent to use? backend testing agent
+    - Which testing method agent to use? frontend testing agent (après l'implémentation complète de P1.5)
     - User Testing Done: N
 
 **All Pending/In progress Issue list**:
-  Aucun. Le projet est en phase de développement de nouvelles fonctionnalités, sans bogue bloquant identifié.
+  Aucun.
 
 **In progress Task List**:
-  Aucune tâche n'est actuellement en cours. La phase précédente a été entièrement terminée et validée.
+  - Task 1:  (P0) Finaliser l'implémentation de la Phase P1.5 - Visualisations Avancées.
+     - Where to resume: Créer les composants React restants pour P1.5.
+     - What will be achieved with this?: Fournir des heatmaps, des superpositions de couches, des légendes interactives et des contrôles avancés à l'utilisateur, complétant ainsi l'expérience visuelle de la Géo-Suite.
+     - Status:  IN PROGRESS
+     - Should Test frontend/backend/both after fix?: frontend
+     - Blocked on something: Non.
 
 **Upcoming and Future Tasks**
     Upcoming Tasks:
-    - **P1: Implémenter la Géo-Suite (Priorité Absolue)**:
-      - **Tâche 1 (P1)**: Créer la structure, les spécifications techniques, les modèles Pydantic, les endpoints API, et les pipelines de données pour les 5 nouveaux modules : , , , , et .
-      - **Tâche 2 (P1)**: Implémenter la logique métier pour chaque moteur en utilisant les sources de données nord-américaines gratuites.
-      - **Tâche 3 (P1)**: Implémenter un nouveau style de carte clair dans le frontend.
-      - **Tâche 4 (P1)**: Créer des tests d'intégration pour la nouvelle Géo-Suite.
-    - **Tâche 5 (P0 - Différée)**: Ajouter des badges visuels sur la carte pour afficher les scores d'analyse. L'utilisateur a demandé de faire cela après l'implémentation de la logique dynamique.
-
+    - **P2: BehaviorFusionEngine**: Fusionner les analyses de la  (existante) et de la  (P1) pour créer des heatmaps combinées et un score global fusionné.
+    
     Future Tasks:
-    - **P2: Fusion Comportement + Géospatial**: Créer un  pour fusionner les analyses des deux suites et générer des heatmaps dynamiques.
     - **P3: Intelligence Adaptative (v3.0)**: Développer un  auto-calibrant avec du ML supervisé.
     - **P4: UX & Produits**: Améliorer l'UX avec un tableau de bord dynamique, l'export PDF, la sauvegarde de zones et des graphiques avancés.
 
 **Completed work in this session**
-- **Standardisation des Moteurs (Phase 3, Étape 2)**: Les formats de sortie de tous les moteurs géospatiaux de base ont été uniformisés.
-- **Implémentation de la  (P0-2)**: La logique métier complète des 6 moteurs d'IA a été développée, en s'appuyant sur des données en temps réel (météo, lune, pression).
-- **Intégration et Calibration (P0-3)**: La  a été validée via une suite de tests d'intégration et calibrée avec des données réelles du Québec, atteignant une cohérence de 88.1%.
-- **Optimisation de la Cohérence**: Un module a été créé pour analyser et améliorer la cohérence des modèles, avec des tests contextuels (saison, région, espèce) et des hooks pour la future Géo-Suite P1.
-- **Panneau Conditions Actuelles (Frontend)**: Un nouveau composant React et son endpoint backend ont été créés pour afficher les conditions en temps réel.
+- **Phase P1 - Backend**: Implémentation complète de la Géo-Suite (5 moteurs), du , des  et des endpoints API. Validé par des tests unitaires et l'agent de test ().
+- **Phase P1 - Frontend**: Intégration complète de l'interface de base pour afficher les données de la Géo-Suite (panneaux, cartes, jauges, sélecteurs, store Zustand). Validé par l'agent de test ().
+- **Correction de bug**: Résolution d'un problème de détection de région pour les coordonnées frontalières entre les États-Unis et le Canada.
+- **Documentation**: Création de  et mise à jour de  pour refléter l'achèvement de la Phase P1.
 
 **Earlier issues found/mentioned but not fixed**
    - Aucun.
@@ -67,78 +67,78 @@ L'application est une stack React/FastAPI/MongoDB fonctionnelle avec une archite
 
 
 **Key Technical Concepts**
-- **Backend**: FastAPI, Pydantic, Architecture de micro-moteurs, Cache multi-niveaux.
-- **Frontend**: React, Hooks personnalisés, MapLibre GL.
-- **Intelligence Artificielle**: Modèles de scoring, calibration de modèles ML, analyse de cohérence.
-- **Géospatial**: Traitement de données WMS, WFS, GeoTIFF, GeoJSON, et API externes (USGS, NASA, etc.).
+- **Backend**: FastAPI, Pydantic, Architecture de micro-moteurs.
+- **Frontend**: React, Hooks, MapLibre GL, **Zustand** (gestion d'état).
+- **Architecture (Nouveau)**: **Layer Orchestration**, **Heatmap Preprocessing**, Unified Output Contracts, State Management centralisé.
+- **Géospatial**: Traitement de données WMS, WFS, GeoTIFF, GeoJSON à l'échelle nord-américaine.
 
 **key DB schema**
-  - Pas de changement au schéma de la base de données.
+  - Aucun changement.
 
 **All files of reference**
-- **Dossier de la nouvelle Géo-Suite:** 
-- **Module d'optimisation:** 
-- **Module de calibration:** 
-- **Récupération des données temps réel:** 
-- **Nouveau composant frontend:** 
-- **Documentation et Roadmap:** 
+- **Spécifications P1**: 
+- **Roadmap & Suivi**: 
+- **Noyau Géospatial**: 
+- **Contrats de Sortie**: 
+- **Store Frontend**: 
+- **Hook Frontend**: 
+- **Fichiers P1.5 (en cours)**:
+    - 
+    - 
+    - 
 
 **Areas that need refactoring**:
-- Aucun besoin de refactoring identifié. Le code est modulaire et les développements récents ont suivi cette structure.
+- Aucun.
 
 **key api endpoints**
--  (GET): Récupère les conditions actuelles (météo, lune, etc.).
--  (POST): Exécute la suite de tests d'intégration P0-3.
--  (POST): Évalue la cohérence des moteurs avec les optimisations.
--  (GET): Endpoint de test pour les futurs hooks géospatiaux.
--  (POST): Exécute l'analyse complète de la Behavior Suite.
+- : Vérifie l'état opérationnel de la suite.
+- : Lance une analyse complète avec les 5 moteurs.
+- : Exécute un moteur spécifique.
+- : Liste les moteurs disponibles.
 
 **Critical Info for New Agent**
-- **Priorité Absolue**: Commencer et exécuter la Phase P1 (Géo-Suite) comme défini dans la dernière requête de l'utilisateur.
-- **Contrainte Non Négociable**: Utiliser **UNIQUEMENT** des sources de données publiques, ouvertes et gratuites pour toute la phase P1. La liste a été validée.
-- **Méthodologie**: L'utilisateur attend que vous prépariez d'abord les spécifications techniques complètes (modèles, endpoints, etc.) pour tous les moteurs de P1 avant de vous lancer dans une implémentation profonde.
-- **Vision**: La Géo-Suite doit être conçue pour être North America Ready, c'est-à-dire capable de gérer des données provenant du Canada, des États-Unis et du Québec.
-- La roadmap détaillée fournie par l'utilisateur dans le message 252 est le document de référence pour toutes les phases futures (P1 à P4).
+- **Priorité Absolue**: Compléter la **Phase P1.5** (visualisations avancées) avant de commencer la Phase P2.
+- **Structure de Communication Obligatoire**: L'utilisateur exige que chaque réponse suive une structure en 6 points (Réponse pro, Commande op, Ajout strat, Verrouillage archi, Clarification, Anticipation P2). Vous devez maintenir ce format.
+- **Verrouillage d'Architecture**: Le découplage entre la logique métier (backend) et la visualisation (frontend) est non négociable. Le frontend ne doit consommer que les .
+- **Anticipation P2**: Lors de l'implémentation de P1.5, vous devez déjà préparer les placeholders et les hooks nécessaires pour la future fusion avec la  (ex: ).
+- **Ajouts Stratégiques pour P1.5**: N'oubliez pas d'utiliser les modules déjà créés (, , ) lors de la création des composants visuels.
 
 **documents and test reports created in this job**
 - 
-- 
-- 
-- 
-- 
--  (mis à jour continuellement)
+-  (mis à jour)
+-  (Validation Backend P1)
+-  (Validation Frontend P1)
 
 **Last 10 User Messages and any pending HUMAN messages** 
-- **User (Last Message):** Donne le feu vert pour la Phase P1. Fournit des spécifications détaillées pour 5 nouveaux modules (, , , , ) et une nouvelle couche de carte. Insiste sur le fait que toutes les sources de données doivent être 100% gratuites, ouvertes et publiques. Demande à l'agent de préparer les spécifications techniques complètes pour P1. **(C'est la tâche à commencer)**.
-- **Agent:** Confirme la compréhension de la contrainte sur les données gratuites, valide la liste des sources, et commence P1 en créant la structure de dossiers initiale.
-- **User:** Valide l'achèvement de l'optimisation de la cohérence et propose d'explorer des pistes pour atteindre 100% de cohérence, en parallèle du démarrage de P1.
-- **Agent:** Termine le module d'optimisation de la cohérence et confirme que l'amélioration future dépend de l'intégration des moteurs géospatiaux de P1.
-- **User:** Valide P0-3 (Tests d'intégration) et donne le plan détaillé pour la suite, incluant la roadmap complète jusqu'à la version 3.0.
-- **Agent:** Termine la phase P0-3 et la valide avec le testing agent.
-- **User:** Valide l'implémentation du panneau Conditions actuelles et donne le feu vert pour P0-3.
-- **Agent:** Termine l'implémentation du panneau frontend Conditions actuelles et le valide avec le testing agent.
-- **User:** Valide l'achèvement de P0-2 (Behavior Suite temps réel) et demande la création d'un panneau Conditions actuelles dans le frontend.
-- **Agent:** Termine l'implémentation de toute la logique métier de la Behavior Suite (P0-2), la valide avec le testing agent, et met à jour le PRD.
+- **User (Last Message):** Valide l'intégration frontend de P1, la jugeant propre et alignée avec la vision. Ordonne le démarrage de la **Phase P1.5** pour implémenter les visualisations avancées (heatmaps, superpositions, légendes, etc.) *avant* de passer à P2. Fournit une liste détaillée des composants et des ajouts stratégiques requis (, etc.) et réitère l'obligation de suivre la structure de communication en 6 points. **(C'est la tâche en cours)**.
+- **Agent:** Confirme la réception des instructions pour P1.5 et commence l'implémentation en créant la structure de fichiers pour les ajouts stratégiques.
+- **User:** Valide l'achèvement de l'intégration frontend P1 et demande la suite : finaliser les visualisations avancées (P1.5) ou passer à P2.
+- **Agent:** Termine l'intégration frontend de P1, la valide avec l'agent de test, met à jour le PRD et demande la validation de l'utilisateur.
+- **User:** Valide l'architecture frontend P1 proposée et demande l'implémentation immédiate avec des ajouts stratégiques (State Manager, Mock Mode, Preset Engine).
+- **Agent:** Propose une architecture frontend détaillée pour P1, respectant la structure en 6 points et anticipant P2.
+- **User:** Valide la fin de la Phase P1 (backend) et demande de passer à l'intégration frontend pour visualiser les données des 5 moteurs. Impose la structure de communication en 6 points pour tous les futurs livrables.
+- **Agent:** Termine l'implémentation backend de la Phase P1, teste tous les endpoints avec succès, corrige un bug de détection de région, met à jour le PRD et annonce la fin de la phase.
 
 **Project Health Check:**
-- **MOCKED:** Aucun.
-- **BROKEN:** Aucun.
+- **MOCKED:** Non
+- **BROKEN:** Non
 
 **3rd Party Integrations**
 - OpenWeatherMap
 - MapLibre GL
 - 
 - 
-- Sources de données WMS/API externes (USGS, NRCan, NOAA, NASA EarthData, etc.) - Leur utilisation sera étendue dans la phase P1.
+- **Zustand** (pour la gestion d'état frontend)
+- Sources de données WMS/API externes (USGS, NRCan, NOAA, NASA EarthData, etc.)
 
 **Testing status**
-  - Testing agent used after significant changes: YES (utilisé 5 fois avec succès dans la session :  à ).
+  - Testing agent used after significant changes: YES (pour le backend P1 et le frontend P1).
   - Troubleshoot agent used after agent stuck in loop: NO
-  - Test files created: Oui, via le testing agent. Rapports dans .
+  - Test files created: Oui, les rapports sont dans .
   - Known regressions: Aucun.
 
 **Credentials to test flow:**
 - **Admin Password:** 
 
 **What agent forgot to execute**
-- Rien. L'agent a suivi méticuleusement les instructions très détaillées de l'utilisateur, y compris le report de tâches de plus faible priorité.</analysis>
+- Rien. L'agent suit scrupuleusement le plan de l'utilisateur.</analysis>
