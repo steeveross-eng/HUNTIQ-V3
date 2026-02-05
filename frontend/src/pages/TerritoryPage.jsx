@@ -52,8 +52,8 @@ const SCORE_COLORS = {
   mauvais: 'bg-red-500 text-red-400 border-red-500',
 };
 
-// Waypoint form component
-const WaypointForm = ({ onAdd, selectedLocation }) => {
+// Waypoint form component - Supports compact mode
+const WaypointForm = ({ onAdd, selectedLocation, compact = false }) => {
   const [name, setName] = useState('');
   const [type, setType] = useState('camera');
   const [notes, setNotes] = useState('');
