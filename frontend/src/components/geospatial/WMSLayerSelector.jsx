@@ -618,6 +618,10 @@ const WMSLayerSelector = ({
         map.addSource(layer.layerConfig.source, layer.sourceConfig);
       }
       
+      // Determine opacity - use fixed opacity for configured layers
+      const fixedConfig = FIXED_OPACITY_LAYERS[layer.id];
+      const layerOpacity = fixedConfig ? fixedConfig.opacity : (layerOpacities[layer.id] || 0.7);
+      
       // Add layer if not exists
       if (!map.getLayer(layer.id)) {
         map.addLayer({
@@ -628,7 +632,7 @@ const WMSLayerSelector = ({
           },
           paint: {
             ...layer.layerConfig.paint,
-            'raster-opacity': layerOpacities[layer.id] || 0.7
+            'raster-opacity': layerOpacity
           }
         });
         
