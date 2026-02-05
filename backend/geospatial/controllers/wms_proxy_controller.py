@@ -4,6 +4,11 @@ Backend proxy for WMS services to bypass CORS restrictions
 
 This module proxies requests to Quebec government and other WMS servers
 that block direct browser CORS requests.
+
+AUTHENTICATION SUPPORT:
+- Supports API key authentication via headers or query params
+- Supports OAuth2 token authentication
+- Credentials stored securely in environment variables
 """
 
 import httpx
@@ -11,6 +16,7 @@ import asyncio
 import hashlib
 import os
 import json
+import base64
 from typing import Dict, Optional, Any
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -22,87 +28,213 @@ logger = logging.getLogger(__name__)
 CACHE_DIR = Path("/tmp/bionic_wms_cache")
 CACHE_DIR.mkdir(exist_ok=True)
 
-# WMS Sources Registry
-# status: "available" = working, "unavailable" = requires auth/down, "limited" = rate limited
-WMS_SOURCES = {
-    # SIGÉOM - Géologie Québec (requires authentication since 2024)
+# =============================================================================
+# QUEBEC GOVERNMENT WMS CREDENTIALS CONFIGURATION
+# Store credentials in environment variables for security
+# =============================================================================
+QUEBEC_WMS_CREDENTIALS = {
+    "mern": {
+        # MERN = Ministère de l'Énergie et des Ressources naturelles
+        # Services: LiDAR, GRHQ, Territoire
+        "env_key": "QUEBEC_MERN_API_KEY",
+        "env_token": "QUEBEC_MERN_TOKEN",
+        "auth_type": "token",  # "api_key", "token", "basic", "oauth2"
+        "auth_header": "Authorization",
+        "auth_prefix": "Bearer",
+        "token_url": "https://servicescarto.mern.gouv.qc.ca/pes/token"
+    },
+    "mffp": {
+        # MFFP = Ministère des Forêts, de la Faune et des Parcs
+        # Services: Inventaire écoforestier
+        "env_key": "QUEBEC_MFFP_API_KEY",
+        "env_token": "QUEBEC_MFFP_TOKEN",
+        "auth_type": "token",
+        "auth_header": "Authorization",
+        "auth_prefix": "Bearer",
+        "token_url": "https://servicescarto.mffp.gouv.qc.ca/token"
+    },
     "sigeom": {
-        "name": "SIGÉOM",
+        # SIGÉOM = Système d'information géominière
+        # Services: Géologie, Dépôts, Failles
+        "env_key": "QUEBEC_SIGEOM_API_KEY",
+        "env_token": "QUEBEC_SIGEOM_TOKEN",
+        "auth_type": "basic",  # GeoServer typically uses basic auth
+        "auth_header": "Authorization",
+        "auth_prefix": "Basic"
+    }
+}
+
+def get_quebec_auth_headers(provider: str) -> Dict[str, str]:
+    """
+    Get authentication headers for Quebec government WMS services.
+    
+    Args:
+        provider: One of "mern", "mffp", "sigeom"
+    
+    Returns:
+        Dict with Authorization header if credentials are available
+    """
+    config = QUEBEC_WMS_CREDENTIALS.get(provider)
+    if not config:
+        return {}
+    
+    headers = {}
+    
+    if config["auth_type"] == "token":
+        token = os.environ.get(config["env_token"])
+        if token:
+            headers[config["auth_header"]] = f"{config['auth_prefix']} {token}"
+    
+    elif config["auth_type"] == "basic":
+        api_key = os.environ.get(config["env_key"])
+        if api_key:
+            # For basic auth, api_key should be "username:password"
+            encoded = base64.b64encode(api_key.encode()).decode()
+            headers[config["auth_header"]] = f"{config['auth_prefix']} {encoded}"
+    
+    elif config["auth_type"] == "api_key":
+        api_key = os.environ.get(config["env_key"])
+        if api_key:
+            headers["X-API-Key"] = api_key
+    
+    return headers
+
+def check_quebec_credentials_status() -> Dict[str, Any]:
+    """
+    Check which Quebec government credentials are configured.
+    
+    Returns:
+        Dict with status for each provider
+    """
+    status = {}
+    for provider, config in QUEBEC_WMS_CREDENTIALS.items():
+        has_key = bool(os.environ.get(config.get("env_key", "")))
+        has_token = bool(os.environ.get(config.get("env_token", "")))
+        status[provider] = {
+            "configured": has_key or has_token,
+            "auth_type": config["auth_type"],
+            "services": []
+        }
+    
+    # Map services to providers
+    status["mern"]["services"] = ["lidar", "grhq"]
+    status["mffp"]["services"] = ["forest"]
+    status["sigeom"]["services"] = ["sigeom"]
+    
+    return status
+
+# =============================================================================
+# WMS SOURCES REGISTRY
+# =============================================================================
+# status: "available" = working, "unavailable" = requires auth/down, 
+#         "auth_required" = needs credentials, "limited" = rate limited
+WMS_SOURCES = {
+    # SIGÉOM - Géologie Québec (requires authentication)
+    "sigeom": {
+        "name": "SIGÉOM Géologie",
+        "description": "Géologie du socle rocheux, dépôts de surface, failles - Essentiel pour analyse terrain",
         "base_url": "https://sigeom.mines.gouv.qc.ca/geoserver/SIGEOM_GEOSCIENCES/wms",
         "layers": {
             "bedrock": "SIGEOM_GEOSCIENCES:GEOLOGIE_SOCLE_1M",
             "surficial": "SIGEOM_GEOSCIENCES:DEPOTS_SURFACE_1M",
-            "faults": "SIGEOM_GEOSCIENCES:FAILLES_1M"
+            "faults": "SIGEOM_GEOSCIENCES:FAILLES_1M",
+            "mineral_deposits": "SIGEOM_GEOSCIENCES:GITES_MINERAUX"
         },
         "srs": "EPSG:3857",
         "format": "image/png",
         "version": "1.1.1",
-        "status": "unavailable",
-        "status_reason": "Authentification requise"
+        "status": "auth_required",
+        "auth_provider": "sigeom",
+        "status_reason": "Authentification requise - Credentials API nécessaires",
+        "data_source": "Ministère des Ressources naturelles du Québec",
+        "use_cases": ["Analyse géologique", "Corridors fauniques", "Qualité du sol"]
     },
-    # LiDAR Québec - Élévation (requires authentication since 2024)
+    # LiDAR Québec - Élévation (requires authentication)
     "lidar": {
         "name": "LiDAR Québec",
+        "description": "Modèles numériques d'élévation haute résolution - Essentiel pour analyse terrain",
         "base_url": "https://servicescarto.mern.gouv.qc.ca/pes/services/Elevation/LIDAR/MapServer/WMSServer",
         "layers": {
-            "dtm": "0",
-            "dsm": "1",
-            "chm": "2"
+            "dtm": "0",  # Digital Terrain Model
+            "dsm": "1",  # Digital Surface Model
+            "chm": "2",  # Canopy Height Model
+            "hillshade": "3",
+            "slope": "4"
         },
         "srs": "EPSG:3857",
         "format": "image/png",
         "version": "1.3.0",
-        "status": "unavailable",
-        "status_reason": "Authentification requise"
+        "status": "auth_required",
+        "auth_provider": "mern",
+        "status_reason": "Authentification requise - Token MERN nécessaire",
+        "data_source": "MERN Québec - Données LiDAR aéroporté",
+        "use_cases": ["Modélisation terrain", "Analyse pente", "Couvert forestier"]
     },
-    # GRHQ - Hydrographie Québec (requires authentication since 2024)
+    # GRHQ - Hydrographie Québec (requires authentication)
     "grhq": {
         "name": "GRHQ Hydrographie",
+        "description": "Réseau hydrographique complet du Québec - Essentiel pour corridors fauniques",
         "base_url": "https://servicescarto.mern.gouv.qc.ca/pes/services/Territoire/GRHQ/MapServer/WMSServer",
         "layers": {
-            "rivers": "0",
-            "lakes": "1",
-            "wetlands": "2",
-            "watersheds": "3"
+            "rivers": "0",      # Cours d'eau
+            "lakes": "1",       # Lacs
+            "wetlands": "2",    # Milieux humides
+            "watersheds": "3",  # Bassins versants
+            "streams": "4"      # Ruisseaux
         },
         "srs": "EPSG:3857",
         "format": "image/png",
         "version": "1.3.0",
-        "status": "unavailable",
-        "status_reason": "Authentification requise"
+        "status": "auth_required",
+        "auth_provider": "mern",
+        "status_reason": "Authentification requise - Token MERN nécessaire",
+        "data_source": "MERN Québec - Géobase du réseau hydrographique",
+        "use_cases": ["Corridors fauniques", "Habitat aquatique", "Zones humides"]
     },
-    # MFFP - Forêt Québec (requires authentication since 2024)
+    # MFFP - Forêt Québec (requires authentication)
     "forest": {
-        "name": "Inventaire forestier MFFP",
+        "name": "Inventaire écoforestier MFFP",
+        "description": "Inventaire forestier détaillé - Essentiel pour analyse habitat",
         "base_url": "https://servicescarto.mffp.gouv.qc.ca/Inventaire_Ecoforestier/VerificationInventaire/MapServer/WMSServer",
         "layers": {
-            "stands": "0",
-            "species": "1",
-            "age": "2"
+            "stands": "0",       # Peuplements forestiers
+            "species": "1",      # Composition en espèces
+            "age": "2",          # Classe d'âge
+            "density": "3",      # Densité du couvert
+            "height": "4",       # Hauteur dominante
+            "disturbance": "5"   # Perturbations
         },
         "srs": "EPSG:3857",
         "format": "image/png",
         "version": "1.3.0",
-        "status": "unavailable",
-        "status_reason": "Authentification requise"
+        "status": "auth_required",
+        "auth_provider": "mffp",
+        "status_reason": "Authentification requise - Token MFFP nécessaire",
+        "data_source": "MFFP Québec - 5e inventaire écoforestier",
+        "use_cases": ["Qualité habitat", "Nourriture gibier", "Couvert thermique"]
     },
-    # HydroSHEDS - requires authentication
-    "hydrosheds": {
-        "name": "HydroSHEDS",
-        "base_url": "https://hydrosheds.org/arcgis/services/HydroSHEDS/HydroSHEDS/MapServer/WMSServer",
+    # Données Québec ouvertes - Limites administratives
+    "quebec_admin": {
+        "name": "Limites administratives Québec",
+        "description": "MRC, municipalités, régions administratives",
+        "base_url": "https://servicescarto.mern.gouv.qc.ca/pes/services/Territoire/SDA_WMS/MapServer/WMSServer",
         "layers": {
-            "rivers": "0",
-            "basins": "1"
+            "mrc": "0",
+            "municipalities": "1",
+            "regions": "2"
         },
-        "srs": "EPSG:4326",
+        "srs": "EPSG:3857",
         "format": "image/png",
-        "version": "1.1.1",
-        "status": "unavailable",
-        "status_reason": "Service non disponible"
+        "version": "1.3.0",
+        "status": "auth_required",
+        "auth_provider": "mern",
+        "status_reason": "Authentification requise",
+        "data_source": "MERN Québec"
     },
-    # OSM WMS - Fully available
+    # OSM WMS - Fully available (fallback/reference)
     "osm": {
         "name": "OpenStreetMap WMS",
+        "description": "Carte de référence OpenStreetMap",
         "base_url": "https://ows.terrestris.de/osm/service",
         "layers": {
             "osm": "OSM-WMS"
@@ -115,6 +247,7 @@ WMS_SOURCES = {
     # CanVec - Natural Resources Canada - Fully available
     "canvec": {
         "name": "CanVec NRCan",
+        "description": "Données vectorielles Canada - Alternative gratuite",
         "base_url": "https://maps.geogratis.gc.ca/wms/canvec_en",
         "layers": {
             "hydro": "hydro",
