@@ -810,8 +810,8 @@ const WMSLayerSelector = ({
                         attribution: '© OpenStreetMap contributors'
                       },
                       terrain: {
-                        url: 'https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}@2x.png',
-                        attribution: '© Stadia Maps © OpenMapTiles © OSM'
+                        url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png',
+                        attribution: '© OpenTopoMap (CC-BY-SA)'
                       }
                     };
                     
