@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 3.19 (Panneau Conditions Actuelles TERMINÉ)
+## Version: 3.20 (P0-3 Intégration & Calibration ML TERMINÉ)
 ## Dernière mise à jour: 2026-02-04
 
 ---
