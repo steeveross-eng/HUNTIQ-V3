@@ -52,9 +52,9 @@ const BIONIC_DARK_STYLE = {
   sources: {
     'base-tiles': {
       type: 'raster',
-      tiles: [TILE_PROVIDERS.carto_voyager.url],
+      tiles: ['https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png'],
       tileSize: 256,
-      attribution: TILE_PROVIDERS.carto_voyager.attribution
+      attribution: '© CARTO © OpenStreetMap'
     }
   },
   layers: [
@@ -63,12 +63,7 @@ const BIONIC_DARK_STYLE = {
       type: 'raster',
       source: 'base-tiles',
       minzoom: 0,
-      maxzoom: 19,
-      paint: {
-        'raster-brightness-min': 0.1,
-        'raster-brightness-max': 1.0,
-        'raster-contrast': 0.1
-      }
+      maxzoom: 20
     }
   ]
 };
