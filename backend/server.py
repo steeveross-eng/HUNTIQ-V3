@@ -4654,6 +4654,14 @@ try:
 except ImportError as e:
     print(f"Behavior Suite not available: {e}")
 
+# Include BIONIC™ P0-3 Integration & Calibration
+try:
+    from behavior.api.p03_endpoints import p03_router
+    app.include_router(p03_router)
+    print("BIONIC™ P0-3 Integration & Calibration loaded")
+except ImportError as e:
+    print(f"P0-3 Integration module not available: {e}")
+
 # Include BIONIC™ Current Conditions (P0-2 - Panneau Conditions Actuelles)
 try:
     from conditions.api.endpoints import conditions_router
