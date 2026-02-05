@@ -914,19 +914,17 @@ Production Ready: ✅ TRUE
 
 ---
 
-## 4. Prochaines Étapes (P0-3+)
+## 4. Prochaines Étapes (P1+)
 
-### P0-3 - Tests d'Intégration & Modèles ML
-- Ajouter tests pour `/api/bionic/core/analyze/real-data-full`
-- Tests de régression pour les 4 moteurs standardisés
-- Entraînement modèles prédictifs sur données Québec
-- Prédictions 24h/72h/7j
-- Calibration avec données de récolte MFFP
+### P0 - Behavior Suite (COMPLÉTÉ ✅)
+- P0-1 : Architecture & moteurs v2.0 ✅
+- P0-2 : Données temps réel + WeatherFetcher ✅
+- P0-3 : Tests d'intégration + calibration ML ✅ (88.1% cohérence, 100% tests)
 
-### P1 - Nouveaux Moteurs Géospatiaux
-- **corridorEngine** : Analyse de connectivité faunique (LiDAR)
-- **landcoverEngine** : Classification NLCD/CanLandCover
-- **nutritionEngine** : Fondations continentales (migration Python)
+### P1 - Nouveaux Moteurs Géospatiaux (PROCHAINE PRIORITÉ)
+- **corridorEngine** : Détection des corridors de déplacement (LiDAR + topographie)
+- **landcoverEngine** : Analyse du couvert végétal (SIGÉOM + OSM + satellites)
+- **nutritionEngine** : Qualité nutritionnelle des habitats (NDVI + modèles)
 
 ### P2 - Cache & Performance
 - Cache L3 cloud distribué (Redis)
