@@ -23,7 +23,7 @@ import sys
 if '/app/bionic/engines/behaviorV3' not in sys.path:
     sys.path.insert(0, '/app/bionic/engines/behaviorV3')
 
-from models.v3_schemas import (
+from v3_models.v3_schemas import (
     CalibrationRecord, CalibrationHistory, CalibrationStatus,
     WeightSet, RollbackReason
 )

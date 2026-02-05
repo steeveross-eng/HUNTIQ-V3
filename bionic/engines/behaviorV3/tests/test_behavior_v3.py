@@ -22,7 +22,7 @@ import os
 sys.path.insert(0, '/app/bionic/engines/behaviorV3')
 sys.path.insert(0, '/app/bionic/engines')
 
-from models.v3_schemas import (
+from v3_models.v3_schemas import (
     FeedbackInput, FeedbackType, TrainingRequest, CalibrationRequest,
     RollbackRequest, RollbackReason, WeightSet, CalibrationStatus
 )
@@ -33,7 +33,7 @@ class TestSimulatedDataGenerator:
     
     def test_generate_dataset(self):
         """Test de génération de dataset."""
-        from data.simulated_data_generator import simulated_data_generator
+        from v3_data.simulated_data_generator import simulated_data_generator
         
         dataset = simulated_data_generator.generate_dataset(n_samples=50)
         
@@ -44,7 +44,7 @@ class TestSimulatedDataGenerator:
     
     def test_species_filter(self):
         """Test du filtre par espèce."""
-        from data.simulated_data_generator import simulated_data_generator
+        from v3_data.simulated_data_generator import simulated_data_generator
         
         dataset = simulated_data_generator.generate_dataset(
             n_samples=30,
@@ -55,7 +55,7 @@ class TestSimulatedDataGenerator:
     
     def test_to_training_format(self):
         """Test de conversion au format ML."""
-        from data.simulated_data_generator import simulated_data_generator
+        from v3_data.simulated_data_generator import simulated_data_generator
         
         dataset = simulated_data_generator.generate_dataset(n_samples=20)
         X, y = simulated_data_generator.to_training_format(dataset)
@@ -70,7 +70,7 @@ class TestCalibrationHistoryTracker:
     
     def test_add_calibration(self):
         """Test d'ajout de calibration."""
-        from data.calibration_history_tracker import CalibrationHistoryTracker
+        from v3_data.calibration_history_tracker import CalibrationHistoryTracker
         
         tracker = CalibrationHistoryTracker(storage_path="/tmp/test_history.json")
         tracker.clear_history(keep_active=False)
@@ -91,7 +91,7 @@ class TestCalibrationHistoryTracker:
     
     def test_get_current_weights(self):
         """Test de récupération des poids actuels."""
-        from data.calibration_history_tracker import CalibrationHistoryTracker
+        from v3_data.calibration_history_tracker import CalibrationHistoryTracker
         
         tracker = CalibrationHistoryTracker(storage_path="/tmp/test_history2.json")
         weights = tracker.get_current_weights()
@@ -101,7 +101,7 @@ class TestCalibrationHistoryTracker:
     
     def test_rollback(self):
         """Test de rollback."""
-        from data.calibration_history_tracker import CalibrationHistoryTracker
+        from v3_data.calibration_history_tracker import CalibrationHistoryTracker
         
         tracker = CalibrationHistoryTracker(storage_path="/tmp/test_history3.json")
         tracker.clear_history(keep_active=False)
@@ -133,7 +133,7 @@ class TestMLCalibrator:
     
     def test_train(self):
         """Test d'entraînement du modèle."""
-        from core.ml_calibrator import MLCalibrator
+        from v3_core.ml_calibrator import MLCalibrator
         
         calibrator = MLCalibrator()
         request = TrainingRequest(
@@ -151,7 +151,7 @@ class TestMLCalibrator:
     
     def test_get_suggested_weights(self):
         """Test de suggestion de poids."""
-        from core.ml_calibrator import MLCalibrator
+        from v3_core.ml_calibrator import MLCalibrator
         
         calibrator = MLCalibrator()
         calibrator.train(TrainingRequest(max_iterations=30))
@@ -168,7 +168,7 @@ class TestWeightAdjuster:
     
     def test_calibrate(self):
         """Test de calibration."""
-        from core.weight_adjuster import WeightAdjuster
+        from v3_core.weight_adjuster import WeightAdjuster
         
         adjuster = WeightAdjuster()
         request = CalibrationRequest(species="deer", territory="quebec")
@@ -181,7 +181,7 @@ class TestWeightAdjuster:
     
     def test_validate_weights(self):
         """Test de validation des poids."""
-        from core.weight_adjuster import WeightAdjuster
+        from v3_core.weight_adjuster import WeightAdjuster
         
         adjuster = WeightAdjuster()
         
@@ -199,7 +199,7 @@ class TestFeedbackCollector:
     
     def test_submit_feedback(self):
         """Test de soumission de feedback."""
-        from core.feedback_collector import FeedbackCollector
+        from v3_core.feedback_collector import FeedbackCollector
         
         collector = FeedbackCollector()
         
@@ -219,7 +219,7 @@ class TestFeedbackCollector:
     
     def test_get_feedback_summary(self):
         """Test du résumé des feedbacks."""
-        from core.feedback_collector import FeedbackCollector
+        from v3_core.feedback_collector import FeedbackCollector
         
         collector = FeedbackCollector()
         summary = collector.get_feedback_summary()
@@ -233,7 +233,7 @@ class TestRollbackManager:
     
     def test_can_rollback(self):
         """Test de vérification de rollback."""
-        from core.rollback_manager import RollbackManager
+        from v3_core.rollback_manager import RollbackManager
         
         manager = RollbackManager()
         result = manager.can_rollback()
@@ -243,7 +243,7 @@ class TestRollbackManager:
     
     def test_get_rollback_candidates(self):
         """Test de récupération des candidats."""
-        from core.rollback_manager import RollbackManager
+        from v3_core.rollback_manager import RollbackManager
         
         manager = RollbackManager()
         candidates = manager.get_rollback_candidates(limit=5)
@@ -256,7 +256,7 @@ class TestBehaviorEngineV3:
     
     def test_get_status(self):
         """Test du statut du moteur."""
-        from core.behavior_engine_v3 import BehaviorEngineV3
+        from v3_core.behavior_engine_v3 import BehaviorEngineV3
         
         engine = BehaviorEngineV3()
         status = engine.get_status()
@@ -268,7 +268,7 @@ class TestBehaviorEngineV3:
     
     def test_train_and_calibrate_workflow(self):
         """Test du workflow complet train + calibrate."""
-        from core.behavior_engine_v3 import BehaviorEngineV3
+        from v3_core.behavior_engine_v3 import BehaviorEngineV3
         
         engine = BehaviorEngineV3()
         
@@ -286,7 +286,7 @@ class TestBehaviorEngineV3:
     
     def test_get_metrics(self):
         """Test des métriques."""
-        from core.behavior_engine_v3 import BehaviorEngineV3
+        from v3_core.behavior_engine_v3 import BehaviorEngineV3
         
         engine = BehaviorEngineV3()
         metrics = engine.get_metrics()
@@ -296,7 +296,7 @@ class TestBehaviorEngineV3:
     
     def test_maintenance_mode(self):
         """Test du mode maintenance."""
-        from core.behavior_engine_v3 import BehaviorEngineV3
+        from v3_core.behavior_engine_v3 import BehaviorEngineV3
         
         engine = BehaviorEngineV3()
         
@@ -315,7 +315,7 @@ class TestAPIEndpoints:
     
     def test_status_endpoint_data(self):
         """Test des données retournées par status."""
-        from core.behavior_engine_v3 import behavior_engine_v3
+        from v3_core.behavior_engine_v3 import behavior_engine_v3
         
         status = behavior_engine_v3.get_status()
         data = status.model_dump()
@@ -327,7 +327,7 @@ class TestAPIEndpoints:
     
     def test_weights_endpoint_data(self):
         """Test des données retournées par weights."""
-        from core.behavior_engine_v3 import behavior_engine_v3
+        from v3_core.behavior_engine_v3 import behavior_engine_v3
         
         weights_response = behavior_engine_v3.get_weights()
         

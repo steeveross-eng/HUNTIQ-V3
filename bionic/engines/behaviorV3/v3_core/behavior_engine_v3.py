@@ -32,7 +32,7 @@ _BASE_PATH = '/app/bionic/engines/behaviorV3'
 if _BASE_PATH not in sys.path:
     sys.path.insert(0, _BASE_PATH)
 
-from models.v3_schemas import (
+from v3_models.v3_schemas import (
     EngineStatus, EngineMetrics, WeightSet,
     TrainingRequest, TrainingResponse,
     CalibrationRequest, CalibrationResponse,
@@ -40,12 +40,12 @@ from models.v3_schemas import (
     RollbackRequest, RollbackResponse,
     WeightsResponse, CalibrationHistory
 )
-from data.calibration_history_tracker import calibration_tracker
-from data.training_data_manager import training_data_manager
-from core.ml_calibrator import ml_calibrator
-from core.weight_adjuster import weight_adjuster
-from core.feedback_collector import feedback_collector
-from core.rollback_manager import rollback_manager
+from v3_data.calibration_history_tracker import calibration_tracker
+from v3_data.training_data_manager import training_data_manager
+from v3_core.ml_calibrator import ml_calibrator
+from v3_core.weight_adjuster import weight_adjuster
+from v3_core.feedback_collector import feedback_collector
+from v3_core.rollback_manager import rollback_manager
 
 logger = logging.getLogger(__name__)
 
@@ -179,7 +179,7 @@ class BehaviorEngineV3:
             CalibrationResponse avec les résultats
         """
         if self._maintenance_mode:
-            from models.v3_schemas import CalibrationStatus
+            from v3_models.v3_schemas import CalibrationStatus
             return CalibrationResponse(
                 success=False,
                 calibration_id="",

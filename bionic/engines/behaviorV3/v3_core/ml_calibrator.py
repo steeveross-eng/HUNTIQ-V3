@@ -22,10 +22,10 @@ import sys
 if '/app/bionic/engines/behaviorV3' not in sys.path:
     sys.path.insert(0, '/app/bionic/engines/behaviorV3')
 
-from models.v3_schemas import (
+from v3_models.v3_schemas import (
     TrainingMetrics, TrainingRequest, TrainingResponse, WeightSet
 )
-from data.training_data_manager import training_data_manager
+from v3_data.training_data_manager import training_data_manager
 
 logger = logging.getLogger(__name__)
 
