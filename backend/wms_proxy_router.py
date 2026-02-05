@@ -43,7 +43,7 @@ WMS_ERROR_TRACKING: Dict[str, Dict[str, Any]] = {}
 ERROR_THRESHOLD = 5  # Nombre d'erreurs avant de marquer comme indisponible
 ERROR_WINDOW = timedelta(minutes=10)  # Fenêtre de temps pour compter les erreurs
 
-# Services WMS autorisés (whitelist)
+# Services WMS autorisés (whitelist) avec fallbacks
 ALLOWED_WMS_HOSTS = [
     "servicescarto.mern.gouv.qc.ca",
     "servicescarto.mffp.gouv.qc.ca",
@@ -53,6 +53,51 @@ ALLOWED_WMS_HOSTS = [
     "hydro.nationalmap.gov",
     "geoegl.msp.gouv.qc.ca"
 ]
+
+# Configuration des sources avec fallbacks
+WMS_SOURCES_WITH_FALLBACK = {
+    "ecoforestry": {
+        "primary": {
+            "host": "servicescarto.mffp.gouv.qc.ca",
+            "url": "https://servicescarto.mffp.gouv.qc.ca/wms/carte_ecofor",
+            "layer": "carte_ecofor"
+        },
+        "fallbacks": [
+            {
+                "host": "ca.nfis.org",
+                "url": "https://ca.nfis.org/cgi-bin/mapserv?MAP=/maps/nfis/ecomap.map",
+                "layer": "ecoregions"
+            },
+            {
+                "host": "maps.geogratis.gc.ca",
+                "url": "https://maps.geogratis.gc.ca/wms/canvec_en",
+                "layer": "vegetation"
+            }
+        ]
+    },
+    "terrain": {
+        "primary": {
+            "host": "maps.geogratis.gc.ca",
+            "url": "https://maps.geogratis.gc.ca/wms/elevation",
+            "layer": "cdem"
+        },
+        "fallbacks": []
+    },
+    "hydro": {
+        "primary": {
+            "host": "hydro.nationalmap.gov",
+            "url": "https://hydro.nationalmap.gov/arcgis/services/nhd/MapServer/WMSServer",
+            "layer": "0"
+        },
+        "fallbacks": [
+            {
+                "host": "geoegl.msp.gouv.qc.ca",
+                "url": "https://geoegl.msp.gouv.qc.ca/ws/igo_gouvouvert.fcgi",
+                "layer": "Hydrographie"
+            }
+        ]
+    }
+}
 
 def is_host_allowed(url: str) -> bool:
     """Vérifie si l'hôte de l'URL est dans la whitelist"""
