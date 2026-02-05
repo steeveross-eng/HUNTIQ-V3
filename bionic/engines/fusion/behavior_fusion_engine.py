@@ -930,7 +930,8 @@ class BehaviorFusionEngine:
         
         if geo_data.get("pressure"):
             pressure_data = geo_data["pressure"]
-            if isinstance(pressure_data, dict) and pressure_data.get("score", {}).get("value", 50) >= 60:
+            pressure_score = self._extract_score(pressure_data)
+            if pressure_score is not None and pressure_score >= 60:
                 recommendations.append("👥 Pression de chasse élevée - Ajustez votre stratégie")
         
         # Behavior-based recommendations
