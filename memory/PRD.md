@@ -1174,11 +1174,12 @@ Tous les composants sont exportés depuis `/app/frontend/src/components/geospati
 - **Frontend Integration** : FusionScorePanel + useFusion hooks ✅
 - **Territory Page** : Nouvel onglet "Fusion" avec UI complète ✅
 
-### P3 - Intelligence Adaptative (v3.0) (PROCHAINE PRIORITÉ)
-- BehaviorEngine auto-calibrant avec ML supervisé
-- Ajustement automatique des pondérations selon les données
-- Apprentissage continu des patterns de chasse
-- Tests multi-espèces et multi-territoires
+### P3 - Intelligence Adaptative (v3.0) (COMPLÉTÉ ✅)
+- **BehaviorEngine v3.0** : Auto-calibration ML avec Gradient Boosting ✅
+- **CalibrationHistoryTracker** : Historique + Rollback ✅
+- **9 API Endpoints** : status, train, calibrate, weights, history, feedback, metrics ✅
+- **Frontend Integration** : BehaviorV3Panel + useBehaviorV3 hooks ✅
+- **Territory Page** : Nouvel onglet "ML v3" avec UI complète ✅
 
 ### P4 - UX & Produits
 - Tableau de bord dynamique
