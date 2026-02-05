@@ -216,9 +216,10 @@ const WaypointList = ({ waypoints, onDelete, onSelect, compact = false }) => {
                 </div>
               </motion.div>
             );
-        })}
-      </div>
-    </ScrollArea>
+          })}
+        </div>
+      </ScrollArea>
+    </div>
   );
 };
 
