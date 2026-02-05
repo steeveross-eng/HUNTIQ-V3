@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 5.2.0 (WMS Proxy Stabilisé)
+## Version: 5.3.0 (Interface Cartographique Stabilisée)
 ## Dernière mise à jour: 2026-02-05
 
 ---
