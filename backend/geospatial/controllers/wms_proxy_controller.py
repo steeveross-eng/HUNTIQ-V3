@@ -251,8 +251,7 @@ WMS_SOURCES = {
         "base_url": "https://maps.geogratis.gc.ca/wms/canvec_en",
         "layers": {
             "hydro": "hydro",
-            "transport": "transport",
-            "admin": "admin_boundaries"
+            "transport": "transport"
         },
         "srs": "EPSG:3857",
         "format": "image/png",
