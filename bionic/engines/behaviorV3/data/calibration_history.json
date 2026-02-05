@@ -1,6 +1,6 @@
 {
-  "total_calibrations": 7,
-  "active_calibration_id": "cal_334d3f08b4c9",
+  "total_calibrations": 8,
+  "active_calibration_id": "cal_b8bc82c4a9ce",
   "records": [
     {
       "id": "cal_c1ae7ee83499",
@@ -236,12 +236,46 @@
       "ml_model_version": "gradient_boosting_v1",
       "notes": "Auto-calibration for deer/quebec",
       "error_message": null,
+      "is_active": false,
+      "rolled_back_at": null,
+      "rollback_reason": null
+    },
+    {
+      "id": "cal_b8bc82c4a9ce",
+      "timestamp": "2026-02-05T17:07:54.720308+00:00",
+      "status": "completed",
+      "species": "deer",
+      "territory": "quebec",
+      "season": "winter",
+      "weights_before": {
+        "activity": 0.05,
+        "seasonal": 0.05,
+        "movement": 0.05,
+        "environmental": 0.4,
+        "temporal": 0.05,
+        "pressure": 0.4
+      },
+      "weights_after": {
+        "activity": 0.1739130434782609,
+        "seasonal": 0.04347826086956522,
+        "movement": 0.1739130434782609,
+        "environmental": 0.2173913043478261,
+        "temporal": 0.1739130434782609,
+        "pressure": 0.2173913043478261
+      },
+      "improvement_score": 25.0,
+      "confidence": 0.935,
+      "training_samples": 500,
+      "feedback_samples": 4,
+      "ml_model_version": "gradient_boosting_v1",
+      "notes": "Auto-calibration for deer/quebec",
+      "error_message": null,
       "is_active": true,
       "rolled_back_at": null,
       "rollback_reason": null
     }
   ],
-  "avg_improvement": 14.971428571428572,
+  "avg_improvement": 16.225,
   "total_rollbacks": 0,
   "success_rate": 100.0
 }
