@@ -7,6 +7,10 @@ import sys
 import logging
 import asyncio
 from pathlib import Path
+
+# Ensure /app/backend is in sys.path for module imports
+if '/app/backend' not in sys.path:
+    sys.path.insert(0, '/app/backend')
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
 from typing import List, Optional, Literal
 from pydantic import BaseModel, Field, ConfigDict
