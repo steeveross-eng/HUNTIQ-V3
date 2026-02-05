@@ -202,7 +202,6 @@ const LAYER_DISPLAY_NAMES = {
   // CanVec
   hydro: 'Hydrographie',
   transport: 'Transport',
-  admin: 'Limites admin.',
   // USGS
   topo: 'Topographie',
   // NOAA
