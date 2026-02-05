@@ -976,47 +976,70 @@ const WMSLayerSelector = ({
                     onClick={() => window.location.reload()}
                     className="mt-3 border-white/20"
                   >
-                    <RefreshCw className="h-4 w-4 mr-2" />
+                    <RefreshCw className="h-3 w-3 mr-1" />
                     Réessayer
                   </Button>
                 </div>
               )}
               
-              {/* Layer groups */}
+              {/* Layer groups with scroll controls */}
               {!loading && !error && (
-                <ScrollArea className="h-[280px] pr-2">
-                  <div className="space-y-2">
-                    {Object.entries(filteredGroups).map(([sourceId, layers]) => (
-                      <SourceGroup
-                        key={sourceId}
-                        sourceId={sourceId}
-                        layers={layers}
-                        activeLayers={activeLayers}
-                        layerOpacities={layerOpacities}
-                        onToggleLayer={handleToggleLayer}
-                        onOpacityChange={handleOpacityChange}
-                        onMoveLayer={handleMoveLayer}
-                      />
-                    ))}
-                    
-                    {Object.keys(filteredGroups).length === 0 && searchQuery && (
-                      <div className="text-center py-8">
-                        <Search className="h-8 w-8 text-gray-600 mx-auto mb-2" />
-                        <p className="text-gray-400 text-sm">Aucune couche trouvée</p>
-                        <p className="text-gray-600 text-xs mt-1">
-                          Essayez un autre terme de recherche
-                        </p>
-                      </div>
-                    )}
+                <div className="relative">
+                  {/* Scroll Up Button */}
+                  <button
+                    onClick={scrollUp}
+                    className="w-full h-5 flex items-center justify-center bg-black/50 hover:bg-black/70 text-gray-400 hover:text-white transition-colors rounded-t border-b border-white/5"
+                    title="Défiler vers le haut"
+                  >
+                    <ChevronUp className="h-3 w-3" />
+                  </button>
+                  
+                  {/* Scrollable Layer List */}
+                  <div 
+                    ref={scrollContainerRef}
+                    className="h-[160px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent"
+                    style={{ scrollBehavior: 'smooth' }}
+                  >
+                    <div className="space-y-1 py-1">
+                      {Object.entries(filteredGroups).map(([sourceId, layers]) => (
+                        <SourceGroup
+                          key={sourceId}
+                          sourceId={sourceId}
+                          layers={layers}
+                          activeLayers={activeLayers}
+                          layerOpacities={layerOpacities}
+                          onToggleLayer={handleToggleLayer}
+                          onOpacityChange={handleOpacityChange}
+                          onMoveLayer={handleMoveLayer}
+                          compact={true}
+                        />
+                      ))}
+                      
+                      {Object.keys(filteredGroups).length === 0 && searchQuery && (
+                        <div className="text-center py-4">
+                          <Search className="h-4 w-4 text-gray-600 mx-auto mb-1" />
+                          <p className="text-gray-400 text-[8px]">Aucun résultat</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </ScrollArea>
+                  
+                  {/* Scroll Down Button */}
+                  <button
+                    onClick={scrollDown}
+                    className="w-full h-5 flex items-center justify-center bg-black/50 hover:bg-black/70 text-gray-400 hover:text-white transition-colors rounded-b border-t border-white/5"
+                    title="Défiler vers le bas"
+                  >
+                    <ChevronDown className="h-3 w-3" />
+                  </button>
+                </div>
               )}
               
-              {/* Footer info */}
-              <div className="mt-3 pt-3 border-t border-white/5">
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span>{wmsConfig?.layers?.length || 0} couches disponibles</span>
-                  <span>Données: Open Data Québec</span>
+              {/* Footer info - Compact */}
+              <div className="mt-2 pt-2 border-t border-white/5">
+                <div className="flex items-center justify-between text-[7px] text-gray-500">
+                  <span>{wmsConfig?.layers?.length || 0} couches</span>
+                  <span>Open Data</span>
                 </div>
               </div>
             </CardContent>
