@@ -1,6 +1,6 @@
 {
-  "total_calibrations": 1,
-  "active_calibration_id": "cal_c1ae7ee83499",
+  "total_calibrations": 2,
+  "active_calibration_id": "cal_2a426836a3f2",
   "records": [
     {
       "id": "cal_c1ae7ee83499",
@@ -31,6 +31,40 @@
       "feedback_samples": 0,
       "ml_model_version": "gradient_boosting_v1",
       "notes": "Auto-calibration for moose/quebec",
+      "error_message": null,
+      "is_active": false,
+      "rolled_back_at": null,
+      "rollback_reason": null
+    },
+    {
+      "id": "cal_2a426836a3f2",
+      "timestamp": "2026-02-05T17:05:37.413789+00:00",
+      "status": "completed",
+      "species": "deer",
+      "territory": "quebec",
+      "season": "fall",
+      "weights_before": {
+        "activity": 0.06250000000000001,
+        "seasonal": 0.06250000000000001,
+        "movement": 0.0625,
+        "environmental": 0.43749999999999994,
+        "temporal": 0.0625,
+        "pressure": 0.3125
+      },
+      "weights_after": {
+        "activity": 0.14003235596103644,
+        "seasonal": 0.05052177460195981,
+        "movement": 0.21471754205832916,
+        "environmental": 0.29050020396126885,
+        "temporal": 0.14003235596103644,
+        "pressure": 0.16419576745636935
+      },
+      "improvement_score": 25.0,
+      "confidence": 0.931,
+      "training_samples": 500,
+      "feedback_samples": 0,
+      "ml_model_version": "gradient_boosting_v1",
+      "notes": "Auto-calibration for deer/quebec",
       "error_message": null,
       "is_active": true,
       "rolled_back_at": null,
