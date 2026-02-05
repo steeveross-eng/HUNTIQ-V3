@@ -684,8 +684,13 @@ const WMSLayerSelector = ({
     }
   }, [activeLayers, addLayerToMap, removeLayerFromMap, onLayerChange]);
   
-  // Change layer opacity
+  // Change layer opacity (blocked for fixed opacity layers)
   const handleOpacityChange = useCallback((layerId, opacity) => {
+    // Don't allow opacity changes for fixed opacity layers
+    if (FIXED_OPACITY_LAYERS[layerId]) {
+      return;
+    }
+    
     setLayerOpacities(prev => ({ ...prev, [layerId]: opacity }));
     
     if (map && map.getLayer(layerId)) {
