@@ -171,17 +171,6 @@ class LayerPrioritySystem {
         });
       }
     }
-    } else if (conflicts.conflictsWith) {
-      for (const conflictId of conflicts.conflictsWith) {
-        if (currentLayers.includes(conflictId)) {
-          activeConflicts.push({
-            layerId: conflictId,
-            resolution: 'reduce_opacity',
-            suggestedOpacity: 0.3
-          });
-        }
-      }
-    }
     
     return activeConflicts;
   }
