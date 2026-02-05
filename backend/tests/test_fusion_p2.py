@@ -474,13 +474,15 @@ class TestFusionModes:
         
     def test_geo_dominant_mode(self):
         """Geo dominant mode returns valid data"""
+        # Use caribou which has geo_suite=0.6 by default, so geo_dominant should increase it further
         response = requests.get(
             f"{BASE_URL}/api/bionic/fusion/weights",
-            params={"species": "deer", "territory": "quebec", "mode": "geo_dominant"}
+            params={"species": "caribou", "territory": "quebec", "mode": "geo_dominant"}
         )
         data = response.json()
         assert response.status_code == 200
         suite = data["weights"]["suite_weights"]
+        # Caribou with geo_dominant should have geo_suite > behavior_suite
         assert suite["geo_suite"] > suite["behavior_suite"]
         
     def test_behavior_dominant_mode(self):
