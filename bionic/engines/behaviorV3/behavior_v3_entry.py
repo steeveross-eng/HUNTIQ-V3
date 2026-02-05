@@ -12,8 +12,11 @@ import os
 # ÉTAPE 1: Configurer le path AVANT tout import
 # ========================================
 _BASE_PATH = '/app/bionic/engines/behaviorV3'
-if _BASE_PATH not in sys.path:
-    sys.path.insert(0, _BASE_PATH)
+
+# IMPORTANT: Insert at position 0 to override any other 'core' module
+if _BASE_PATH in sys.path:
+    sys.path.remove(_BASE_PATH)
+sys.path.insert(0, _BASE_PATH)
 
 # ========================================
 # ÉTAPE 2: Imports des sous-modules (après config path)
