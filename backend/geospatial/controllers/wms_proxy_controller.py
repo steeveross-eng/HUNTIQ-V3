@@ -213,24 +213,6 @@ WMS_SOURCES = {
         "data_source": "MFFP Québec - 5e inventaire écoforestier",
         "use_cases": ["Qualité habitat", "Nourriture gibier", "Couvert thermique"]
     },
-    # Données Québec ouvertes - Limites administratives
-    "quebec_admin": {
-        "name": "Limites administratives Québec",
-        "description": "MRC, municipalités, régions administratives",
-        "base_url": "https://servicescarto.mern.gouv.qc.ca/pes/services/Territoire/SDA_WMS/MapServer/WMSServer",
-        "layers": {
-            "mrc": "0",
-            "municipalities": "1",
-            "regions": "2"
-        },
-        "srs": "EPSG:3857",
-        "format": "image/png",
-        "version": "1.3.0",
-        "status": "auth_required",
-        "auth_provider": "mern",
-        "status_reason": "Authentification requise",
-        "data_source": "MERN Québec"
-    },
     # OSM WMS - Fully available (fallback/reference)
     "osm": {
         "name": "OpenStreetMap WMS",
