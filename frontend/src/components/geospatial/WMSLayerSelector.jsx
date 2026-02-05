@@ -319,7 +319,7 @@ const LayerItem = ({
 };
 
 /**
- * Source group component
+ * Source group component - Compact version
  */
 const SourceGroup = ({ 
   sourceId, 
@@ -328,7 +328,8 @@ const SourceGroup = ({
   layerOpacities,
   onToggleLayer,
   onOpacityChange,
-  onMoveLayer 
+  onMoveLayer,
+  compact = false
 }) => {
   const [expanded, setExpanded] = useState(true);
   const sourceInfo = SOURCE_ICONS[sourceId] || SOURCE_ICONS.default;
@@ -337,33 +338,33 @@ const SourceGroup = ({
   
   return (
     <div className="border border-white/5 rounded-sm overflow-hidden">
-      {/* Group header */}
+      {/* Group header - Compact */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full p-3 flex items-center justify-between bg-black/40 hover:bg-black/60 transition-colors"
+        className="w-full px-2 py-1 flex items-center justify-between bg-black/40 hover:bg-black/60 transition-colors"
       >
-        <div className="flex items-center gap-2">
-          <Icon className={`h-4 w-4 ${sourceInfo.color}`} />
-          <span className="text-sm text-white font-medium">
+        <div className="flex items-center gap-1">
+          <Icon className={`h-3 w-3 ${sourceInfo.color}`} />
+          <span className="text-[9px] text-white font-medium truncate max-w-[80px]">
             {SOURCE_NAMES[sourceId] || sourceId}
           </span>
           {activeCount > 0 && (
-            <Badge className="bg-[#f5a623]/20 text-[#f5a623] text-xs">
+            <Badge className="bg-[#f5a623]/20 text-[#f5a623] text-[7px] px-1 py-0">
               {activeCount}
             </Badge>
           )}
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500">{layers.length} couches</span>
+        <div className="flex items-center gap-1">
+          <span className="text-[7px] text-gray-500">{layers.length}</span>
           {expanded ? (
-            <ChevronUp className="h-4 w-4 text-gray-400" />
+            <ChevronUp className="h-2.5 w-2.5 text-gray-400" />
           ) : (
-            <ChevronDown className="h-4 w-4 text-gray-400" />
+            <ChevronDown className="h-2.5 w-2.5 text-gray-400" />
           )}
         </div>
       </button>
       
-      {/* Layers */}
+      {/* Layers - Compact */}
       <AnimatePresence>
         {expanded && (
           <motion.div
@@ -372,7 +373,7 @@ const SourceGroup = ({
             exit={{ height: 0 }}
             className="overflow-hidden"
           >
-            <div className="p-2 space-y-2 bg-black/20">
+            <div className="px-1.5 py-1 space-y-0.5 bg-black/20">
               {layers.map((layer, index) => {
                 const isActive = activeLayers.includes(layer.id);
                 const activeIndex = activeLayers.indexOf(layer.id);
@@ -389,6 +390,7 @@ const SourceGroup = ({
                     onMoveDown={() => onMoveLayer(layer.id, 1)}
                     canMoveUp={isActive && activeIndex > 0}
                     canMoveDown={isActive && activeIndex < activeLayers.length - 1}
+                    compact={true}
                   />
                 );
               })}
