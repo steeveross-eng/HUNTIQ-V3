@@ -1472,7 +1472,21 @@ Implémentation complète du **BehaviorEngine v3.0** avec Machine Learning super
 
 ---
 
-## 12. Infrastructure Couches Québec (Préparée - 2026-02-05)
+## 12. Documents de Certification Livrés (2026-02-05)
+
+### Documents générés:
+| Document | Fichier | Description |
+|----------|---------|-------------|
+| Schéma d'architecture | `/app/memory/ARCHITECTURE_SCHEMA.md` | Architecture technique complète avec diagrammes |
+| Certificat de conformité | `/app/memory/CONFORMITY_CERTIFICATE.md` | Attestation de conformité fonctionnelle et technique |
+| Checklist de livraison | `/app/memory/DELIVERY_CHECKLIST.md` | Validation pré-livraison avec tous les critères |
+
+### Correction appliquée:
+- Suppression du label orphelin "Limites admin." du sélecteur WMS frontend
+
+---
+
+## 13. Infrastructure Couches Québec (Préparée - 2026-02-05)
 
 L'infrastructure backend est prête pour les couches WMS gouvernementales du Québec.
 
