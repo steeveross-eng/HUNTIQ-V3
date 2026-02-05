@@ -4702,7 +4702,7 @@ try:
     if _p3_path not in _sys.path:
         _sys.path.insert(0, _p3_path)
     
-    from loader import behavior_v3_router
+    from behavior_v3_entry import behavior_v3_router
     app.include_router(behavior_v3_router)
     print("BIONIC™ P3 BehaviorEngine v3.0 loaded - ML auto-calibration active")
 except Exception as e:
