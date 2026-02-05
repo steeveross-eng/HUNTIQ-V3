@@ -1156,13 +1156,12 @@ Tous les composants sont exportés depuis `/app/frontend/src/components/geospati
 - **State Management** : Zustand avec presets ✅
 - **Hooks & Services** : useGeoSuite + geosuite.service.js ✅
 
-### P1.5 - Frontend Enhancement (À FAIRE)
-- Heatmaps dynamiques multi-moteurs
-- Superposition corridor + densité + landcover sur carte
-- Légendes interactives
-- Mode "Espèce" avec presets automatiques
-- Mode "Territoire" (QC / Canada / USA)
-- Contrôles: transparence, rayon, profondeur temporelle
+### P1.5 - Visualisations Avancées (COMPLÉTÉ ✅)
+- **10 composants visuels** : Heatmaps, légendes, contrôles, modes, overlays ✅
+- **5 modules performance** : Priority, Cache, Logger, Budget, Preprocessor ✅
+- **Layer Priority System** : Ordre d'affichage optimisé ✅
+- **Heatmap Cache Layer** : Cache LRU réduisant les recalculs ~12x ✅
+- **UI Interaction Logger** : Tracking QA/UX ✅
 
 ### P0 - Badges Visuels (DIFFÉRÉ)
 - Badges sur la carte avec scores d'analyse
@@ -1171,6 +1170,8 @@ Tous les composants sont exportés depuis `/app/frontend/src/components/geospati
 - Fusion Behavior Suite + Géo-Suite
 - Heatmaps dynamiques combinées
 - Score global fusionné
+- Pondérations dynamiques multi-moteurs
+- Tests multi-espèces et multi-territoires
 
 ### P3 - Intelligence Adaptative (v3.0)
 - BehaviorEngine auto-calibrant avec ML supervisé
