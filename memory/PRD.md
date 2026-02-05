@@ -1121,4 +1121,3 @@ Intégration complète du frontend React pour la Géo-Suite P1 avec composants m
 
 *HUNTIQ V3 BIONIC™ - Powered by GPT-5.2 & Emergent Platform*
 *La chasse réinventée au Québec 🦌*
-
