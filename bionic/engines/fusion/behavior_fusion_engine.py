@@ -545,25 +545,23 @@ class BehaviorFusionEngine:
         self, lat: float, lon: float, species: str, territory: str, radius_km: float
     ) -> Dict[str, Any]:
         """Fetch data from Geo-Suite engines."""
-        # Import here to avoid circular imports
-        from geospatial import (
-            corridorEngine,
-            landcoverEngine,
-            nutritionEngine,
-            populationDensityEngine,
-            huntingPressureModule
-        )
-        
         results = {}
         
         try:
+            # Import engines locally
+            from geospatial.corridor_engine import corridor_engine
+            from geospatial.landcover_engine import landcover_engine
+            from geospatial.nutrition_engine import nutrition_engine
+            from geospatial.population_density_engine import population_density_engine
+            from geospatial.hunting_pressure_module import hunting_pressure_module
+            
             # Run all geo engines in parallel
             tasks = [
-                corridorEngine.analyze(lat, lon, radius_km, species),
-                landcoverEngine.analyze(lat, lon, radius_km),
-                nutritionEngine.analyze(lat, lon, species, radius_km),
-                populationDensityEngine.analyze(lat, lon, species),
-                huntingPressureModule.analyze(lat, lon)
+                corridor_engine.analyze(lat, lon, radius_km, species),
+                landcover_engine.analyze(lat, lon, radius_km),
+                nutrition_engine.analyze(lat, lon, species, radius_km),
+                population_density_engine.analyze(lat, lon, species),
+                hunting_pressure_module.analyze(lat, lon)
             ]
             
             engine_results = await asyncio.gather(*tasks, return_exceptions=True)
