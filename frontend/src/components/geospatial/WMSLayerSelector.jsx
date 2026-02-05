@@ -734,30 +734,45 @@ const WMSLayerSelector = ({
   
   // Panel position styles
   const positionStyles = position === 'left' 
-    ? 'left-4 top-4'
-    : 'right-4 top-4';
+    ? 'left-2 top-2'
+    : 'right-2 top-2';
+  
+  // Scroll controls ref
+  const scrollContainerRef = React.useRef(null);
+  
+  const scrollUp = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop -= 100;
+    }
+  };
+  
+  const scrollDown = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop += 100;
+    }
+  };
   
   return (
-    <Card className={`absolute ${positionStyles} z-10 w-72 max-h-[calc(100vh-250px)] bg-black/95 border-white/10 backdrop-blur-md shadow-xl overflow-hidden`}>
-      <CardHeader className="pb-2">
+    <Card className={`absolute ${positionStyles} z-10 w-48 max-h-[55vh] bg-black/95 border-white/10 backdrop-blur-md shadow-lg overflow-hidden`}>
+      <CardHeader className="py-1.5 px-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Layers className="h-5 w-5 text-[#f5a623]" />
-            <CardTitle className="text-sm text-white">Couches WMS BIONIC™</CardTitle>
-          </div>
           <div className="flex items-center gap-1">
+            <Layers className="h-3.5 w-3.5 text-[#f5a623]" />
+            <CardTitle className="text-[10px] text-white font-medium">Couches WMS</CardTitle>
+          </div>
+          <div className="flex items-center gap-0.5">
             {activeLayers.length > 0 && (
-              <Badge className="bg-[#f5a623]/20 text-[#f5a623] text-xs mr-2">
-                {activeLayers.length} active{activeLayers.length > 1 ? 's' : ''}
+              <Badge className="bg-[#f5a623]/20 text-[#f5a623] text-[8px] px-1 py-0 mr-1">
+                {activeLayers.length}
               </Badge>
             )}
             <Button
               size="sm"
               variant="ghost"
-              className="h-6 w-6 p-0 text-gray-400 hover:text-white"
+              className="h-5 w-5 p-0 text-gray-400 hover:text-white"
               onClick={() => setExpanded(!expanded)}
             >
-              {expanded ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+              {expanded ? <Minus className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
             </Button>
           </div>
         </div>
@@ -771,13 +786,16 @@ const WMSLayerSelector = ({
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <CardContent className="pt-2">
-              {/* Species Preset Selector */}
-              <SpeciesPresetSelector
-                onApplyPreset={handleApplyPreset}
-                currentPreset={currentPreset}
-                disabled={loading}
-              />
+            <CardContent className="pt-1 px-2 pb-2">
+              {/* Species Preset Selector - Compact */}
+              <div className="mb-2">
+                <SpeciesPresetSelector
+                  onApplyPreset={handleApplyPreset}
+                  currentPreset={currentPreset}
+                  disabled={loading}
+                  compact={true}
+                />
+              </div>
               
               {/* Base Map Selector */}
               <div className="mb-3 pb-3 border-b border-white/5">
