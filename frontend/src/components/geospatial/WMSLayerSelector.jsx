@@ -762,7 +762,7 @@ const WMSLayerSelector = ({
   };
   
   return (
-    <Card className={`absolute ${positionStyles} z-10 w-48 max-h-[55vh] bg-black/95 border-white/10 backdrop-blur-md shadow-lg overflow-hidden`}>
+    <Card className={`absolute ${positionStyles} z-10 w-48 max-h-[70vh] bg-black/95 border-white/10 backdrop-blur-md shadow-lg overflow-hidden`}>
       <CardHeader className="py-1.5 px-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
