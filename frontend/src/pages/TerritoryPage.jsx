@@ -517,14 +517,14 @@ const TerritoryPage = () => {
       </div>
 
       {/* Main content */}
-      <div className="max-w-[1800px] mx-auto p-4">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-          {/* Map - 3 columns */}
-          <div className="lg:col-span-3">
+      <div className="max-w-[1920px] mx-auto p-4">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+          {/* Map - 4 columns (80% width) */}
+          <div className="lg:col-span-4">
             <Card className="bg-[#1a1a1a] border-white/10 overflow-hidden">
               <CardContent className="p-0">
                 <TerritoryMap
-                  height="calc(100vh - 200px)"
+                  height="calc(100vh - 180px)"
                   onLocationSelect={handleLocationSelect}
                   waypoints={waypoints}
                   showLayerPanel={true}
@@ -533,8 +533,8 @@ const TerritoryPage = () => {
             </Card>
           </div>
 
-          {/* Sidebar - 1 column */}
-          <div className="space-y-4">
+          {/* Sidebar - 1 column (20% width) */}
+          <div className="space-y-3 max-h-[calc(100vh-180px)] overflow-y-auto">
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="w-full bg-black/40 border border-white/10">
