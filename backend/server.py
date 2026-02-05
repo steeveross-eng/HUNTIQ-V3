@@ -4662,6 +4662,14 @@ try:
 except ImportError as e:
     print(f"P0-3 Integration module not available: {e}")
 
+# Include BIONIC™ Coherence Optimization
+try:
+    from behavior.api.optimization_endpoints import optimization_router
+    app.include_router(optimization_router)
+    print("BIONIC™ Coherence Optimization loaded")
+except ImportError as e:
+    print(f"Coherence Optimization not available: {e}")
+
 # Include BIONIC™ Current Conditions (P0-2 - Panneau Conditions Actuelles)
 try:
     from conditions.api.endpoints import conditions_router
