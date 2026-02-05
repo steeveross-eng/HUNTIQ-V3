@@ -391,6 +391,10 @@ const SpeciesPresetSelector = ({
   const [selectedSpecies, setSelectedSpecies] = useState(currentPreset || '');
   
   const handlePresetChange = (speciesKey) => {
+    if (speciesKey === '__none__') {
+      setSelectedSpecies('');
+      return;
+    }
     setSelectedSpecies(speciesKey);
     if (speciesKey && SPECIES_PRESETS[speciesKey]) {
       onApplyPreset(speciesKey, SPECIES_PRESETS[speciesKey]);
