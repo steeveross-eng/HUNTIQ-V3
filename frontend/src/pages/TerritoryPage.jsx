@@ -535,62 +535,64 @@ const TerritoryPage = () => {
 
           {/* Sidebar - 1 column (17% width) - Compact */}
           <div className="space-y-2 max-h-[calc(100vh-140px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
-            {/* Tabs */}
+            {/* Tabs - Compact */}
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="w-full bg-black/40 border border-white/10">
-                <TabsTrigger value="map" className="flex-1 data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  Waypoints
+              <TabsList className="w-full bg-black/40 border border-white/10 h-7">
+                <TabsTrigger value="map" className="flex-1 text-[8px] data-[state=active]:bg-[#f5a623] data-[state=active]:text-black h-6">
+                  <MapPin className="h-3 w-3 mr-0.5" />
+                  Points
                 </TabsTrigger>
-                <TabsTrigger value="score" className="flex-1 data-[state=active]:bg-[#f5a623] data-[state=active]:text-black">
-                  <Target className="h-4 w-4 mr-1" />
+                <TabsTrigger value="score" className="flex-1 text-[8px] data-[state=active]:bg-[#f5a623] data-[state=active]:text-black h-6">
+                  <Target className="h-3 w-3 mr-0.5" />
                   Score
                 </TabsTrigger>
-                <TabsTrigger value="fusion" className="flex-1 data-[state=active]:bg-purple-500 data-[state=active]:text-white">
-                  <span className="mr-1">🔮</span>
+                <TabsTrigger value="fusion" className="flex-1 text-[8px] data-[state=active]:bg-purple-500 data-[state=active]:text-white h-6">
+                  <span className="mr-0.5 text-[9px]">🔮</span>
                   Fusion
                 </TabsTrigger>
-                <TabsTrigger value="behaviorv3" className="flex-1 data-[state=active]:bg-amber-500 data-[state=active]:text-black">
-                  <span className="mr-1">🧠</span>
-                  ML v3
+                <TabsTrigger value="behaviorv3" className="flex-1 text-[8px] data-[state=active]:bg-amber-500 data-[state=active]:text-black h-6">
+                  <span className="mr-0.5 text-[9px]">🧠</span>
+                  ML
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="map" className="mt-4 space-y-4">
-                {/* Add waypoint form */}
+              <TabsContent value="map" className="mt-2 space-y-2">
+                {/* Add waypoint form - Compact */}
                 <Card className="bg-[#1a1a1a] border-white/10">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2">
-                      <Plus className="h-5 w-5 text-[#f5a623]" />
-                      <CardTitle className="text-sm text-white">Nouveau Waypoint</CardTitle>
+                  <CardHeader className="py-1.5 px-2">
+                    <div className="flex items-center gap-1">
+                      <Plus className="h-3 w-3 text-[#f5a623]" />
+                      <CardTitle className="text-[9px] text-white">Nouveau Waypoint</CardTitle>
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="px-2 pb-2 pt-0">
                     <WaypointForm
                       onAdd={handleAddWaypoint}
                       selectedLocation={selectedLocation}
+                      compact={true}
                     />
                   </CardContent>
                 </Card>
 
-                {/* Waypoint list */}
+                {/* Waypoint list - Compact */}
                 <Card className="bg-[#1a1a1a] border-white/10">
-                  <CardHeader className="pb-2">
+                  <CardHeader className="py-1.5 px-2">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-5 w-5 text-[#f5a623]" />
-                        <CardTitle className="text-sm text-white">Mes Waypoints</CardTitle>
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-3 w-3 text-[#f5a623]" />
+                        <CardTitle className="text-[9px] text-white">Mes Waypoints</CardTitle>
                       </div>
-                      <Badge className="bg-white/5 text-gray-400 text-xs">
+                      <Badge className="bg-white/5 text-gray-400 text-[7px] px-1 py-0">
                         {waypoints.length}
                       </Badge>
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="px-2 pb-2 pt-0">
                     <WaypointList
                       waypoints={waypoints}
                       onDelete={handleDeleteWaypoint}
                       onSelect={handleSelectWaypoint}
+                      compact={true}
                     />
                   </CardContent>
                 </Card>
