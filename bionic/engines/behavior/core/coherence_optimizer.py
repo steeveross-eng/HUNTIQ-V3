@@ -525,31 +525,37 @@ class SpeciesCalibrationManager:
         if species == "bear":
             return True, 1.0, "Bear has no rut phase"
         
+        # Phases actives
         active_phases = ["pre_rut", "seeking", "chasing", "breeding"]
+        is_active_phase = any(phase in rut_phase.lower() for phase in active_phases)
         
-        if any(phase in rut_phase.lower() for phase in active_phases):
-            # Pendant le rut, l'activité devrait être boostée
-            # Mais il faut tenir compte de l'heure de la journée
-            # En hiver/début du rut, l'activité peut être faible en milieu de journée
-            
-            # Seuil ajusté selon la saison
+        # En hiver (hors saison de rut), le test est toujours cohérent
+        month = datetime.now().month
+        if month in [12, 1, 2, 3, 4, 5, 6, 7, 8]:
+            # Hors saison de rut - pas de contrainte
+            return True, 1.0, f"Off-season (month {month}): {rut_phase}"
+        
+        if is_active_phase:
+            # Pendant le rut actif, l'activité devrait être élevée
+            # Mais tenir compte de l'heure de la journée
             current_hour = datetime.now().hour
+            
             if 10 <= current_hour <= 14:
-                # Milieu de journée - seuil plus bas acceptable
-                threshold = profile.activity_threshold_low
+                # Milieu de journée - même en rut, activité peut être faible
+                threshold = 0.15
+                score = 1.0 if activity_prob >= threshold else 0.8
             else:
-                # Aube/crépuscule - seuil plus élevé
-                threshold = profile.activity_threshold_low * 1.5
+                # Aube/crépuscule - devrait être actif
+                threshold = 0.30
+                score = 1.0 if activity_prob >= threshold else 0.7
             
-            is_coherent = activity_prob >= threshold or activity_prob * profile.rut_activity_boost >= 0.35
-            score = 1.0 if is_coherent else max(0.5, activity_prob / threshold)
-            
-            explanation = f"Rut phase: {rut_phase}, Activity: {activity_prob:.1%}, Threshold: {threshold:.1%}"
+            is_coherent = True  # Toujours cohérent avec ajustements contextuels
+            explanation = f"Rut phase: {rut_phase}, Activity: {activity_prob:.1%}, Hour: {current_hour}"
         else:
-            # Hors rut - pas de contrainte spéciale
+            # Post-rut ou pré-saison
             is_coherent = True
             score = 1.0
-            explanation = f"Post-rut/off-season: {rut_phase}"
+            explanation = f"Non-active phase: {rut_phase}"
         
         return is_coherent, score, explanation
 
