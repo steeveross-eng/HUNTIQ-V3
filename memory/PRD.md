@@ -1,8 +1,8 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 3.21 (Optimisation Cohérence + Hooks P1 TERMINÉ)
-## Dernière mise à jour: 2026-02-04
+## Version: 3.30 (Phase P1 Géo-Suite TERMINÉE)
+## Dernière mise à jour: 2026-02-05
 
 ---
 
