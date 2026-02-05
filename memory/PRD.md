@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 5.1.0 (Fondations Verrouillées)
+## Version: 5.2.0 (WMS Proxy Stabilisé)
 ## Dernière mise à jour: 2026-02-05
 
 ---
@@ -24,6 +24,13 @@ Fusionner HUNTIQ V1 et V2 + Intégrer l'IA GPT-5.2 pour l'analyse d'attractants 
 - **Base de données**: MongoDB
 - **IA**: GPT-5.2 via Emergent LLM Key
 - **Hébergement**: Emergent Platform
+
+### ⚠️ IMPORTANT - Conflit de Namespace Geospatial
+Il existe 2 modules Python nommés `geospatial`:
+- `/app/backend/geospatial/` - Module backend avec WMS Proxy (50 endpoints)
+- `/app/bionic/engines/geospatial/` - P1 Géo-Suite (5 engines)
+
+Pour éviter les conflits d'import, `server.py` utilise `importlib` et nettoie `sys.modules` avant chaque import.
 
 ### Architecture Services (NOUVEAU)
 ```
