@@ -1072,6 +1072,71 @@ Intégration complète du frontend React pour la Géo-Suite P1 avec composants m
 
 ---
 
+### 2026-02-05 - Phase P1.5: Visualisations Avancées ✅
+
+#### Résumé
+Implémentation complète des **visualisations avancées P1.5** pour la Géo-Suite. Cette phase finalise l'interface utilisateur avec des heatmaps dynamiques, la superposition de couches, les légendes interactives, et les modes Espèce/Territoire. Tous les composants sont **P2-Ready** pour BehaviorFusionEngine.
+
+#### Composants Créés (10 composants)
+```
+/app/frontend/src/components/geospatial/
+├── HeatmapRenderer.jsx               # Rendu heatmaps (Canvas + SVG)
+├── InteractiveLegend.jsx             # Légendes interactives avec contrôles
+├── LayerControlsAdvanced.jsx         # Contrôles UI (transparence, rayon, temps)
+├── LayerOverlayPanel.jsx             # Panneau de superposition des couches
+├── SpeciesModePanel.jsx              # Mode "Espèce" avec préréglages
+├── TerritoryModePanel.jsx            # Mode "Territoire" (QC/Canada/USA)
+├── FusionScorePlaceholder.jsx        # Placeholder P2 (BehaviorFusionEngine)
+├── AdvancedVisualizationPanel.jsx    # Orchestrateur principal P1.5
+├── LayerOrchestrationEngine.js       # Moteur d'orchestration des couches
+└── performance/
+    ├── PerformanceBudget.js          # Budgets FPS/mémoire/réseau
+    ├── HeatmapPreprocessor.js        # Prétraitement des heatmaps
+    ├── LayerPrioritySystem.js        # Système de priorité des couches
+    ├── HeatmapCacheLayer.js          # Cache LRU pour heatmaps
+    └── UIInteractionLogger.js        # Logger d'interactions UX/QA
+```
+
+#### Fonctionnalités P1.5
+| Feature | Description |
+|---------|-------------|
+| **Heatmaps dynamiques** | Multi-moteurs avec Canvas et SVG renderers, auto-sélection |
+| **Superposition de couches** | corridor > densité > landcover avec ordre de priorité |
+| **Légendes interactives** | Gradient bars, opacity controls, expand/collapse |
+| **Mode Espèce** | 6 espèces avec préréglages automatiques des couches |
+| **Mode Territoire** | Québec, Canada, USA avec détection automatique |
+| **Contrôles avancés** | Transparence, rayon d'analyse, profondeur temporelle |
+| **Layer Priority System** | Gestion de l'ordre d'affichage (z-index, blend modes) |
+| **Heatmap Cache** | LRU avec 100 entrées, TTL 5min, 50MB max |
+| **UI Interaction Logger** | Tracking QA, patterns d'utilisation |
+
+#### Ajouts Stratégiques (3 modules)
+| Module | Description |
+|--------|-------------|
+| **LayerPrioritySystem** | Ordonne les couches (corridor=100, pressure=90, nutrition=70, population=60, landcover=10) |
+| **HeatmapCacheLayer** | Cache LRU intelligent réduisant les recalculs de ~12x |
+| **UIInteractionLogger** | Logger d'interactions avec 20+ types d'événements pour QA |
+
+#### Architecture P2-Ready
+- **FusionScorePlaceholder.jsx** : Prêt pour recevoir les scores fusionnés Geo+Behavior
+- **getFusionOutput()** : Méthode dans le store Zustand pour la fusion
+- **FusionInterface** : Défini dans `unified_output.py`
+- **Hooks de fusion** : Tous les moteurs exposent les données via Unified Output Contracts
+
+#### Tests
+- **15/15 tests passés** (100%)
+  - Backend: 13/13 API tests
+  - Frontend: 2/2 component tests
+- Voir `/app/test_reports/iteration_19.json`
+
+#### Export Centralisé
+Tous les composants sont exportés depuis `/app/frontend/src/components/geospatial/index.js`:
+- 10 composants visuels
+- 5 modules de performance
+- Hooks et singletons
+
+---
+
 ## 4. Prochaines Étapes (P1+)
 
 ### P0 - Behavior Suite (COMPLÉTÉ ✅)
