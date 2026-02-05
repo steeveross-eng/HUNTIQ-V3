@@ -380,12 +380,13 @@ const SourceGroup = ({
 };
 
 /**
- * Species Preset Selector Component
+ * Species Preset Selector Component - Ultra Compact Version
  */
 const SpeciesPresetSelector = ({ 
   onApplyPreset, 
   currentPreset, 
-  disabled 
+  disabled,
+  compact = false
 }) => {
   const [selectedSpecies, setSelectedSpecies] = useState(currentPreset || '');
   
@@ -396,6 +397,35 @@ const SpeciesPresetSelector = ({
     }
   };
   
+  // Ultra-compact inline version
+  if (compact) {
+    return (
+      <div className="flex items-center gap-1.5 p-1.5 bg-[#f5a623]/5 rounded-sm border border-[#f5a623]/10">
+        <Target className="h-3 w-3 text-[#f5a623] flex-shrink-0" />
+        <Select value={selectedSpecies} onValueChange={handlePresetChange} disabled={disabled}>
+          <SelectTrigger className="bg-black/40 border-white/10 text-white text-[8px] h-5 flex-1 min-w-0">
+            <SelectValue placeholder="Gibier..." />
+          </SelectTrigger>
+          <SelectContent className="bg-[#1a1a1a] border-white/10">
+            <SelectItem value="" className="text-white text-[9px]">
+              <span className="text-gray-400">Aucun</span>
+            </SelectItem>
+            {Object.entries(SPECIES_PRESETS).map(([key, preset]) => (
+              <SelectItem key={key} value={key} className="text-white text-[9px]">
+                <div className="flex items-center gap-1">
+                  <span className="text-xs">{preset.icon}</span>
+                  <span>{preset.name}</span>
+                  <span className="text-[7px] text-gray-500">({preset.layers.length})</span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    );
+  }
+  
+  // Standard version (non-compact)
   return (
     <div className="p-3 bg-gradient-to-r from-[#f5a623]/10 to-transparent rounded-sm border border-[#f5a623]/20 mb-3">
       <div className="flex items-center gap-2 mb-2">
