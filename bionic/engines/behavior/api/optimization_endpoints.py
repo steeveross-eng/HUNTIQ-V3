@@ -242,10 +242,21 @@ async def get_p1_fusion_hooks():
     """
     Get the pre-fusion hooks ready for P1 geospatial engines.
     """
+    # Convert type objects to string representations for JSON serialization
+    expected_engines = {}
+    for engine_name, engine_data in GeospatialFusionHooks.EXPECTED_P1_ENGINES.items():
+        expected_engines[engine_name] = {
+            "output_format": {
+                k: v.__name__ if isinstance(v, type) else str(v)
+                for k, v in engine_data["output_format"].items()
+            },
+            "fusion_weights": engine_data["fusion_weights"]
+        }
+    
     return {
         "hooks_version": "1.0.0",
         "ready_for_p1": True,
-        "expected_engines": GeospatialFusionHooks.EXPECTED_P1_ENGINES,
+        "expected_engines": expected_engines,
         "fusion_interface": {
             "input_format": "prepare_fusion_input()",
             "prefusion_coherence": "calculate_prefusion_coherence()",
