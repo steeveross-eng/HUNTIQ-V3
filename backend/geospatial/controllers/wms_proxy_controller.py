@@ -327,30 +327,50 @@ class WMSProxyController:
         """Get WMS source configuration"""
         return self.sources.get(source_id)
     
-    def list_sources(self, include_unavailable: bool = False) -> list:
+    def list_sources(self, include_unavailable: bool = False, include_auth_required: bool = False) -> list:
         """List WMS sources
         
         Args:
             include_unavailable: If True, include sources that are not currently accessible
+            include_auth_required: If True, include sources that need authentication
         
         Returns:
             List of source info dicts
         """
         sources = []
+        credentials_status = check_quebec_credentials_status()
+        
         for source_id, config in self.sources.items():
             status = config.get("status", "available")
             
             # Skip unavailable sources unless explicitly requested
-            if not include_unavailable and status == "unavailable":
+            if status == "unavailable" and not include_unavailable:
                 continue
+            
+            # Handle auth_required sources
+            if status == "auth_required":
+                auth_provider = config.get("auth_provider")
+                if auth_provider and credentials_status.get(auth_provider, {}).get("configured"):
+                    # Credentials are configured, mark as available
+                    actual_status = "available"
+                elif include_auth_required:
+                    actual_status = "auth_required"
+                else:
+                    continue
+            else:
+                actual_status = status
                 
             sources.append({
                 "id": source_id,
                 "name": config["name"],
+                "description": config.get("description", ""),
                 "layers": list(config["layers"].keys()),
                 "requires_key": config.get("requires_key", False),
-                "status": status,
-                "status_reason": config.get("status_reason", None)
+                "status": actual_status,
+                "status_reason": config.get("status_reason", None),
+                "auth_provider": config.get("auth_provider"),
+                "data_source": config.get("data_source"),
+                "use_cases": config.get("use_cases", [])
             })
         
         return sources
