@@ -1,67 +1,85 @@
 <analysis>**original_problem_statement:**
-L'utilisateur a demandé le développement de l'application géospatiale BIONIC en plusieurs phases, visant à analyser les territoires de chasse en combinant des données géospatiales et comportementales de la faune.
+L'utilisateur a demandé le développement de l'application géospatiale BIONIC en plusieurs phases. Les phases P1 (Géo-Suite), P1.5 (Visualisations), P2 (FusionEngine) et P3 (Moteur ML auto-calibrant) sont considérées comme implémentées.
+
+Suite à la livraison de P3, l'utilisateur a commandé un audit technique complet pour assurer la conformité avec la vision BIONIC™ Ultimate. Cet audit a révélé des instabilités. L'utilisateur a alors redéfini la priorité absolue : la solidification complète des fondations de l'application (stabilité WMS, finalisation des engines, documentation Swagger, cache Redis) avant d'entamer toute nouvelle phase (Marketplace, UX P4).
+
+Le dernier message de l'utilisateur signale un bug critique : malgré les rapports de l'agent indiquant que le proxy WMS était stabilisé, la fonctionnalité est en panne en conditions réelles avec l'erreur Impossible de charger les couches WMS. Une correction immédiate est exigée.
 
 **PRODUCT REQUIREMENTS:**
-1.  **Phase P1 (Géo-Suite Nord-Américaine)**: Créer 5 moteurs géospatiaux (corridor, landcover, nutrition, densité de population, pression de chasse) fonctionnels en Amérique du Nord. **(TERMINÉ)**
-2.  **Phase P1.5 (Visualisations Avancées)**: Implémenter des fonctionnalités de visualisation avancées comme des heatmaps dynamiques, la superposition de couches et des légendes interactives. **(TERMINÉ)**
-3.  **Phase P2 (BehaviorFusionEngine)**: Fusionner les analyses de la  (existante) et de la  (P1) pour créer des heatmaps combinées et un score global fusionné. **(TERMINÉ)**
-4.  **Phase P3 (Intelligence Adaptative v3.0)**: Développer un  auto-calibrant avec du Machine Learning supervisé pour ajuster dynamiquement les pondérations. **(EN COURS)**
-5.  **Phase P4 (UX & Produits)**: Améliorer l'UX avec un tableau de bord dynamique, l'export PDF, la sauvegarde de zones et des graphiques avancés. **(FUTUR)**
-6.  **Structure de Communication Stricte**: L'utilisateur exige que toutes les réponses suivent une structure en 6 points (Réponse pro, Commande op, Ajout strat, Verrouillage archi, Clarification, Anticipation).
-7.  **Clarification sur le Marketplace**: L'utilisateur a demandé un état des lieux de la fonctionnalité Marketplace existante avant de commencer P3. **(TERMINÉ)**
+1.  **Correction immédiate du WMS Proxy** pour garantir un fallback fonctionnel et une stabilité des sources de données cartographiques.
+2.  **Solidification des fondations**: Finaliser, stabiliser et verrouiller l'architecture technique avant de poursuivre la roadmap.
+3.  **Phase P4 (UX & Produits)**: Améliorer l'UX avec un tableau de bord, l'export PDF, etc. (FUTUR)
+4.  **Marketplace MVP**: Créer un module de marketplace isolé. (FUTUR)
 
 **User's preferred language**: Français
 
 **what currently exists?**
-- **Backend**: Les phases P1 (Géo-Suite) et P2 (BehaviorFusionEngine) sont complètes et fonctionnelles. Le  fusionne avec succès les données des deux suites, calcule un score global et expose ses propres endpoints API (). Le module  a été identifié comme une fonctionnalité complète et isolée, avec son propre backend et frontend, et ne dépend pas des modules BIONIC.
-- **Frontend**: Les phases P1 (UI de base) et P1.5 (visualisations avancées) sont complètes. Un nouvel onglet Fusion a été ajouté à la page Territory, intégrant le  (P1.5) et le  (P2) qui consomme les données du .
-- **Architecture**: L'application maintient un découplage strict entre les moteurs d'analyse backend, la logique de fusion et les composants de visualisation React.
+- **Backend**: Une architecture de micro-moteurs sur FastAPI. Les phases P1, P2 et P3 sont implémentées. Un  (P3) basé sur le Machine Learning (Gradient Boosting) a été ajouté dans un module isolé () pour résoudre des conflits d'importation. Un audit technique complet a été réalisé (). La documentation Swagger a été générée et est accessible via l'endpoint . Le proxy WMS () a été modifié pour inclure une logique de fallback, mais celle-ci s'est avérée inefficace en conditions réelles.
+- **Frontend**: Une interface React qui intègre les visualisations des différentes phases (Géo-Suite, Fusion, ML v3) dans la page .
 
 **Last working item**:
-    - Last item agent was working: Réponse à la demande de clarification de l'utilisateur concernant l'onglet Marketplace. L'agent a analysé les fichiers pertinents et a fourni un rapport détaillé confirmant que le Marketplace est une fonctionnalité complète, fonctionnelle et isolée, ne constituant pas un obstacle pour le début de la Phase P3.
-    - Status: IN PROGRESS (La tâche principale de la Phase P3 est sur le point de commencer).
-    - Agent Testing Done: N/A (La dernière action était une analyse de fichiers, pas une implémentation de code).
-    - Which testing method agent to use? backend testing agent (pour la logique ML de P3), puis both (pour l'intégration complète).
-    - User Testing Done: N
+    - Last item agent was working: L'agent venait de démarrer l'investigation d'un bug critique signalé par l'utilisateur. Le proxy WMS, précédemment déclaré stabilisé par l'agent, ne fonctionne pas en conditions réelles, affichant une erreur Impossible de charger les couches WMS.
+    - Status: IN PROGRESS
+    - Agent Testing Done: N
+    - Which testing method agent to use? backend testing agent
+    - User Testing Done: Y (L'utilisateur a découvert le bug en utilisant l'application).
 
 **All Pending/In progress Issue list**:
-  Aucun.
+  - Issue 1:  **(P0) Le Proxy WMS est défaillant en conditions réelles**
+
+  Issues Detail:
+  - Issue 1: 
+     - Attempted fixes: L'agent a ajouté une logique de fallback dans . Cet ajout n'a pas résolu le problème car le test de l'agent n'a pas simulé les appels réels du frontend, manquant ainsi le vrai cas d'échec.
+     - Next debug checklist: 
+        1.  Identifier les URLs WMS exactes utilisées par le frontend en inspectant  et d'autres fichiers pertinents.
+        2.  Utiliser  pour tester manuellement chaque URL via l'endpoint du proxy .
+        3.  Analyser les logs du backend () pour obtenir des détails sur les erreurs (timeout, codes HTTP, etc.) lors des appels .
+        4.  Corriger la logique dans  pour gérer correctement le cas d'échec réel (timeout, URL invalide, format de réponse inattendu).
+     - Why fix this issue and what will be achieved with the fix?: C'est un bloqueur critique qui rend les fonctionnalités de cartographie de l'application inutilisables. La résolution de ce bug est une exigence directe de l'utilisateur et une étape obligatoire pour stabiliser les fondations de l'application.
+     - Status:  IN PROGRESS
+     - Is recurring issue? Y
+     - Should Test frontend/backend/both after fix?: both
+     - Blocked on other issue: Non. C'est le principal bloqueur.
 
 **In progress Task List**:
-  - Task 1:  **(P0) Implémenter la Phase P3 - BehaviorEngine v3.0 auto-calibrant**
-     - Where to resume: L'analyse du Marketplace étant terminée, il faut maintenant commencer l'implémentation backend de la Phase P3. La première étape sera de créer la structure du nouveau moteur  et l'accélérateur stratégique .
-     - What will be achieved with this?: Un moteur capable d'ajuster automatiquement les pondérations de fusion via l'apprentissage supervisé, améliorant ainsi continuellement la pertinence des scores. Cela représente le cœur de l'intelligence adaptative du système BIONIC.
-     - Status:  NOT STARTED
+  - Task 1:  **(P1) Finaliser la solidification des fondations BIONIC™**
+     - Where to resume: Cette tâche a été interrompue par le bug WMS. Une fois l'Issue 1 résolue, il faudra reprendre le plan de l'utilisateur. L'agent avait terminé les Jour 1 (Stabilité) et Jour 2 (Modularité). Le Jour 3 (schéma d'architecture final et certificat de conformité) est la prochaine étape.
+     - What will be achieved with this?: Une base applicative 100% stable, modulaire, documentée et validée, conformément à la directive de l'utilisateur.
+     - Status:  BLOCKED
      - Should Test frontend/backend/both after fix?: both
-     - Blocked on something: Non.
+     - Blocked on something: Issue 1: Le Proxy WMS est défaillant en conditions réelles.
 
 **Upcoming and Future Tasks**
     Upcoming Tasks:
-    - **P3 - Intégration Frontend**: Créer un hook React pour consommer les pondérations auto-calibrées et développer une interface pour le .
+    - (P1) **Jour 3 du plan de solidification**: Créer le schéma d'architecture final et le certificat de conformité global.
+    - (P2) **Implémentation du cache Redis**: Remplacer le cache en mémoire actuel (notamment dans ) par Redis, comme recommandé dans l'audit technique.
 
     Future Tasks:
-    - **P4 - UX & Produits**:
-        - Développer un tableau de bord dynamique.
-        - Implémenter la fonctionnalité d'export en PDF.
-        - Permettre la sauvegarde et la gestion des zones d'analyse.
-        - Ajouter des graphiques avancés pour l'analyse des tendances.
+    - **P1 - Marketplace MVP**: Développer un module isolé avec des fonctionnalités CRUD pour les produits et les catégories.
+    - **P2 - Marketplace Importation d'annonce**: Ajouter une fonctionnalité pour importer automatiquement des annonces via URL.
+    - **Phase P4 - UX & Produits**:
+        - Tableau de bord dynamique.
+        - Export en PDF.
+        - Sauvegarde et gestion des zones d'analyse.
+        - Graphiques avancés pour l'analyse des tendances.
 
 **Completed work in this session**
-- **Phase P1.5 - Visualisations Avancées (TERMINÉ)**:
-    - Création des composants et modules stratégiques manquants (, , , ).
-    - Création d'un composant orchestrateur .
-    - Correction des erreurs de linting et validation complète via l'agent de test ().
-- **Phase P2 - BehaviorFusionEngine (TERMINÉ)**:
-    - **Backend**: Implémentation du moteur de fusion (), du gestionnaire de poids (), et des endpoints API associés. Correction de plusieurs bugs d'importation et de type de données ().
-    - **Frontend**: Création du service (), du hook () et du composant (). Intégration dans un nouvel onglet Fusion sur la page Territoire.
-    - **Validation**: Tests backend et frontend réussis via l'agent de test ().
-- **Clarification - Marketplace (TERMINÉ)**:
-    - Analyse complète des fichiers frontend et des routes API liés au Marketplace.
-    - Confirmation qu'il s'agit d'une fonctionnalité complète, isolée et fonctionnelle (CRUD, paiements Stripe, filtres, etc.) et non d'un simple placeholder.
-- **Documentation**: Mise à jour de  pour refléter l'achèvement des Phases P1.5 et P2.
+- **Phase P3 -  (TERMINÉ)**:
+  - Implémentation et intégration d'un module ML isolé () pour l'auto-calibration des poids.
+  - Résolution de conflits d'import Python complexes en renommant les sous-dossiers ( → ).
+  - Intégration frontend complète avec un nouveau composant  dans un onglet ML v3.
+  - Validation réussie avec l'agent de test ().
+- **Audit Technique et Solidification des Fondations (Partiel)**:
+  - Réalisation d'un audit technique complet sur 17 modules ().
+  - Exécution des plans Jour 1 (Stabilité) et Jour 2 (Modularité), incluant le nettoyage de l'architecture (suppression de dossiers stubs) et la génération de la documentation Swagger.
+  - Création de rapports de progrès quotidiens (, ).
 
 **Earlier issues found/mentioned but not fixed**
-   - Aucun.
+   - **Issue 1: Cache Redis non implémenté.**
+     - Debug checklist: L'audit a recommandé de remplacer le cache en mémoire par Redis pour la scalabilité, notamment pour le WMS Proxy. La tâche a été notée mais pas encore implémentée.
+     - Why to solve this issue and what will be achieved with this?: Améliorer la performance, la stabilité et la résilience de l'application, en particulier pour les services externes comme le WMS.
+     - Should Test frontend/backend/both after fix: backend
+     - Is recurring issue? N
 
 **Known issue recurrence from previous fork**
   - Aucun.
@@ -70,68 +88,70 @@ L'utilisateur a demandé le développement de l'application géospatiale BIONIC 
 
 
 **Key Technical Concepts**
-- **Backend**: FastAPI, Pydantic, Architecture de micro-moteurs.
-- **Frontend**: React, Hooks, Zustand, MapLibre GL.
-- **Architecture**: Découplage strict (Backend Logic vs Frontend View), Unified Output Contracts.
-- **Nouveau**: Moteur de fusion (), Composants de visualisation avancée (Heatmaps, Superposition de couches), placehoders pour le ML.
+- **Backend**: FastAPI, Pydantic
+- **Frontend**: React, Hooks, MapLibre GL
+- **Architecture**: Micro-moteurs, modularité stricte.
+- **ML**: Intégration de  (Gradient Boosting).
+- **Débogage d'architecture**: Résolution de conflits d'import () en renommant des répertoires pour éviter les collisions de namespaces.
+- **Proxy WMS**: Proxy inverse pour les sources de données WMS externes, supposé avoir un cache et une logique de retry, mais actuellement défaillant.
 
 **key DB schema**
   - Aucun changement.
 
 **All files of reference**
-- **Roadmap & Suivi**: 
-- **Moteur de Fusion P2**: 
-- **Page d'intégration P2**: 
-- **Composant de visualisation P2**: 
-- **Hook P2**: 
-- **Rapports de test**:  (P1.5),  (P2)
+- **Fichier du bug**: 
+- **Source des appels WMS**: 
+- **Page d'intégration principale**: 
+- **Rapports d'audit**: , , 
+- **Rapport de test récent**: 
 
 **Areas that need refactoring**:
-- Aucun.
+- Aucun identifié. L'agent a déjà effectué un nettoyage en supprimant les répertoires de stub inutilisés.
 
 **key api endpoints**
-- : Vérifie l'état du moteur de fusion.
-- : Lance une analyse de fusion complète.
-- : Renvoie un output optimisé pour l'UI, avec des données de heatmap.
-- : Récupère les pondérations actuelles.
-- : Liste les préréglages de poids disponibles.
+- : Proxy pour les couches WMS. **(BUG CRITIQUE)**
+- : Endpoints pour le nouveau moteur ML (status, train, calibrate, etc.).
+- : Interface utilisateur de la documentation OpenAPI (Swagger).
 
 **Critical Info for New Agent**
-- **Priorité Absolue**: Commencer l'implémentation de la **Phase P3 ()**. L'analyse du Marketplace est terminée et ne doit plus être un point de blocage.
-- **Structure de Communication Obligatoire**: L'utilisateur exige que chaque réponse suive la structure en 6 points. Le non-respect de cette consigne est un échec.
-- **Verrouillage d'Architecture**: Maintenir un découplage strict entre la logique ML (P3), la logique de fusion (P2) et la visualisation (frontend). Le moteur P3 ne doit pas modifier directement les composants React.
-- **Module Marketplace**: Le Marketplace est une fonctionnalité complète et **isolée**. Ne pas y toucher ou tenter de l'intégrer à moins d'une demande explicite de l'utilisateur.
+- **PRIORITÉ ABSOLUE**: Résoudre le bug critique du WMS Proxy (Impossible de charger les couches WMS). L'utilisateur a explicitement signalé que les correctifs précédents étaient insuffisants. La confiance doit être restaurée par une solution robuste et minutieusement testée.
+- **NE PAS FAIRE CONFIANCE AUX ANCIENS TESTS**: Les tests WMS précédents de l'agent ont réussi alors que la fonctionnalité était cassée. Il est impératif de reproduire le scénario de l'utilisateur en testant les URL exactes utilisées par le frontend.
+- **COMMUNICATION STRICTE**: L'utilisateur exige une structure de réponse en 6 points pour toutes les mises à jour majeures. Le non-respect est un motif d'échec.
+- **MANDAT ARCHITECTURAL**: Aucune nouvelle fonctionnalité ne doit être développée tant que les fondations ne sont pas jugées 100% stables, ce qui inclut la correction du bug WMS.
 
 **documents and test reports created in this job**
 -  (mis à jour)
 - 
 - 
+- 
+- 
+- 
 
 **Last 10 User Messages and any pending HUMAN messages** 
-- **User (Last message)**: Valide l'achèvement de la phase P2. Demande une clarification sur l'état de l'onglet Marketplace existant avant de lancer la phase P3. Donne ensuite la commande opérationnelle pour démarrer immédiatement l'implémentation de la phase P3 () avec ses accélérateurs stratégiques et ses contraintes d'architecture. **(Ceci est la tâche en cours)**.
-- **Agent**: Termine la Phase P2, met à jour le PRD.md, et utilise l'outil  pour proposer une amélioration et attendre la prochaine commande.
-- **User**: Valide l'achèvement de la Phase P1.5. Donne la commande opérationnelle pour démarrer la Phase P2 (), y compris les accélérateurs stratégiques. Confirme également que le  doit être intégré pour une démo.
-- **Agent**: Termine la Phase P1.5, met à jour le PRD.md, et utilise l'outil  pour conclure la tâche et proposer une démo.
+1.  **Utilisateur (Urgent)**: Signale que le WMS Proxy est toujours en panne en conditions réelles et demande une correction immédiate.
+2.  **Utilisateur**: Approuve le démarrage du Jour 2 du plan de solidification.
+3.  **Utilisateur**: Reçoit le rapport du Jour 1, prend note des progrès et autorise la continuation.
+4.  **Utilisateur**: Reçoit l'audit, définit la solidification des fondations comme priorité absolue et liste 7 actions requises, dont la correction du WMS.
+5.  **Utilisateur**: Demande un audit technique complet de tous les modules pour garantir la conformité.
 
 **Project Health Check:**
-- **MOCKED:** Non
-- **BROKEN:** Non
+- **BROKEN:** Oui. La fonctionnalité de proxy WMS, essentielle pour l'affichage des cartes, est confirmée comme étant non fonctionnelle en conditions réelles d'utilisation.
 
 **3rd Party Integrations**
-- OpenWeatherMap
+- 
 - MapLibre GL
 - Stripe (isolé dans le module Marketplace)
-- Sources de données WMS/API externes (USGS, NRCan, etc.)
-- Zustand
+- OpenWeatherMap
+- Sources de données externes WMS/API (la source du bug actuel)
 
 **Testing status**
-  - Testing agent used after significant changes: YES (pour P1.5 et P2).
+  - Testing agent used after significant changes: YES
   - Troubleshoot agent used after agent stuck in loop: NO
-  - Test files created: Oui, les rapports sont dans .
-  - Known regressions: Aucun.
+  - Test files created: Non, mais des rapports de test ont été générés.
+  - Known regressions: Oui, la fonctionnalité WMS est soit une régression, soit un bug qui n'a jamais été correctement résolu malgré les rapports précédents de l'agent.
 
 **Credentials to test flow:**
 - **Admin Password:** 
 
 **What agent forgot to execute**
-- Rien. L'agent a suivi toutes les instructions de l'utilisateur, y compris les ajouts stratégiques, et a respecté scrupuleusement le plan de développement par phases.</analysis>
+- L'agent a échoué à tester adéquatement le proxy WMS. Il n'a pas utilisé les URL réelles du frontend pour ses tests, ce qui l'a conduit à déclarer prématurément la résolution d'un bug qui persistait en conditions réelles.</analysis>
