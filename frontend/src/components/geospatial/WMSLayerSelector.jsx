@@ -797,9 +797,9 @@ const WMSLayerSelector = ({
                 />
               </div>
               
-              {/* Base Map Selector */}
-              <div className="mb-3 pb-3 border-b border-white/5">
-                <label className="text-xs text-gray-400 block mb-2">Fond de carte</label>
+              {/* Base Map Selector - Compact */}
+              <div className="mb-2 pb-2 border-b border-white/5">
+                <label className="text-[8px] text-gray-400 block mb-1">Fond de carte</label>
                 <Select 
                   defaultValue="voyager"
                   onValueChange={(value) => {
@@ -869,35 +869,35 @@ const WMSLayerSelector = ({
                     }
                   }}
                 >
-                  <SelectTrigger className="bg-black/40 border-white/10 text-white text-sm h-9">
-                    <SelectValue placeholder="Choisir un style" />
+                  <SelectTrigger className="bg-black/40 border-white/10 text-white text-[9px] h-6">
+                    <SelectValue placeholder="Style" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#1a1a1a] border-white/10">
-                    <SelectItem value="voyager" className="text-white">
-                      <div className="flex items-center gap-2">
-                        <Map className="h-4 w-4 text-blue-400" />
-                        Voyager (Couleur)
+                    <SelectItem value="voyager" className="text-white text-[9px]">
+                      <div className="flex items-center gap-1">
+                        <Map className="h-3 w-3 text-blue-400" />
+                        Voyager
                       </div>
                     </SelectItem>
-                    <SelectItem value="light" className="text-white">
-                      <div className="flex items-center gap-2">
-                        <Map className="h-4 w-4 text-gray-300" />
-                        Clair (Positron)
+                    <SelectItem value="light" className="text-white text-[9px]">
+                      <div className="flex items-center gap-1">
+                        <Map className="h-3 w-3 text-gray-300" />
+                        Clair
                       </div>
                     </SelectItem>
-                    <SelectItem value="dark" className="text-white">
-                      <div className="flex items-center gap-2">
-                        <Map className="h-4 w-4 text-gray-600" />
+                    <SelectItem value="dark" className="text-white text-[9px]">
+                      <div className="flex items-center gap-1">
+                        <Map className="h-3 w-3 text-gray-600" />
                         Sombre
                       </div>
                     </SelectItem>
-                    <SelectItem value="satellite" className="text-white">
-                      <div className="flex items-center gap-2">
-                        <Satellite className="h-4 w-4 text-green-400" />
+                    <SelectItem value="satellite" className="text-white text-[9px]">
+                      <div className="flex items-center gap-1">
+                        <Satellite className="h-3 w-3 text-green-400" />
                         Satellite
                       </div>
                     </SelectItem>
-                    <SelectItem value="osm" className="text-white">
+                    <SelectItem value="osm" className="text-white text-[9px]">
                       <div className="flex items-center gap-2">
                         <Globe className="h-4 w-4 text-orange-400" />
                         OpenStreetMap
