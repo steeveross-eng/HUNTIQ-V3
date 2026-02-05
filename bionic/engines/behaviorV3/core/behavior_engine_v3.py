@@ -25,9 +25,12 @@ import logging
 from typing import Dict, Any, Optional, List
 from datetime import datetime, timezone
 
+# Import path config FIRST
 import sys
-if '/app/bionic/engines/behaviorV3' not in sys.path:
-    sys.path.insert(0, '/app/bionic/engines/behaviorV3')
+import os
+_BASE_PATH = '/app/bionic/engines/behaviorV3'
+if _BASE_PATH not in sys.path:
+    sys.path.insert(0, _BASE_PATH)
 
 from models.v3_schemas import (
     EngineStatus, EngineMetrics, WeightSet,
