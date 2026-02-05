@@ -779,6 +779,75 @@ const WMSLayerSelector = ({
                 disabled={loading}
               />
               
+              {/* Base Map Selector */}
+              <div className="mb-3 pb-3 border-b border-white/5">
+                <label className="text-xs text-gray-400 block mb-2">Fond de carte</label>
+                <Select 
+                  defaultValue="voyager"
+                  onValueChange={(value) => {
+                    if (!map) return;
+                    
+                    const baseStyles = {
+                      voyager: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+                      light: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                      dark: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                      satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                      osm: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      terrain: 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png'
+                    };
+                    
+                    const newUrl = baseStyles[value];
+                    if (newUrl && map.getSource('base-tiles')) {
+                      // Update the source tiles
+                      const source = map.getSource('base-tiles');
+                      source.setTiles([newUrl]);
+                    }
+                  }}
+                >
+                  <SelectTrigger className="bg-black/40 border-white/10 text-white text-sm h-9">
+                    <SelectValue placeholder="Choisir un style" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1a1a1a] border-white/10">
+                    <SelectItem value="voyager" className="text-white">
+                      <div className="flex items-center gap-2">
+                        <Map className="h-4 w-4 text-blue-400" />
+                        Voyager (Couleur)
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="light" className="text-white">
+                      <div className="flex items-center gap-2">
+                        <Map className="h-4 w-4 text-gray-300" />
+                        Clair (Positron)
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="dark" className="text-white">
+                      <div className="flex items-center gap-2">
+                        <Map className="h-4 w-4 text-gray-600" />
+                        Sombre
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="satellite" className="text-white">
+                      <div className="flex items-center gap-2">
+                        <Satellite className="h-4 w-4 text-green-400" />
+                        Satellite (ESRI)
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="osm" className="text-white">
+                      <div className="flex items-center gap-2">
+                        <Globe className="h-4 w-4 text-orange-400" />
+                        OpenStreetMap
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="terrain" className="text-white">
+                      <div className="flex items-center gap-2">
+                        <Mountain className="h-4 w-4 text-amber-400" />
+                        Terrain
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
               {/* Search */}
               <div className="relative mb-3">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
