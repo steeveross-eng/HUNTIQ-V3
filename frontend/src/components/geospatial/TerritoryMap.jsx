@@ -167,6 +167,7 @@ const CoordinatesDisplay = ({ coordinates }) => {
 // Main Territory Map Component
 const TerritoryMap = ({ 
   onLocationSelect,
+  waypoints = [],
   initialCenter = [QUEBEC_CENTER.lng, QUEBEC_CENTER.lat],
   initialZoom = 7,
   showLayerPanel = true,
@@ -182,6 +183,45 @@ const TerritoryMap = ({
   const [mouseCoordinates, setMouseCoordinates] = useState(null);
   const [markers, setMarkers] = useState([]);
   const markersRef = useRef([]);
+
+  // Render waypoint markers when waypoints change
+  useEffect(() => {
+    if (!map || !mapLoaded) return;
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current = [];
+
+    // Add new markers for each waypoint
+    waypoints.forEach(waypoint => {
+      const typeInfo = {
+        camera: { color: '#22c55e', label: 'Caméra' },
+        mirador: { color: '#f5a623', label: 'Mirador' },
+        affut: { color: '#ef4444', label: 'Affût' },
+        saline: { color: '#3b82f6', label: 'Saline' },
+        sentier: { color: '#8b5cf6', label: 'Sentier' },
+        observation: { color: '#ec4899', label: 'Observation' }
+      }[waypoint.type] || { color: '#f5a623', label: 'Waypoint' };
+
+      const marker = addMarker(map, [waypoint.coordinates.lng, waypoint.coordinates.lat], {
+        color: typeInfo.color,
+        popup: `<div class="p-2 bg-black text-white rounded">
+          <strong class="text-[${typeInfo.color}]">${waypoint.name}</strong>
+          <br/><span class="text-gray-400 text-xs">${typeInfo.label}</span>
+          <br/><span class="text-gray-300 text-xs font-mono">
+            ${waypoint.coordinates.lat.toFixed(5)}°N, ${Math.abs(waypoint.coordinates.lng).toFixed(5)}°W
+          </span>
+          ${waypoint.notes ? `<br/><span class="text-gray-400 text-xs mt-1 block">${waypoint.notes}</span>` : ''}
+        </div>`
+      });
+
+      if (marker) {
+        markersRef.current.push(marker);
+      }
+    });
+
+    setMarkers(waypoints);
+  }, [map, mapLoaded, waypoints]);
 
   // Handle mouse move for coordinates display
   useEffect(() => {
