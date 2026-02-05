@@ -4761,7 +4761,21 @@ except ImportError as e:
     print(f"Current Conditions not available: {e}")
 
 # Include BIONIC™ P1 Géo-Suite (North America Ready)
+# This is in /app/bionic/engines/geospatial/, different from /app/backend/geospatial/
 try:
+    import sys as _p1_sys
+    import importlib
+    # Temporarily prioritize bionic engines path
+    _bionic_path = '/app/bionic/engines'
+    if _bionic_path not in _p1_sys.path:
+        _p1_sys.path.insert(0, _bionic_path)
+    
+    # Clear backend geospatial from modules to load bionic version
+    for mod_name in list(_p1_sys.modules.keys()):
+        if mod_name.startswith('geospatial'):
+            del _p1_sys.modules[mod_name]
+    
+    # Now import from bionic engines geospatial
     from geospatial.api.endpoints import router as geosuite_router
     app.include_router(geosuite_router)
     print("BIONIC™ P1 Géo-Suite loaded - 5 geospatial engines active (North America Ready)")
