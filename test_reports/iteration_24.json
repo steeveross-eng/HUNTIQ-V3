@@ -1,0 +1,124 @@
+{
+  "summary": "BIONIC™ Bug Fix Verification - All 4 reported issues have been RESOLVED. Tested base map theme switching (Voyager, Clair, Sombre, Satellite, OSM, Terrain), WMS panel ergonomics, and waypoint functionality.",
+  
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  
+  "passed_tests": [
+    "✅ Base map Voyager (Couleur) - CARTO @2x tiles load correctly with colorful style",
+    "✅ Base map Clair (Positron) - CARTO light gray theme loads with © CARTO attribution",
+    "✅ Base map Sombre (Dark) - CARTO dark theme loads with dark background",
+    "✅ Base map Satellite - Google mt1 satellite imagery loads with © Google attribution",
+    "✅ Base map OpenStreetMap - OSM tiles load with © OpenStreetMap contributors attribution",
+    "✅ Base map Terrain (Topo) - OpenTopoMap loads with relief/contours and © OpenTopoMap (CC-BY-SA) attribution",
+    "✅ WMS panel width is 288px (w-72) - compact as expected",
+    "✅ WMS panel has scroll area with max-height 280px",
+    "✅ Map occupies 78.4% of viewport width (~80% / 4 columns out of 5)",
+    "✅ No AJAX errors when zooming on Satellite theme (Google tiles replaced ESRI)",
+    "✅ Waypoint can be added via form and marker appears on map",
+    "✅ Waypoint count updates in header (1 waypoint)",
+    "✅ Export button appears when waypoints exist",
+    "✅ WMS sources available: OpenStreetMap (1), CanVec (3), USGS (1)",
+    "✅ Base map selector dropdown shows all 6 options with icons"
+  ],
+  
+  "test_report_links": [
+    "/app/test_reports/iteration_24.json"
+  ],
+  
+  "action_items": [],
+  
+  "critical_code_review_comments": [
+    "WMSLayerSelector.jsx lines 787-895: Base map selector correctly removes old source/layer before adding new one",
+    "Base map configs use proper tile URLs: CARTO (@2x), Google mt1, OpenStreetMap, OpenTopoMap",
+    "Stadia Maps replaced with OpenTopoMap (no API key required)",
+    "ESRI World Imagery replaced with Google satellite (no CORS/AJAX errors)",
+    "TerritoryPage.jsx line 521: grid-cols-5 layout with map on col-span-4 (80%)",
+    "WMSLayerSelector.jsx line 741: w-72 max-h-[calc(100vh-250px)] for compact panel"
+  ],
+  
+  "updated_files": [],
+  
+  "success_rate": {
+    "backend": "N/A - Frontend only testing",
+    "frontend": "100% - All 4 reported bugs fixed and verified"
+  },
+  
+  "test_credentials": {},
+  
+  "seed_data_creation": "None required",
+  
+  "retest_needed": false,
+  
+  "should_main_agent_self_test": false,
+  
+  "context_for_next_testing_agent": "All 4 reported bugs have been fixed: 1) Base maps now use remove/add source/layer pattern instead of setTiles(), 2) Terrain uses OpenTopoMap (no Stadia API key needed), 3) WMS panel is compact (w-72, 280px scroll), 4) Satellite uses Google tiles (no ESRI AJAX errors). All 6 base map themes work correctly with proper attributions.",
+  
+  "bugs_verified": {
+    "bug_1_base_maps_same_render": {
+      "reported": "Les fonds de carte (Voyager, Clair, Satellite, OSM) affichaient tous le même rendu",
+      "fix_applied": "Recreate source/layer instead of using setTiles() - lines 822-846 in WMSLayerSelector.jsx",
+      "status": "RESOLVED",
+      "evidence": "Each theme displays distinct style with correct attribution"
+    },
+    "bug_2_terrain_not_working": {
+      "reported": "Couche Terrain non fonctionnelle (Stadia nécessite API key)",
+      "fix_applied": "Replaced Stadia with OpenTopoMap (https://tile.opentopomap.org/{z}/{x}/{y}.png)",
+      "status": "RESOLVED",
+      "evidence": "Terrain theme shows topographic relief with © OpenTopoMap (CC-BY-SA) attribution"
+    },
+    "bug_3_panel_too_large": {
+      "reported": "Panneaux latéraux trop grands",
+      "fix_applied": "WMS panel uses w-72 (288px) with max-h and scroll area (280px)",
+      "status": "RESOLVED",
+      "evidence": "Panel width measured at 288px, scroll area present"
+    },
+    "bug_4_esri_ajax_error": {
+      "reported": "Erreur AJAX ESRI",
+      "fix_applied": "Replaced ESRI World Imagery with Google Maps satellite tiles (https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z})",
+      "status": "RESOLVED",
+      "evidence": "No AJAX errors in console logs, satellite imagery loads correctly"
+    }
+  },
+  
+  "base_map_themes_verified": {
+    "voyager": {
+      "url": "https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png",
+      "attribution": "© CARTO © OpenStreetMap",
+      "status": "Working"
+    },
+    "light": {
+      "url": "https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
+      "attribution": "© CARTO",
+      "status": "Working"
+    },
+    "dark": {
+      "url": "https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
+      "attribution": "© CARTO",
+      "status": "Working"
+    },
+    "satellite": {
+      "url": "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+      "attribution": "© Google",
+      "status": "Working"
+    },
+    "osm": {
+      "url": "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "attribution": "© OpenStreetMap contributors",
+      "status": "Working"
+    },
+    "terrain": {
+      "url": "https://tile.opentopomap.org/{z}/{x}/{y}.png",
+      "attribution": "© OpenTopoMap (CC-BY-SA)",
+      "status": "Working"
+    }
+  }
+}
