@@ -1166,22 +1166,98 @@ Tous les composants sont exportés depuis `/app/frontend/src/components/geospati
 ### P0 - Badges Visuels (DIFFÉRÉ)
 - Badges sur la carte avec scores d'analyse
 
-### P2 - BehaviorFusionEngine (PROCHAINE PRIORITÉ)
-- Fusion Behavior Suite + Géo-Suite
-- Heatmaps dynamiques combinées
-- Score global fusionné
-- Pondérations dynamiques multi-moteurs
-- Tests multi-espèces et multi-territoires
+### P2 - BehaviorFusionEngine (COMPLÉTÉ ✅)
+- **Backend BehaviorFusionEngine** : Fusion Behavior Suite + Géo-Suite ✅
+- **FusionWeightManager** : Pondérations dynamiques par espèce/territoire/saison ✅
+- **FusionReadyOutput** : Format standardisé P3-Ready ✅
+- **11 API Endpoints** : /analyze, /weights, /heatmap, /calibration, etc. ✅
+- **Frontend Integration** : FusionScorePanel + useFusion hooks ✅
+- **Territory Page** : Nouvel onglet "Fusion" avec UI complète ✅
 
-### P3 - Intelligence Adaptative (v3.0)
+### P3 - Intelligence Adaptative (v3.0) (PROCHAINE PRIORITÉ)
 - BehaviorEngine auto-calibrant avec ML supervisé
-- Apprentissage continu
+- Ajustement automatique des pondérations selon les données
+- Apprentissage continu des patterns de chasse
+- Tests multi-espèces et multi-territoires
 
 ### P4 - UX & Produits
 - Tableau de bord dynamique
 - Export PDF des rapports d'analyse
 - Sauvegarde de zones personnalisées
 - Graphiques avancés
+
+---
+
+### 2026-02-05 - Phase P2: BehaviorFusionEngine ✅
+
+#### Résumé
+Implémentation complète du **BehaviorFusionEngine** pour fusionner la Behavior Suite et la Géo-Suite. Produit un score global unifié avec heatmaps combinées et pondérations dynamiques. Intégré dans la page Territory avec nouvel onglet "Fusion".
+
+#### Backend Créé
+```
+/app/bionic/engines/fusion/
+├── __init__.py
+├── behavior_fusion_engine.py     # Moteur principal + FusionWeightManager
+└── api/
+    ├── __init__.py
+    └── endpoints.py              # 11 endpoints API
+```
+
+#### Fonctionnalités Backend
+| Feature | Description |
+|---------|-------------|
+| **BehaviorFusionEngine** | Fusion async des 5 moteurs Geo + 4 moteurs Behavior |
+| **FusionWeightManager** | Pondérations par espèce (6), territoire (3), saison (4), mode (5) |
+| **FusionReadyOutput** | Dataclass avec to_dict() et get_frontend_output() |
+| **Heatmap Generation** | Grille 5x5 avec intensités fusionnées |
+| **P3 Hooks** | Placeholders pour auto-calibration ML |
+
+#### API Endpoints (11)
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/bionic/fusion/status` | Statut du moteur de fusion |
+| `GET /api/bionic/fusion/analyze` | Analyse complète avec heatmap |
+| `GET /api/bionic/fusion/analyze/quick` | Analyse rapide sans heatmap |
+| `GET /api/bionic/fusion/analyze/frontend` | Format optimisé frontend (camelCase) |
+| `GET /api/bionic/fusion/heatmap` | Données heatmap seules |
+| `GET /api/bionic/fusion/weights` | Poids de fusion calculés |
+| `GET /api/bionic/fusion/weights/species-presets` | Presets par espèce |
+| `GET /api/bionic/fusion/weights/territory-modifiers` | Modificateurs territoires |
+| `GET /api/bionic/fusion/weights/seasonal-modifiers` | Modificateurs saisonniers |
+| `GET /api/bionic/fusion/calibration/status` | Status P3 calibration |
+| `POST /api/bionic/fusion/calibration/feedback` | Feedback chasseur |
+| `GET /api/bionic/fusion/compatibility` | Vérification compatibilité |
+
+#### Frontend Créé
+```
+/app/frontend/src/
+├── services/
+│   └── fusion.service.js         # Service API (11 méthodes)
+├── hooks/
+│   └── useFusion.js              # 6 hooks React
+└── components/geospatial/
+    └── FusionScorePanel.jsx      # UI principale fusion
+```
+
+#### Hooks Frontend
+| Hook | Description |
+|------|-------------|
+| `useFusion` | Hook principal avec state complet |
+| `useQuickFusion` | Analyse rapide |
+| `useFusionFrontend` | Données optimisées frontend |
+| `useFusionHeatmap` | Données heatmap |
+| `useFusionWeights` | Poids de fusion |
+| `useFusionStatus` | Statut du moteur |
+
+#### Intégration Territory Page
+- Nouvel onglet **"Fusion"** ajouté dans `/territoire`
+- `FusionScorePanel` avec sélecteur de mode, scores, breakdown, recommandations
+- `AdvancedVisualizationPanel` P1.5 intégré
+
+#### Tests
+- **32/32 tests backend passés** (100%)
+- **Frontend build réussi**, onglet Fusion fonctionnel
+- Voir `/app/test_reports/iteration_20.json`
 
 ---
 
