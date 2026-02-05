@@ -136,3 +136,10 @@ export { default as AdvancedVisualizationPanel } from './AdvancedVisualizationPa
 
 // Fusion Score Panel (Main P2 Component)
 export { default as FusionScorePanel } from './FusionScorePanel';
+
+// =============================================================================
+// PHASE P3: BEHAVIORENGINE V3.0 AUTO-CALIBRANT
+// =============================================================================
+
+// BehaviorV3 Panel (Main P3 Component - ML Auto-Calibration)
+export { default as BehaviorV3Panel } from './BehaviorV3Panel';
