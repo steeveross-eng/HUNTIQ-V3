@@ -243,6 +243,14 @@ const LayerItem = ({
   const sourceInfo = SOURCE_ICONS[layer.sourceId] || SOURCE_ICONS.default;
   const Icon = sourceInfo.icon;
   
+  // Check if this layer has fixed opacity (no slider)
+  const fixedConfig = FIXED_OPACITY_LAYERS[layer.id];
+  const isFixedOpacity = !!fixedConfig;
+  const displayOpacity = isFixedOpacity ? fixedConfig.opacity : opacity;
+  
+  // Special styling for hydrography (blue dark)
+  const isHydroLayer = layer.id === 'wms-canvec-hydro';
+  
   return (
     <motion.div
       layout
@@ -252,34 +260,50 @@ const LayerItem = ({
       className={`
         px-1.5 py-1 rounded-sm border transition-all group
         ${isActive 
-          ? 'bg-[#f5a623]/10 border-[#f5a623]/30' 
+          ? isHydroLayer
+            ? 'bg-[#1e3a5f]/30 border-[#1e3a5f]/60'  // Bleu foncé pour hydro
+            : 'bg-[#f5a623]/10 border-[#f5a623]/30' 
           : 'bg-black/30 border-white/5 hover:border-white/15'
         }
       `}
     >
       <div className="flex items-center gap-1.5">
         {/* Icon - Compact */}
-        <div className={`w-5 h-5 rounded-sm flex items-center justify-center ${sourceInfo.bg}`}>
-          <Icon className={`h-2.5 w-2.5 ${sourceInfo.color}`} />
+        <div className={`w-5 h-5 rounded-sm flex items-center justify-center ${
+          isHydroLayer && isActive ? 'bg-[#1e3a5f]/40' : sourceInfo.bg
+        }`}>
+          <Icon className={`h-2.5 w-2.5 ${
+            isHydroLayer && isActive ? 'text-blue-300' : sourceInfo.color
+          }`} />
         </div>
         
         {/* Layer info - Compact */}
         <div className="flex-1 min-w-0">
-          <p className="text-[8px] text-white font-medium truncate leading-tight">
+          <p className={`text-[8px] font-medium truncate leading-tight ${
+            isHydroLayer && isActive ? 'text-blue-200' : 'text-white'
+          }`}>
             {layer.displayName}
           </p>
+          {/* Fixed opacity indicator */}
+          {isFixedOpacity && isActive && (
+            <p className="text-[6px] text-blue-400/70">Opacité fixe 100%</p>
+          )}
         </div>
         
         {/* Toggle - Compact */}
         <Switch
           checked={isActive}
           onCheckedChange={onToggle}
-          className="data-[state=checked]:bg-[#f5a623] scale-75"
+          className={`scale-75 ${
+            isHydroLayer 
+              ? 'data-[state=checked]:bg-[#1e3a5f]' 
+              : 'data-[state=checked]:bg-[#f5a623]'
+          }`}
         />
       </div>
       
-      {/* Opacity control (when active) - Compact */}
-      {isActive && (
+      {/* Opacity control (when active) - Hidden for fixed opacity layers */}
+      {isActive && !isFixedOpacity && (
         <motion.div 
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: 'auto', opacity: 1 }}
@@ -288,14 +312,14 @@ const LayerItem = ({
           <div className="flex items-center gap-1">
             <Eye className="h-2 w-2 text-gray-500" />
             <Slider
-              value={[opacity * 100]}
+              value={[displayOpacity * 100]}
               onValueChange={(value) => onOpacityChange(value[0] / 100)}
               max={100}
               step={10}
               className="flex-1 h-3"
             />
             <span className="text-[7px] text-gray-400 w-6 text-right">
-              {Math.round(opacity * 100)}%
+              {Math.round(displayOpacity * 100)}%
             </span>
           </div>
         </motion.div>
