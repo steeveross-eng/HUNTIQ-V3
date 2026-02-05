@@ -30,7 +30,7 @@ import HydroAnalysisPanel from '@/components/geospatial/HydroAnalysisPanel';
 import EnvironmentAnalysisPanelEnhanced from '@/components/geospatial/EnvironmentAnalysisPanelEnhanced';
 import CurrentConditionsPanel from '@/components/geospatial/CurrentConditionsPanel';
 import { HuntingPotentialAnalysis } from '@/components/geospatial';
-import { FusionScorePanel, AdvancedVisualizationPanel } from '@/components/geospatial';
+import { FusionScorePanel, AdvancedVisualizationPanel, BehaviorV3Panel } from '@/components/geospatial';
 import { api } from '@/services/api.client';
 
 // Waypoint types with icons and colors
