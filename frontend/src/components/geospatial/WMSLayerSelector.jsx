@@ -993,23 +993,25 @@ const WMSLayerSelector = ({
               
               {/* Layer groups with scroll controls */}
               {!loading && !error && (
-                <div className="relative">
-                  {/* Scroll Up Button */}
+                <div className="relative flex flex-col">
+                  {/* Scroll Up Button - More prominent */}
                   <button
                     onClick={scrollUp}
-                    className="w-full h-5 flex items-center justify-center bg-black/50 hover:bg-black/70 text-gray-400 hover:text-white transition-colors rounded-t border-b border-white/5"
+                    className="w-full h-6 flex items-center justify-center gap-1 bg-gradient-to-b from-black/70 to-black/40 hover:from-[#f5a623]/30 hover:to-black/50 text-gray-400 hover:text-[#f5a623] transition-all rounded-t border border-white/10"
                     title="Défiler vers le haut"
                   >
-                    <ChevronUp className="h-3 w-3" />
+                    <ChevronUp className="h-3.5 w-3.5" />
+                    <span className="text-[7px]">HAUT</span>
+                    <ChevronUp className="h-3.5 w-3.5" />
                   </button>
                   
-                  {/* Scrollable Layer List */}
+                  {/* Scrollable Layer List - Increased height */}
                   <div 
                     ref={scrollContainerRef}
-                    className="h-[160px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent"
+                    className="h-[220px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#f5a623]/50 scrollbar-track-black/30 border-x border-white/5"
                     style={{ scrollBehavior: 'smooth' }}
                   >
-                    <div className="space-y-1 py-1">
+                    <div className="space-y-1 p-1">
                       {Object.entries(filteredGroups).map(([sourceId, layers]) => (
                         <SourceGroup
                           key={sourceId}
@@ -1033,13 +1035,15 @@ const WMSLayerSelector = ({
                     </div>
                   </div>
                   
-                  {/* Scroll Down Button */}
+                  {/* Scroll Down Button - More prominent */}
                   <button
                     onClick={scrollDown}
-                    className="w-full h-5 flex items-center justify-center bg-black/50 hover:bg-black/70 text-gray-400 hover:text-white transition-colors rounded-b border-t border-white/5"
+                    className="w-full h-6 flex items-center justify-center gap-1 bg-gradient-to-t from-black/70 to-black/40 hover:from-[#f5a623]/30 hover:to-black/50 text-gray-400 hover:text-[#f5a623] transition-all rounded-b border border-white/10"
                     title="Défiler vers le bas"
                   >
-                    <ChevronDown className="h-3 w-3" />
+                    <ChevronDown className="h-3.5 w-3.5" />
+                    <span className="text-[7px]">BAS</span>
+                    <ChevronDown className="h-3.5 w-3.5" />
                   </button>
                 </div>
               )}
