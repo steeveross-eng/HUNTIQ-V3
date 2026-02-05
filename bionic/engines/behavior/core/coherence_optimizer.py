@@ -472,19 +472,40 @@ class SpeciesCalibrationManager:
         """
         profile = cls.get_profile(species)
         
-        # Calculer la corrélation attendue
-        expected_movement = activity_prob * (profile.movement_threshold_high - profile.movement_threshold_low) + profile.movement_threshold_low
+        # En hiver ou avec faible activité, le mouvement peut être découplé
+        # (le gibier bouge pour manger même si l'activité visible est faible)
         
-        # Tolérance basée sur l'espèce
-        tolerance = profile.movement_threshold_high * 0.3
+        # Tolérance large - le mouvement dépend de nombreux facteurs
+        # La corrélation n'est pas linéaire
+        min_movement = profile.movement_threshold_low
+        max_movement = profile.movement_threshold_high
         
-        deviation = abs(movement_km - expected_movement)
-        is_coherent = deviation <= tolerance
+        # Vérifier si le mouvement est dans une plage raisonnable
+        is_in_range = min_movement <= movement_km <= max_movement
         
-        # Score basé sur la déviation
-        score = max(0, 1.0 - (deviation / (tolerance * 2)))
+        # Score basé sur la plage
+        if is_in_range:
+            # Normaliser dans la plage
+            range_position = (movement_km - min_movement) / (max_movement - min_movement)
+            
+            # Score basé sur la cohérence avec l'activité
+            if activity_prob < 0.2:
+                # Faible activité - mouvement devrait être faible à modéré
+                expected_position = 0.2
+            elif activity_prob > 0.6:
+                # Haute activité - mouvement devrait être modéré à élevé
+                expected_position = 0.7
+            else:
+                expected_position = activity_prob
+            
+            deviation = abs(range_position - expected_position)
+            score = max(0.5, 1.0 - deviation)
+            is_coherent = True
+        else:
+            is_coherent = movement_km <= max_movement  # Cohérent si pas excessif
+            score = 0.7 if is_coherent else 0.4
         
-        explanation = f"Activity: {activity_prob:.1%}, Movement: {movement_km:.1f}km, Expected: {expected_movement:.1f}km"
+        explanation = f"Activity: {activity_prob:.1%}, Movement: {movement_km:.1f}km (range: {min_movement}-{max_movement}km)"
         
         return is_coherent, score, explanation
     
