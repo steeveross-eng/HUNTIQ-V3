@@ -4697,13 +4697,28 @@ except ImportError as e:
 
 # Include BIONIC™ P3 BehaviorEngine v3.0 (Auto-Calibrant)
 try:
-    if '/app/bionic/engines/behaviorV3' not in sys.path:
-        sys.path.insert(0, '/app/bionic/engines/behaviorV3')
-    from api.endpoints import behavior_v3_router
+    import sys as _sys
+    _p3_path = '/app/bionic/engines/behaviorV3'
+    if _p3_path not in _sys.path:
+        _sys.path.insert(0, _p3_path)
+    print(f"P3 path added: {_p3_path}")
+    
+    # Force absolute import from the path
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "behavior_v3_endpoints",
+        "/app/bionic/engines/behaviorV3/api/endpoints.py"
+    )
+    behavior_v3_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(behavior_v3_module)
+    behavior_v3_router = behavior_v3_module.behavior_v3_router
+    
     app.include_router(behavior_v3_router)
     print("BIONIC™ P3 BehaviorEngine v3.0 loaded - ML auto-calibration active")
-except ImportError as e:
-    print(f"P3 BehaviorEngine v3.0 not available: {e}")
+except Exception as e:
+    import traceback
+    print(f"P3 BehaviorEngine v3.0 not available: {type(e).__name__}: {e}")
+    traceback.print_exc()
 
 # Include BIONIC™ Main Engine (POST /api/bionic/analyze)
 try:
