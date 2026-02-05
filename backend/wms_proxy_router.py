@@ -560,4 +560,154 @@ async def reset_circuit_breaker(host: str = None):
         logger.info("All circuit breakers reset")
         return {"success": True, "message": "Tous les circuit breakers ont été réinitialisés"}
 
-logger.info('WMS Proxy Router initialized with robust error handling')
+
+@router.get("/smart/{layer_type}")
+async def smart_wms_proxy(
+    layer_type: str,
+    bbox: str,
+    width: int = 256,
+    height: int = 256,
+    format: str = "image/png",
+    crs: str = "EPSG:4326"
+):
+    """
+    Proxy WMS intelligent avec fallback automatique entre sources.
+    
+    Essaie la source primaire, puis les fallbacks en cas d'échec.
+    
+    Args:
+        layer_type: Type de couche (ecoforestry, terrain, hydro)
+        bbox: Bounding box (minx,miny,maxx,maxy)
+        width: Largeur de l'image
+        height: Hauteur de l'image
+        format: Format d'image
+        crs: Système de coordonnées
+    
+    Returns:
+        Image tile ou erreur détaillée
+    """
+    if layer_type not in WMS_SOURCES_WITH_FALLBACK:
+        return JSONResponse(
+            status_code=400,
+            content={
+                "error": "invalid_layer_type",
+                "message": f"Type de couche inconnu: {layer_type}",
+                "available_types": list(WMS_SOURCES_WITH_FALLBACK.keys())
+            }
+        )
+    
+    sources_config = WMS_SOURCES_WITH_FALLBACK[layer_type]
+    all_sources = [sources_config["primary"]] + sources_config.get("fallbacks", [])
+    
+    errors_collected = []
+    
+    for source in all_sources:
+        host = source["host"]
+        
+        # Vérifier le circuit breaker
+        if not is_source_available(host):
+            errors_collected.append({"source": host, "error": "circuit_breaker_open"})
+            continue
+        
+        # Construire l'URL WMS
+        wms_url = (
+            f"{source['url']}?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0"
+            f"&LAYERS={source['layer']}&STYLES=&FORMAT={format}"
+            f"&TRANSPARENT=true&WIDTH={width}&HEIGHT={height}"
+            f"&CRS={crs}&BBOX={bbox}"
+        )
+        
+        # Vérifier le cache
+        cache_key = get_cache_key(source['url'], {"bbox": bbox, "layer": source['layer']})
+        if cache_key in WMS_CACHE:
+            cached = WMS_CACHE[cache_key]
+            if datetime.now() - cached['timestamp'] < CACHE_DURATION:
+                logger.debug(f"Smart WMS cache hit for {layer_type} from {host}")
+                return Response(
+                    content=cached['data'],
+                    media_type=format,
+                    headers={
+                        "Access-Control-Allow-Origin": "*",
+                        "Cache-Control": "public, max-age=3600",
+                        "X-WMS-Cache": "HIT",
+                        "X-WMS-Source": host,
+                        "X-WMS-Layer-Type": layer_type
+                    }
+                )
+        
+        # Essayer de récupérer la tuile
+        content, success, error_message = await fetch_wms_with_retry(wms_url, max_retries=2)
+        
+        if success and content:
+            # Mettre en cache
+            WMS_CACHE[cache_key] = {
+                'data': content,
+                'timestamp': datetime.now()
+            }
+            
+            logger.info(f"Smart WMS success: {layer_type} from {host}")
+            
+            return Response(
+                content=content,
+                media_type=format,
+                headers={
+                    "Access-Control-Allow-Origin": "*",
+                    "Cache-Control": "public, max-age=3600",
+                    "X-WMS-Cache": "MISS",
+                    "X-WMS-Source": host,
+                    "X-WMS-Layer-Type": layer_type,
+                    "X-WMS-Fallback-Used": "false" if source == all_sources[0] else "true"
+                }
+            )
+        else:
+            errors_collected.append({"source": host, "error": error_message})
+            logger.warning(f"Smart WMS source failed: {host} - {error_message}, trying fallback...")
+    
+    # Tous les sources ont échoué
+    logger.error(f"Smart WMS all sources failed for {layer_type}")
+    return JSONResponse(
+        status_code=502,
+        content={
+            "error": "all_sources_failed",
+            "message": f"Toutes les sources ont échoué pour {layer_type}",
+            "layer_type": layer_type,
+            "errors": errors_collected,
+            "sources_tried": len(all_sources)
+        }
+    )
+
+
+@router.get("/sources")
+async def get_available_sources():
+    """
+    Retourne la liste des types de couches disponibles avec leurs sources.
+    """
+    sources_info = {}
+    
+    for layer_type, config in WMS_SOURCES_WITH_FALLBACK.items():
+        primary = config["primary"]
+        fallbacks = config.get("fallbacks", [])
+        
+        sources_info[layer_type] = {
+            "primary": {
+                "host": primary["host"],
+                "available": is_source_available(primary["host"])
+            },
+            "fallbacks_count": len(fallbacks),
+            "fallbacks": [
+                {
+                    "host": fb["host"],
+                    "available": is_source_available(fb["host"])
+                }
+                for fb in fallbacks
+            ],
+            "total_sources": 1 + len(fallbacks)
+        }
+    
+    return {
+        "layer_types": sources_info,
+        "total_types": len(WMS_SOURCES_WITH_FALLBACK)
+    }
+
+
+logger.info('WMS Proxy Router initialized with robust error handling and smart fallback')
