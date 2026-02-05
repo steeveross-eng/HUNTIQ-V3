@@ -545,6 +545,10 @@ const TerritoryPage = () => {
                   <Target className="h-4 w-4 mr-1" />
                   Score
                 </TabsTrigger>
+                <TabsTrigger value="fusion" className="flex-1 data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+                  <span className="mr-1">🔮</span>
+                  Fusion
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="map" className="mt-4 space-y-4">
