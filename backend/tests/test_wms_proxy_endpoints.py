@@ -319,7 +319,8 @@ class TestWMSCacheClear:
         
         data = response.json()
         assert data["status"] == "success"
-        assert "cleared" in data
+        assert "message" in data
+        assert "Cleared" in data["message"]
         
     def test_cache_clear_specific_source(self):
         """Test clearing cache for specific source"""
