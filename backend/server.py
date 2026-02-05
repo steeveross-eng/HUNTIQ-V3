@@ -4641,15 +4641,22 @@ except ImportError as e:
     print(f"WMS Proxy API not available: {e}")
 
 # Include BIONIC™ Geospatial Engine (backend module with WMS proxy)
+# Must be loaded before /app/bionic/engines is added to sys.path to avoid namespace conflict
 try:
-    import importlib.util
-    spec = importlib.util.spec_from_file_location(
-        "backend_geospatial_endpoints", 
-        "/app/backend/geospatial/endpoints/__init__.py"
-    )
-    backend_geo_module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(backend_geo_module)
-    geospatial_router = backend_geo_module.geospatial_router
+    # Ensure backend is at front of path
+    import sys as _geo_sys
+    if '/app/backend' in _geo_sys.path:
+        _geo_sys.path.remove('/app/backend')
+    _geo_sys.path.insert(0, '/app/backend')
+    
+    # Clear any cached 'geospatial' module from bionic/engines
+    import importlib
+    if 'geospatial' in _geo_sys.modules:
+        del _geo_sys.modules['geospatial']
+    if 'geospatial.endpoints' in _geo_sys.modules:
+        del _geo_sys.modules['geospatial.endpoints']
+    
+    from geospatial.endpoints import geospatial_router
     app.include_router(geospatial_router)
     print("BIONIC™ Geospatial Engine loaded - WMS Proxy + 50 endpoints active")
 except Exception as e:
