@@ -657,6 +657,53 @@ const TerritoryPage = () => {
                   score={globalEnvironmentScore || territoryScore}
                 />
               </TabsContent>
+
+              {/* BIONIC™ P2 Fusion Tab */}
+              <TabsContent value="fusion" className="mt-4 space-y-4">
+                {/* Fusion Score Panel */}
+                <FusionScorePanel
+                  lat={selectedLocation?.lat}
+                  lon={selectedLocation?.lng}
+                  species="deer"
+                  territory="quebec"
+                  radiusKm={2.0}
+                  autoLoad={false}
+                  showWeights={true}
+                  showBreakdown={true}
+                  showRecommendations={true}
+                />
+
+                {/* Advanced Visualization Panel */}
+                {selectedLocation && (
+                  <Card className="bg-[#1a1a1a] border-white/10 overflow-hidden">
+                    <CardHeader className="pb-2 bg-gradient-to-r from-purple-900/30 to-indigo-900/30">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🎨</span>
+                        <CardTitle className="text-sm text-white">Visualisations Avancées P1.5</CardTitle>
+                        <Badge className="bg-purple-500/20 text-purple-300 text-xs">P1.5</Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <AdvancedVisualizationPanel 
+                        defaultTab="layers"
+                        showPerformance={false}
+                      />
+                    </CardContent>
+                  </Card>
+                )}
+
+                {!selectedLocation && (
+                  <Card className="bg-[#1a1a1a] border-white/10">
+                    <CardContent className="p-8 text-center">
+                      <span className="text-4xl mb-4 block">📍</span>
+                      <p className="text-gray-400 font-medium">Sélectionnez un point sur la carte</p>
+                      <p className="text-sm text-gray-500 mt-2">
+                        Cliquez sur la carte pour activer la fusion Geo+Behavior
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+              </TabsContent>
             </Tabs>
 
             {/* Quick info */}
