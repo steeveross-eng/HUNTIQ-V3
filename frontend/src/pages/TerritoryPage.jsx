@@ -549,6 +549,10 @@ const TerritoryPage = () => {
                   <span className="mr-1">🔮</span>
                   Fusion
                 </TabsTrigger>
+                <TabsTrigger value="behaviorv3" className="flex-1 data-[state=active]:bg-amber-500 data-[state=active]:text-black">
+                  <span className="mr-1">🧠</span>
+                  ML v3
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="map" className="mt-4 space-y-4">
