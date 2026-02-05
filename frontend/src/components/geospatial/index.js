@@ -122,3 +122,10 @@ export {
   useInteractionLogger,
   INTERACTION_TYPES
 } from './performance/UIInteractionLogger';
+
+// =============================================================================
+// BIONIC™ P1.5 Main Orchestrator
+// =============================================================================
+
+// Advanced Visualization Panel (Main P1.5 Component)
+export { default as AdvancedVisualizationPanel } from './AdvancedVisualizationPanel';
