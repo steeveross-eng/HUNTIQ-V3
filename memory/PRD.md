@@ -1261,5 +1261,131 @@ Implémentation complète du **BehaviorFusionEngine** pour fusionner la Behavior
 
 ---
 
+### 2026-02-05 - Phase P3: BehaviorEngine v3.0 Auto-Calibrant ✅
+
+#### Résumé
+Implémentation complète du **BehaviorEngine v3.0** avec Machine Learning supervisé (Gradient Boosting). Module 100% isolé pour l'auto-calibration des pondérations. Intégré dans la page Territory avec nouvel onglet "ML v3".
+
+#### Backend Créé
+```
+/app/bionic/engines/behaviorV3/
+├── __init__.py
+├── behavior_v3_entry.py           # Point d'entrée + Router FastAPI
+├── v3_models/
+│   ├── __init__.py
+│   └── v3_schemas.py              # 15+ modèles Pydantic isolés
+├── v3_data/
+│   ├── __init__.py
+│   ├── calibration_history_tracker.py   # ACCÉLÉRATEUR STRATÉGIQUE
+│   ├── training_data_manager.py
+│   └── simulated_data_generator.py      # Données calibrées Québec
+├── v3_core/
+│   ├── __init__.py
+│   ├── ml_calibrator.py           # Gradient Boosting (natif, sans sklearn)
+│   ├── weight_adjuster.py         # Ajustement dynamique des poids
+│   ├── feedback_collector.py      # Collecte feedback chasseurs
+│   └── rollback_manager.py        # Rollback en cas de mauvaise calibration
+├── api/
+│   ├── __init__.py
+│   └── endpoints.py               # 9+ endpoints API (secondaire)
+└── tests/
+    └── test_behavior_v3.py        # Tests unitaires/intégration
+```
+
+#### Architecture P3 - Module 100% Isolé
+| Contrainte | Implémentation |
+|------------|----------------|
+| Isolation totale | Dossiers renommés (v3_core, v3_data, v3_models) |
+| Aucune dépendance | Pas d'import des modules P1/P2/Marketplace |
+| Stockage local | Historique dans `/v3_data/calibration_history.json` |
+| Rollback interne | RollbackManager intégré |
+| Mode Maintenance | Compatible via `set_maintenance_mode()` |
+
+#### API Endpoints (9)
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/bionic/behavior-v3/status` | Statut du moteur v3.0 (version, phase, capacités) |
+| `POST /api/bionic/behavior-v3/train` | Entraînement ML (Gradient Boosting) |
+| `POST /api/bionic/behavior-v3/calibrate` | Calibration des pondérations |
+| `GET /api/bionic/behavior-v3/weights` | Pondérations actuelles (6 catégories) |
+| `GET /api/bionic/behavior-v3/history` | Historique des calibrations |
+| `POST /api/bionic/behavior-v3/feedback` | Soumission feedback chasseur |
+| `GET /api/bionic/behavior-v3/feedback/summary` | Résumé des feedbacks |
+| `GET /api/bionic/behavior-v3/rollback/candidates` | Candidats pour rollback |
+| `GET /api/bionic/behavior-v3/metrics` | Métriques de performance ML |
+
+#### Algorithme ML: Gradient Boosting
+| Feature | Valeur |
+|---------|--------|
+| Type | Régression supervisée |
+| n_estimators | 50-100 (configurable) |
+| learning_rate | 0.1 (configurable) |
+| Accuracy obtenue | 85-90% sur données simulées |
+| Cross-validation | 3-fold |
+
+#### CalibrationHistoryTracker (Accélérateur Stratégique)
+| Fonctionnalité | Description |
+|----------------|-------------|
+| Historique complet | Timestamp, poids avant/après, métriques |
+| Rollback granulaire | Vers n'importe quelle calibration précédente |
+| Export analytique | JSON ou CSV |
+| Statistiques | avg_improvement, success_rate, total_rollbacks |
+
+#### Données d'Entraînement
+| Source | Échantillons | Calibration |
+|--------|--------------|-------------|
+| Simulées | 500/entraînement | Coefficients québécois MFFP 2015-2024 |
+| Feedback utilisateur | Illimité | SUCCESS/PARTIAL/FAILURE/RATING |
+
+#### Frontend Créé
+```
+/app/frontend/src/
+├── services/
+│   └── behaviorV3.service.js      # Service API (10 méthodes)
+├── hooks/
+│   └── useBehaviorV3.js           # 8 hooks React + hook combiné
+└── components/geospatial/
+    └── BehaviorV3Panel.jsx        # UI principale ML v3
+```
+
+#### Composant BehaviorV3Panel
+| Tab | Contenu |
+|-----|---------|
+| **Statut** | Calibrations, Feedbacks, Rollbacks, Capacités actives |
+| **Poids** | Barres de progression 6 catégories (activity, seasonal, movement, environmental, temporal, pressure) |
+| **Historique** | CalibrationCards avec Active badge, amélioration %, confiance |
+| **Actions** | Sélecteur espèce, boutons "Entraîner ML" et "Calibrer", résultats |
+
+#### Intégration Territory Page
+- Nouvel onglet **"ML v3"** ajouté dans `/territoire` (4ème onglet)
+- Badge ambre pour différencier de Fusion (violet)
+- Composant `BehaviorV3Panel` avec data-testid
+
+#### Tests
+- **34/34 tests backend passés** (100%)
+- **Frontend 100%** - Onglet ML v3 fonctionnel avec toutes les interactions
+- Voir `/app/test_reports/iteration_21.json`
+
+---
+
+## 10. Prochaines Étapes (Après P3)
+
+### P1 - Marketplace MVP (PROCHAINE PRIORITÉ)
+- CRUD produits isolé
+- Catégories de produits
+- Module indépendant du reste de BIONIC
+
+### P2 - Importation d'annonce via URL
+- Acquisition automatique de données
+- Toujours isolé
+
+### P4 - UX & Produits
+- Tableau de bord dynamique
+- Export PDF des rapports
+- Sauvegarde de zones personnalisées
+- Graphiques avancés
+
+---
+
 *HUNTIQ V3 BIONIC™ - Powered by GPT-5.2 & Emergent Platform*
 *La chasse réinventée au Québec 🦌*
