@@ -201,7 +201,6 @@ const LAYER_DISPLAY_NAMES = {
   osm: 'Carte OSM',
   // CanVec
   hydro: 'Hydrographie',
-  transport: 'Transport',
   // USGS
   topo: 'Topographie',
   // NOAA

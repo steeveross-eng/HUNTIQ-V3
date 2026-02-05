@@ -229,11 +229,10 @@ WMS_SOURCES = {
     # CanVec - Natural Resources Canada - Fully available
     "canvec": {
         "name": "CanVec NRCan",
-        "description": "Données vectorielles Canada - Alternative gratuite",
+        "description": "Hydrographie Canada - Données vectorielles gratuites",
         "base_url": "https://maps.geogratis.gc.ca/wms/canvec_en",
         "layers": {
-            "hydro": "hydro",
-            "transport": "transport"
+            "hydro": "hydro"
         },
         "srs": "EPSG:3857",
         "format": "image/png",
