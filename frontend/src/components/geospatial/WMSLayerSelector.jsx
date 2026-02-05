@@ -717,7 +717,7 @@ const WMSLayerSelector = ({
     : 'right-2 top-2';
   
   // Scroll controls ref
-  const scrollContainerRef = React.useRef(null);
+  const scrollContainerRef = useRef(null);
   
   const scrollUp = () => {
     if (scrollContainerRef.current) {
