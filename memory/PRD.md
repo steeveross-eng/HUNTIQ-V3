@@ -844,6 +844,74 @@ Module frontend indépendant affichant les conditions de chasse en temps réel, 
 - **20/20 tests passés** (100%)
 - Voir `/app/test_reports/iteration_14.json`
 
+### 2026-02-04 - P0-3: Tests d'Intégration & Calibration ML ✅
+
+#### Résumé
+Module complet de tests d'intégration inter-moteurs et calibration ML avec données spécifiques au Québec.
+
+#### Fichiers Créés
+```
+/app/bionic/engines/behavior/core/
+└── integration_calibration.py   # Module principal (1000+ lignes)
+    ├── QuebecCalibrationData     # Données calibration Québec
+    ├── CoherenceMatrix           # Matrice de cohérence
+    ├── BehaviorSuiteIntegrationTester
+    ├── MLCalibrationAdjuster
+    └── IntegrationReportGenerator
+
+/app/bionic/engines/behavior/api/
+└── p03_endpoints.py              # 7 endpoints API
+```
+
+#### Endpoints API P0-3
+| Route | Description |
+|-------|-------------|
+| `GET /api/bionic/p03/status` | Status du module |
+| `GET /api/bionic/p03/test/single` | Test intégration unique |
+| `POST /api/bionic/p03/test/full` | Suite complète (15 tests) |
+| `GET /api/bionic/p03/test/result/{id}` | Résultats async |
+| `GET /api/bionic/p03/calibration/quebec` | Données calibration Québec |
+| `GET /api/bionic/p03/calibration/region` | Calibration par région |
+| `GET /api/bionic/p03/coherence/matrix` | Matrice de cohérence |
+
+#### Données de Calibration Québec
+| Source | Données |
+|--------|---------|
+| MFFP | Densité de récolte par région/espèce |
+| Environnement Canada | Températures moyennes mensuelles |
+| Télémétrie GPS | Patterns de déplacement |
+| Études universitaires | Dates de rut, coefficients thermiques |
+
+#### Régions Calibrées
+| Région | Cohérence | Status |
+|--------|-----------|--------|
+| Laurentides | 87.4% | ✅ VALIDATED |
+| Saguenay | 87.4% | ✅ VALIDATED |
+| Outaouais | 87.4% | ✅ VALIDATED |
+| Abitibi | 90.1% | ✅ VALIDATED |
+| Gaspésie | 87.4% | ✅ VALIDATED |
+
+#### Espèces Calibrées
+| Espèce | Cohérence | Score Moyen |
+|--------|-----------|-------------|
+| Deer | 87.4% | 43.2/100 |
+| Moose | 88.6% | 47.1/100 |
+| Bear | 88.2% | 32.5/100 |
+
+#### Rapport Final
+```
+Total Tests: 15 (5 régions × 3 espèces)
+Success Rate: 100%
+Average Coherence: 88.1%
+Calibration Status: PASS
+Behavior Suite Status: VALIDATED
+Production Ready: ✅ TRUE
+```
+
+#### Tests
+- **34/34 tests passés** (100%)
+- Voir `/app/test_reports/iteration_15.json`
+
 ---
 
 ## 4. Prochaines Étapes (P0-3+)
