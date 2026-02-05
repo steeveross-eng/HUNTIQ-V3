@@ -216,7 +216,7 @@ const LAYER_DISPLAY_NAMES = {
 };
 
 /**
- * Individual layer item component
+ * Individual layer item component - Compact version
  */
 const LayerItem = ({ 
   layer, 
@@ -227,7 +227,8 @@ const LayerItem = ({
   onMoveUp,
   onMoveDown,
   canMoveUp,
-  canMoveDown
+  canMoveDown,
+  compact = false
 }) => {
   const [showOpacity, setShowOpacity] = useState(false);
   const sourceInfo = SOURCE_ICONS[layer.sourceId] || SOURCE_ICONS.default;
@@ -236,79 +237,55 @@ const LayerItem = ({
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: -10 }}
+      initial={{ opacity: 0, y: -5 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 10 }}
+      exit={{ opacity: 0, y: 5 }}
       className={`
-        p-3 rounded-sm border transition-all group
+        px-1.5 py-1 rounded-sm border transition-all group
         ${isActive 
           ? 'bg-[#f5a623]/10 border-[#f5a623]/30' 
           : 'bg-black/30 border-white/5 hover:border-white/15'
         }
       `}
     >
-      <div className="flex items-center gap-3">
-        {/* Drag handle (visible on active layers) */}
-        {isActive && (
-          <div className="flex flex-col gap-0.5 opacity-30 hover:opacity-70 cursor-grab">
-            <button 
-              onClick={onMoveUp} 
-              disabled={!canMoveUp}
-              className="p-0.5 hover:bg-white/10 rounded disabled:opacity-30"
-            >
-              <ChevronUp className="h-3 w-3 text-gray-400" />
-            </button>
-            <button 
-              onClick={onMoveDown} 
-              disabled={!canMoveDown}
-              className="p-0.5 hover:bg-white/10 rounded disabled:opacity-30"
-            >
-              <ChevronDown className="h-3 w-3 text-gray-400" />
-            </button>
-          </div>
-        )}
-        
-        {/* Icon */}
-        <div className={`w-8 h-8 rounded-sm flex items-center justify-center ${sourceInfo.bg}`}>
-          <Icon className={`h-4 w-4 ${sourceInfo.color}`} />
+      <div className="flex items-center gap-1.5">
+        {/* Icon - Compact */}
+        <div className={`w-5 h-5 rounded-sm flex items-center justify-center ${sourceInfo.bg}`}>
+          <Icon className={`h-2.5 w-2.5 ${sourceInfo.color}`} />
         </div>
         
-        {/* Layer info */}
+        {/* Layer info - Compact */}
         <div className="flex-1 min-w-0">
-          <p className="text-sm text-white font-medium truncate">
+          <p className="text-[8px] text-white font-medium truncate leading-tight">
             {layer.displayName}
           </p>
-          <p className="text-xs text-gray-500 truncate">
-            {layer.sourceName}
-          </p>
         </div>
         
-        {/* Toggle */}
+        {/* Toggle - Compact */}
         <Switch
           checked={isActive}
           onCheckedChange={onToggle}
-          className="data-[state=checked]:bg-[#f5a623]"
+          className="data-[state=checked]:bg-[#f5a623] scale-75"
         />
       </div>
       
-      {/* Opacity control (when active) */}
+      {/* Opacity control (when active) - Compact */}
       {isActive && (
         <motion.div 
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: 'auto', opacity: 1 }}
-          className="mt-3 pt-3 border-t border-white/5"
+          className="mt-1 pt-1 border-t border-white/5"
         >
-          <div className="flex items-center gap-3">
-            <Eye className="h-3 w-3 text-gray-500" />
-            <span className="text-xs text-gray-400 w-16">Opacité</span>
+          <div className="flex items-center gap-1">
+            <Eye className="h-2 w-2 text-gray-500" />
             <Slider
               value={[opacity * 100]}
               onValueChange={(value) => onOpacityChange(value[0] / 100)}
               max={100}
-              step={5}
-              className="flex-1"
+              step={10}
+              className="flex-1 h-3"
             />
-            <span className="text-xs text-gray-400 w-8 text-right">
+            <span className="text-[7px] text-gray-400 w-6 text-right">
               {Math.round(opacity * 100)}%
             </span>
           </div>
