@@ -28,32 +28,47 @@ const TILE_PROVIDERS = {
     url: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
     attribution: '© CARTO'
   },
+  carto_voyager: {
+    name: 'Carto Voyager',
+    url: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    attribution: '© CARTO © OpenStreetMap'
+  },
   stamen_terrain: {
     name: 'Stadia Terrain',
     url: 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png',
     attribution: '© Stadia Maps, © OpenMapTiles'
+  },
+  esri_world_imagery: {
+    name: 'ESRI Satellite',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution: '© Esri, DigitalGlobe, GeoEye'
   }
 };
 
-// Default style for BIONIC™ dark theme
+// Default style for BIONIC™ - Using Voyager theme for better readability
 const BIONIC_DARK_STYLE = {
   version: 8,
-  name: 'BIONIC Dark',
+  name: 'BIONIC Voyager',
   sources: {
-    'osm-tiles': {
+    'base-tiles': {
       type: 'raster',
-      tiles: [TILE_PROVIDERS.carto_dark.url],
+      tiles: [TILE_PROVIDERS.carto_voyager.url],
       tileSize: 256,
-      attribution: TILE_PROVIDERS.carto_dark.attribution
+      attribution: TILE_PROVIDERS.carto_voyager.attribution
     }
   },
   layers: [
     {
-      id: 'osm-layer',
+      id: 'base-layer',
       type: 'raster',
-      source: 'osm-tiles',
+      source: 'base-tiles',
       minzoom: 0,
-      maxzoom: 19
+      maxzoom: 19,
+      paint: {
+        'raster-brightness-min': 0.1,
+        'raster-brightness-max': 1.0,
+        'raster-contrast': 0.1
+      }
     }
   ]
 };
