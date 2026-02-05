@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 3.50 (P1.5 Visualisations Avancées COMPLÈTE)
+## Version: 4.0.0 (P2 BehaviorFusionEngine COMPLÈTE)
 ## Dernière mise à jour: 2026-02-05
 
 ---
