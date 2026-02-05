@@ -966,7 +966,7 @@ const WMSLayerSelector = ({
               
               {/* Layer groups */}
               {!loading && !error && (
-                <ScrollArea className="h-[400px] pr-2">
+                <ScrollArea className="h-[280px] pr-2">
                   <div className="space-y-2">
                     {Object.entries(filteredGroups).map(([sourceId, layers]) => (
                       <SourceGroup
