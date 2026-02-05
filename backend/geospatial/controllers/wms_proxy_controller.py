@@ -194,17 +194,33 @@ class WMSProxyController:
         """Get WMS source configuration"""
         return self.sources.get(source_id)
     
-    def list_sources(self) -> list:
-        """List all available WMS sources"""
-        return [
-            {
+    def list_sources(self, include_unavailable: bool = False) -> list:
+        """List WMS sources
+        
+        Args:
+            include_unavailable: If True, include sources that are not currently accessible
+        
+        Returns:
+            List of source info dicts
+        """
+        sources = []
+        for source_id, config in self.sources.items():
+            status = config.get("status", "available")
+            
+            # Skip unavailable sources unless explicitly requested
+            if not include_unavailable and status == "unavailable":
+                continue
+                
+            sources.append({
                 "id": source_id,
                 "name": config["name"],
                 "layers": list(config["layers"].keys()),
-                "requires_key": config.get("requires_key", False)
-            }
-            for source_id, config in self.sources.items()
-        ]
+                "requires_key": config.get("requires_key", False),
+                "status": status,
+                "status_reason": config.get("status_reason", None)
+            })
+        
+        return sources
     
     def get_cache_key(self, source_id: str, layer: str, bbox: str, width: int, height: int) -> str:
         """Generate cache key for a tile request"""
