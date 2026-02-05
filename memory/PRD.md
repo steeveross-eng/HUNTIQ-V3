@@ -1421,6 +1421,32 @@ Implémentation complète du **BehaviorEngine v3.0** avec Machine Learning super
 
 **Test**: `/app/test_reports/iteration_23.json` - 100% frontend tests passés
 
+### Ergonomie et Fonds de Carte (RÉSOLU ✅)
+
+**Problèmes signalés**:
+1. "Les fonds de carte affichent tous le même rendu"
+2. "Couche Terrain non fonctionnelle"
+3. "Panneaux latéraux occupent 50% de l'écran"
+4. "Erreur AJAX ESRI lors du zoom"
+
+**Solutions**:
+1. **Changement de fond**: Pattern remove/add source/layer au lieu de `setTiles()`
+2. **Terrain**: Remplacement Stadia (API key requise) par OpenTopoMap (gratuit)
+3. **Ergonomie**: Carte 80% (4 cols/5), panneau WMS w-72 avec scroll 280px
+4. **Satellite**: Remplacement ESRI par Google Maps tiles (pas d'erreur CORS)
+
+**6 Fonds de carte disponibles**:
+| Thème | Source | Attribution |
+|-------|--------|-------------|
+| Voyager | CARTO @2x | © CARTO © OpenStreetMap |
+| Clair | CARTO Positron | © CARTO |
+| Sombre | CARTO Dark | © CARTO |
+| Satellite | Google mt1 | © Google |
+| OSM | OpenStreetMap | © OpenStreetMap contributors |
+| Terrain | OpenTopoMap | © OpenTopoMap (CC-BY-SA) |
+
+**Test**: `/app/test_reports/iteration_24.json` - 100% tests passés
+
 ---
 
 ## 11. Prochaines Étapes (Après P3)
