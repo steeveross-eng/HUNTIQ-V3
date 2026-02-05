@@ -898,76 +898,76 @@ const WMSLayerSelector = ({
                       </div>
                     </SelectItem>
                     <SelectItem value="osm" className="text-white text-[9px]">
-                      <div className="flex items-center gap-2">
-                        <Globe className="h-4 w-4 text-orange-400" />
-                        OpenStreetMap
+                      <div className="flex items-center gap-1">
+                        <Globe className="h-3 w-3 text-orange-400" />
+                        OSM
                       </div>
                     </SelectItem>
-                    <SelectItem value="terrain" className="text-white">
-                      <div className="flex items-center gap-2">
-                        <Mountain className="h-4 w-4 text-amber-400" />
-                        Terrain (Topo)
+                    <SelectItem value="terrain" className="text-white text-[9px]">
+                      <div className="flex items-center gap-1">
+                        <Mountain className="h-3 w-3 text-amber-400" />
+                        Terrain
                       </div>
                     </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               
-              {/* Search */}
-              <div className="relative mb-3">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+              {/* Search - Compact */}
+              <div className="relative mb-2">
+                <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-500" />
                 <Input
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Rechercher une couche..."
-                  className="pl-9 bg-black/40 border-white/10 text-white text-sm h-9"
+                  placeholder="Rechercher..."
+                  className="pl-7 bg-black/40 border-white/10 text-white text-[9px] h-6"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                    className="absolute right-2 top-1/2 -translate-y-1/2"
                   >
-                    <X className="h-4 w-4 text-gray-500 hover:text-white" />
+                    <X className="h-3 w-3 text-gray-500 hover:text-white" />
                   </button>
                 )}
               </div>
               
-              {/* Actions */}
+              {/* Actions - Compact */}
               {activeLayers.length > 0 && (
-                <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/5">
-                  <span className="text-xs text-gray-400">
+                <div className="flex items-center justify-between mb-2 pb-2 border-b border-white/5">
+                  <span className="text-[8px] text-gray-400">
                     {currentPreset && SPECIES_PRESETS[currentPreset] ? (
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-0.5">
                         <span>{SPECIES_PRESETS[currentPreset].icon}</span>
                         <span>{SPECIES_PRESETS[currentPreset].name}</span>
                       </span>
                     ) : (
-                      `${activeLayers.length} couche${activeLayers.length > 1 ? 's' : ''} active${activeLayers.length > 1 ? 's' : ''}`
+                      `${activeLayers.length} active`
                     )}
                   </span>
                   <Button
                     size="sm"
                     variant="ghost"
                     onClick={handleClearAll}
-                    className="h-7 px-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                    className="h-5 px-1 text-[8px] text-red-400 hover:text-red-300 hover:bg-red-500/10"
                   >
-                    <X className="h-3 w-3 mr-1" />
-                    Tout effacer
+                    <X className="h-2.5 w-2.5 mr-0.5" />
+                    Effacer
                   </Button>
                 </div>
               )}
               
-              {/* Loading state */}
+              {/* Loading state - Compact */}
               {loading && (
-                <div className="flex flex-col items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 text-[#f5a623] animate-spin mb-2" />
-                  <p className="text-gray-400 text-sm">Chargement des couches...</p>
+                <div className="flex flex-col items-center justify-center py-4">
+                  <Loader2 className="h-4 w-4 text-[#f5a623] animate-spin mb-1" />
+                  <p className="text-gray-400 text-[8px]">Chargement...</p>
                 </div>
               )}
               
               {/* Error state */}
               {error && (
-                <div className="flex flex-col items-center justify-center py-8">
+                <div className="flex flex-col items-center justify-center py-4">
                   <AlertCircle className="h-6 w-6 text-red-400 mb-2" />
                   <p className="text-red-400 text-sm">{error}</p>
                   <Button
