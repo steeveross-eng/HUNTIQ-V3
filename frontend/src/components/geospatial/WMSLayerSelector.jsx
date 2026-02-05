@@ -787,20 +787,67 @@ const WMSLayerSelector = ({
                   onValueChange={(value) => {
                     if (!map) return;
                     
-                    const baseStyles = {
-                      voyager: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-                      light: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-                      dark: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-                      satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                      osm: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      terrain: 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png'
+                    // Base map configurations with proper attributions
+                    const baseConfigs = {
+                      voyager: {
+                        url: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
+                        attribution: '© CARTO © OpenStreetMap'
+                      },
+                      light: {
+                        url: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
+                        attribution: '© CARTO'
+                      },
+                      dark: {
+                        url: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
+                        attribution: '© CARTO'
+                      },
+                      satellite: {
+                        url: 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+                        attribution: '© Google'
+                      },
+                      osm: {
+                        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        attribution: '© OpenStreetMap contributors'
+                      },
+                      terrain: {
+                        url: 'https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}@2x.png',
+                        attribution: '© Stadia Maps © OpenMapTiles © OSM'
+                      }
                     };
                     
-                    const newUrl = baseStyles[value];
-                    if (newUrl && map.getSource('base-tiles')) {
-                      // Update the source tiles
-                      const source = map.getSource('base-tiles');
-                      source.setTiles([newUrl]);
+                    const config = baseConfigs[value];
+                    if (!config) return;
+                    
+                    try {
+                      // Remove old source and layer
+                      if (map.getLayer('base-layer')) {
+                        map.removeLayer('base-layer');
+                      }
+                      if (map.getSource('base-tiles')) {
+                        map.removeSource('base-tiles');
+                      }
+                      
+                      // Add new source
+                      map.addSource('base-tiles', {
+                        type: 'raster',
+                        tiles: [config.url],
+                        tileSize: 256,
+                        attribution: config.attribution
+                      });
+                      
+                      // Add new layer at bottom
+                      const firstLayerId = map.getStyle().layers[0]?.id;
+                      map.addLayer({
+                        id: 'base-layer',
+                        type: 'raster',
+                        source: 'base-tiles',
+                        minzoom: 0,
+                        maxzoom: 20
+                      }, firstLayerId);
+                      
+                      console.log('Base map changed to:', value);
+                    } catch (err) {
+                      console.error('Error changing base map:', err);
                     }
                   }}
                 >
@@ -829,7 +876,7 @@ const WMSLayerSelector = ({
                     <SelectItem value="satellite" className="text-white">
                       <div className="flex items-center gap-2">
                         <Satellite className="h-4 w-4 text-green-400" />
-                        Satellite (ESRI)
+                        Satellite
                       </div>
                     </SelectItem>
                     <SelectItem value="osm" className="text-white">
@@ -841,7 +888,7 @@ const WMSLayerSelector = ({
                     <SelectItem value="terrain" className="text-white">
                       <div className="flex items-center gap-2">
                         <Mountain className="h-4 w-4 text-amber-400" />
-                        Terrain
+                        Terrain (Stadia)
                       </div>
                     </SelectItem>
                   </SelectContent>
