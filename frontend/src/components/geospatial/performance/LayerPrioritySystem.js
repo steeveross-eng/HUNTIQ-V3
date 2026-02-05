@@ -72,32 +72,33 @@ export const LAYER_PRIORITY_ORDER = {
 // =============================================================================
 
 export const LAYER_CONFLICTS = {
-  // Layers that shouldn't be shown together at full opacity
-  pressure: ['nutrition'], // Both are heatmaps, conflict visually
-  nutrition: ['pressure'],
-  
-  // Recommendations when adding these layers
+  // Recommendations when adding these layers (with conflict info)
   corridors: {
+    simpleConflicts: [],
     recommended: ['landcover'],
     conflictsWith: [],
     enhances: ['nutrition', 'population']
   },
   landcover: {
+    simpleConflicts: [],
     recommended: ['corridors'],
     conflictsWith: [],
     enhances: []
   },
   nutrition: {
+    simpleConflicts: ['pressure'], // Both are heatmaps, conflict visually
     recommended: ['landcover', 'corridors'],
     conflictsWith: ['pressure'],
     enhances: ['corridors']
   },
   population: {
+    simpleConflicts: [],
     recommended: ['landcover'],
     conflictsWith: [],
     enhances: ['nutrition']
   },
   pressure: {
+    simpleConflicts: ['nutrition'], // Both are heatmaps, conflict visually
     recommended: ['landcover', 'corridors'],
     conflictsWith: ['nutrition'],
     enhances: ['corridors']

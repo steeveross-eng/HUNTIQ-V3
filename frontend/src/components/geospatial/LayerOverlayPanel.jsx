@@ -22,7 +22,7 @@ import { useInteractionLogger } from './performance/UIInteractionLogger';
 function LayerStackVisualizer({ layerStack, onReorder }) {
   return (
     <div className="relative bg-gray-100 rounded-lg p-3" data-testid="layer-stack-visualizer">
-      <p className="text-xs text-gray-500 mb-2">Ordre d'affichage (haut = premier plan)</p>
+      <p className="text-xs text-gray-500 mb-2">Ordre d&apos;affichage (haut = premier plan)</p>
       
       <div className="space-y-1">
         {layerStack.map((layer, index) => {

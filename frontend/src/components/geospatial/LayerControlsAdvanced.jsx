@@ -48,7 +48,7 @@ function RadiusControl({ value, onChange, min = 0.5, max = 50, step = 0.5 }) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-700">Rayon d'analyse</span>
+        <span className="text-sm font-medium text-gray-700">Rayon d&apos;analyse</span>
         <span className="text-sm font-bold text-emerald-600">{value} km</span>
       </div>
       
@@ -278,7 +278,7 @@ export function LayerControlsAdvanced({
           onClick={() => toggleSection('radius')}
           className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100"
         >
-          <span className="text-sm font-medium text-gray-700">Rayon d'analyse</span>
+          <span className="text-sm font-medium text-gray-700">Rayon d&apos;analyse</span>
           <span className="text-sm text-emerald-600 font-bold">{analysisLocation.radiusKm} km</span>
         </button>
         

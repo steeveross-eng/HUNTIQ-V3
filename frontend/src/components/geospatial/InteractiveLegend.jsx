@@ -16,8 +16,10 @@ import { HEATMAP_CONFIGS } from './performance/HeatmapPreprocessor';
 // GRADIENT BAR
 // =============================================================================
 
+let gradientCounter = 0;
+
 function GradientBar({ gradient, width = 150, height = 12 }) {
-  const gradientId = useMemo(() => `gradient-${Math.random().toString(36).substr(2, 9)}`, []);
+  const gradientId = useMemo(() => `gradient-${++gradientCounter}`, []);
   
   const stops = Object.entries(gradient).sort((a, b) => parseFloat(a[0]) - parseFloat(b[0]));
   

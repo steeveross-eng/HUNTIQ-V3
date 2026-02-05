@@ -101,10 +101,8 @@ function CanvasHeatmap({ data, config, width, height, opacity = 0.7 }) {
 // =============================================================================
 
 function SVGHeatmap({ data, config, width, height, opacity = 0.7 }) {
-  if (!data?.points?.length) return null;
-  
   const radius = config?.radius ?? 30;
-  const bounds = data.bounds || [-180, -90, 180, 90];
+  const bounds = data?.bounds || [-180, -90, 180, 90];
   
   const getColor = useCallback((value) => {
     const stops = Object.entries(config?.gradient ?? {}).sort((a, b) => parseFloat(a[0]) - parseFloat(b[0]));
@@ -118,6 +116,8 @@ function SVGHeatmap({ data, config, width, height, opacity = 0.7 }) {
     }
     return stops[stops.length - 1]?.[1] ?? '#4CAF50';
   }, [config?.gradient]);
+  
+  if (!data?.points?.length) return null;
   
   return (
     <svg 
