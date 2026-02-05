@@ -526,6 +526,7 @@ const TerritoryPage = () => {
                 <TerritoryMap
                   height="calc(100vh - 200px)"
                   onLocationSelect={handleLocationSelect}
+                  waypoints={waypoints}
                   showLayerPanel={true}
                 />
               </CardContent>
