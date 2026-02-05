@@ -1472,5 +1472,27 @@ Implémentation complète du **BehaviorEngine v3.0** avec Machine Learning super
 
 ---
 
+## 12. Infrastructure Couches Québec (Préparée - 2026-02-05)
+
+L'infrastructure backend est prête pour les couches WMS gouvernementales du Québec.
+
+### Sources en attente de credentials:
+
+| Source | Provider | Variable d'env | Couches |
+|--------|----------|----------------|---------|
+| LiDAR Québec | MERN | `QUEBEC_MERN_TOKEN` | DTM, DSM, CHM, Hillshade, Slope |
+| GRHQ Hydrographie | MERN | `QUEBEC_MERN_TOKEN` | Rivières, Lacs, Milieux humides |
+| Inventaire écoforestier | MFFP | `QUEBEC_MFFP_TOKEN` | Peuplements, Espèces, Âge, Densité |
+| SIGÉOM Géologie | SIGÉOM | `QUEBEC_SIGEOM_API_KEY` | Socle, Dépôts, Failles |
+
+### Endpoints API:
+- `GET /api/geospatial/wms/quebec-credentials-status` - Vérifier statut credentials
+- `GET /api/geospatial/wms/quebec-urls` - Documentation URLs complète
+- `GET /api/geospatial/wms/sources-all` - Toutes les sources
+
+### Documentation: `/app/memory/QUEBEC_WMS_INTEGRATION.md`
+
+---
+
 *HUNTIQ V3 BIONIC™ - Powered by GPT-5.2 & Emergent Platform*
 *La chasse réinventée au Québec 🦌*
