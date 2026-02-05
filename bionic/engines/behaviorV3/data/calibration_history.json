@@ -1,6 +1,6 @@
 {
-  "total_calibrations": 2,
-  "active_calibration_id": "cal_2a426836a3f2",
+  "total_calibrations": 7,
+  "active_calibration_id": "cal_334d3f08b4c9",
   "records": [
     {
       "id": "cal_c1ae7ee83499",
@@ -66,12 +66,182 @@
       "ml_model_version": "gradient_boosting_v1",
       "notes": "Auto-calibration for deer/quebec",
       "error_message": null,
+      "is_active": false,
+      "rolled_back_at": null,
+      "rollback_reason": null
+    },
+    {
+      "id": "cal_9d22e285fa7b",
+      "timestamp": "2026-02-05T17:06:33.759185+00:00",
+      "status": "completed",
+      "species": "deer",
+      "territory": "quebec",
+      "season": "fall",
+      "weights_before": {
+        "activity": 0.14003235596103644,
+        "seasonal": 0.05052177460195981,
+        "movement": 0.21471754205832916,
+        "environmental": 0.29050020396126885,
+        "temporal": 0.14003235596103644,
+        "pressure": 0.16419576745636935
+      },
+      "weights_after": {
+        "activity": 0.050256520969864035,
+        "seasonal": 0.050256520969864035,
+        "movement": 0.1313705458152246,
+        "environmental": 0.4020521677589123,
+        "temporal": 0.050256520969864035,
+        "pressure": 0.31580772351627096
+      },
+      "improvement_score": 25.0,
+      "confidence": 0.932,
+      "training_samples": 500,
+      "feedback_samples": 1,
+      "ml_model_version": "gradient_boosting_v1",
+      "notes": "Auto-calibration for deer/quebec",
+      "error_message": null,
+      "is_active": false,
+      "rolled_back_at": null,
+      "rollback_reason": null
+    },
+    {
+      "id": "cal_ea917eacf131",
+      "timestamp": "2026-02-05T17:06:33.804367+00:00",
+      "status": "completed",
+      "species": "moose",
+      "territory": "quebec",
+      "season": "winter",
+      "weights_before": {
+        "activity": 0.050256520969864035,
+        "seasonal": 0.050256520969864035,
+        "movement": 0.1313705458152246,
+        "environmental": 0.4020521677589123,
+        "temporal": 0.050256520969864035,
+        "pressure": 0.31580772351627096
+      },
+      "weights_after": {
+        "activity": 0.04951965930474398,
+        "seasonal": 0.04951965930474398,
+        "movement": 0.12944438942260078,
+        "environmental": 0.39615727443795185,
+        "temporal": 0.04951965930474398,
+        "pressure": 0.3258393582252154
+      },
+      "improvement_score": 3.8,
+      "confidence": 0.932,
+      "training_samples": 500,
+      "feedback_samples": 1,
+      "ml_model_version": "gradient_boosting_v1",
+      "notes": "Auto-calibration for moose/quebec",
+      "error_message": null,
+      "is_active": false,
+      "rolled_back_at": null,
+      "rollback_reason": null
+    },
+    {
+      "id": "cal_23358219428b",
+      "timestamp": "2026-02-05T17:06:33.844556+00:00",
+      "status": "completed",
+      "species": "bear",
+      "territory": "quebec",
+      "season": "winter",
+      "weights_before": {
+        "activity": 0.04951965930474398,
+        "seasonal": 0.04951965930474398,
+        "movement": 0.12944438942260078,
+        "environmental": 0.39615727443795185,
+        "temporal": 0.04951965930474398,
+        "pressure": 0.3258393582252154
+      },
+      "weights_after": {
+        "activity": 0.04951965930474398,
+        "seasonal": 0.04951965930474398,
+        "movement": 0.12944438942260078,
+        "environmental": 0.39615727443795185,
+        "temporal": 0.04951965930474398,
+        "pressure": 0.3258393582252154
+      },
+      "improvement_score": 0.5,
+      "confidence": 0.932,
+      "training_samples": 500,
+      "feedback_samples": 1,
+      "ml_model_version": "gradient_boosting_v1",
+      "notes": "Auto-calibration for bear/quebec",
+      "error_message": null,
+      "is_active": false,
+      "rolled_back_at": null,
+      "rollback_reason": null
+    },
+    {
+      "id": "cal_06a276ded7e0",
+      "timestamp": "2026-02-05T17:06:33.887029+00:00",
+      "status": "completed",
+      "species": "deer",
+      "territory": "quebec",
+      "season": "winter",
+      "weights_before": {
+        "activity": 0.04951965930474398,
+        "seasonal": 0.04951965930474398,
+        "movement": 0.12944438942260078,
+        "environmental": 0.39615727443795185,
+        "temporal": 0.04951965930474398,
+        "pressure": 0.3258393582252154
+      },
+      "weights_after": {
+        "activity": 0.04951965930474398,
+        "seasonal": 0.04951965930474398,
+        "movement": 0.12944438942260078,
+        "environmental": 0.39615727443795185,
+        "temporal": 0.04951965930474398,
+        "pressure": 0.3258393582252154
+      },
+      "improvement_score": 0.5,
+      "confidence": 0.932,
+      "training_samples": 500,
+      "feedback_samples": 1,
+      "ml_model_version": "gradient_boosting_v1",
+      "notes": "Auto-calibration for deer/quebec",
+      "error_message": null,
+      "is_active": false,
+      "rolled_back_at": null,
+      "rollback_reason": null
+    },
+    {
+      "id": "cal_334d3f08b4c9",
+      "timestamp": "2026-02-05T17:06:34.837572+00:00",
+      "status": "completed",
+      "species": "deer",
+      "territory": "quebec",
+      "season": "winter",
+      "weights_before": {
+        "activity": 0.04951965930474398,
+        "seasonal": 0.04951965930474398,
+        "movement": 0.12944438942260078,
+        "environmental": 0.39615727443795185,
+        "temporal": 0.04951965930474398,
+        "pressure": 0.3258393582252154
+      },
+      "weights_after": {
+        "activity": 0.05,
+        "seasonal": 0.05,
+        "movement": 0.05,
+        "environmental": 0.4,
+        "temporal": 0.05,
+        "pressure": 0.4
+      },
+      "improvement_score": 25.0,
+      "confidence": 0.936,
+      "training_samples": 500,
+      "feedback_samples": 3,
+      "ml_model_version": "gradient_boosting_v1",
+      "notes": "Auto-calibration for deer/quebec",
+      "error_message": null,
       "is_active": true,
       "rolled_back_at": null,
       "rollback_reason": null
     }
   ],
-  "avg_improvement": 25.0,
+  "avg_improvement": 14.971428571428572,
   "total_rollbacks": 0,
   "success_rate": 100.0
 }
