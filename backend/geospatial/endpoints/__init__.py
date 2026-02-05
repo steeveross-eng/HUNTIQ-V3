@@ -1370,15 +1370,16 @@ from fastapi.responses import Response
 from ..controllers.wms_proxy_controller import wms_proxy
 
 @geospatial_router.get("/wms/sources")
-async def list_wms_sources():
+async def list_wms_sources(include_unavailable: bool = Query(False, description="Include sources that are not currently accessible")):
     """
     List all available WMS sources.
     
     Returns available WMS services with their layers.
+    Set include_unavailable=true to also see sources that require authentication.
     """
     return {
         "status": "success",
-        "sources": wms_proxy.list_sources(),
+        "sources": wms_proxy.list_sources(include_unavailable=include_unavailable),
         "note": "Use /wms/tile/{source}/{layer} to fetch tiles"
     }
 
