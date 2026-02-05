@@ -407,8 +407,8 @@ const SpeciesPresetSelector = ({
             <SelectValue placeholder="Gibier..." />
           </SelectTrigger>
           <SelectContent className="bg-[#1a1a1a] border-white/10">
-            <SelectItem value="" className="text-white text-[9px]">
-              <span className="text-gray-400">Aucun</span>
+            <SelectItem value="__none__" className="text-white text-[9px]">
+              <span className="text-gray-400">Aucun préréglage</span>
             </SelectItem>
             {Object.entries(SPECIES_PRESETS).map(([key, preset]) => (
               <SelectItem key={key} value={key} className="text-white text-[9px]">
