@@ -1548,3 +1548,204 @@ async def get_maplibre_wms_config():
         "layers": layers,
         "usage_note": "Merge sources and layers into your MapLibre style"
     }
+
+
+@geospatial_router.get("/wms/quebec-credentials-status")
+async def get_quebec_credentials_status():
+    """
+    Check status of Quebec government WMS credentials.
+    
+    Returns which credentials are configured and which services they enable.
+    """
+    from ..controllers.wms_proxy_controller import check_quebec_credentials_status, QUEBEC_WMS_CREDENTIALS
+    
+    status = check_quebec_credentials_status()
+    
+    return {
+        "status": "success",
+        "credentials": status,
+        "configuration_guide": {
+            "mern": {
+                "description": "MERN (Ministère de l'Énergie et des Ressources naturelles)",
+                "services_enabled": ["LiDAR Québec", "GRHQ Hydrographie", "Limites administratives"],
+                "env_variables": {
+                    "QUEBEC_MERN_TOKEN": "Bearer token from MERN portal"
+                },
+                "portal_url": "https://www.donneesquebec.ca/",
+                "auth_type": "OAuth2 Bearer Token"
+            },
+            "mffp": {
+                "description": "MFFP (Ministère des Forêts, de la Faune et des Parcs)",
+                "services_enabled": ["Inventaire écoforestier"],
+                "env_variables": {
+                    "QUEBEC_MFFP_TOKEN": "Bearer token from MFFP portal"
+                },
+                "portal_url": "https://www.donneesquebec.ca/",
+                "auth_type": "OAuth2 Bearer Token"
+            },
+            "sigeom": {
+                "description": "SIGÉOM (Système d'information géominière)",
+                "services_enabled": ["Géologie du socle", "Dépôts de surface", "Failles"],
+                "env_variables": {
+                    "QUEBEC_SIGEOM_API_KEY": "username:password for Basic Auth"
+                },
+                "portal_url": "https://sigeom.mines.gouv.qc.ca/",
+                "auth_type": "HTTP Basic Authentication"
+            }
+        }
+    }
+
+
+@geospatial_router.get("/wms/quebec-urls")
+async def get_quebec_wms_urls():
+    """
+    Get complete list of Quebec government WMS/WMTS URLs needed for BIONIC™.
+    
+    Returns URLs organized by ministry/provider with layer details.
+    """
+    return {
+        "status": "success",
+        "title": "URLs WMS/WMTS du Gouvernement du Québec pour BIONIC™",
+        "providers": {
+            "mern": {
+                "name": "MERN - Ministère de l'Énergie et des Ressources naturelles",
+                "portal": "https://www.donneesquebec.ca/",
+                "services": {
+                    "lidar": {
+                        "name": "LiDAR Québec - Élévation",
+                        "type": "WMS",
+                        "url": "https://servicescarto.mern.gouv.qc.ca/pes/services/Elevation/LIDAR/MapServer/WMSServer",
+                        "capabilities_url": "https://servicescarto.mern.gouv.qc.ca/pes/services/Elevation/LIDAR/MapServer/WMSServer?service=WMS&request=GetCapabilities",
+                        "layers": {
+                            "0": "DTM - Digital Terrain Model (Modèle numérique de terrain)",
+                            "1": "DSM - Digital Surface Model (Modèle numérique de surface)",
+                            "2": "CHM - Canopy Height Model (Modèle de hauteur du couvert)",
+                            "3": "Hillshade (Ombrage)",
+                            "4": "Slope (Pente)"
+                        },
+                        "srs": "EPSG:3857",
+                        "use_cases": ["Modélisation terrain", "Analyse pente", "Couvert forestier"]
+                    },
+                    "grhq": {
+                        "name": "GRHQ - Géobase du réseau hydrographique du Québec",
+                        "type": "WMS",
+                        "url": "https://servicescarto.mern.gouv.qc.ca/pes/services/Territoire/GRHQ/MapServer/WMSServer",
+                        "capabilities_url": "https://servicescarto.mern.gouv.qc.ca/pes/services/Territoire/GRHQ/MapServer/WMSServer?service=WMS&request=GetCapabilities",
+                        "layers": {
+                            "0": "Cours d'eau (Rivières)",
+                            "1": "Plans d'eau (Lacs)",
+                            "2": "Milieux humides",
+                            "3": "Bassins versants",
+                            "4": "Ruisseaux"
+                        },
+                        "srs": "EPSG:3857",
+                        "use_cases": ["Corridors fauniques", "Habitat aquatique", "Zones humides"]
+                    },
+                    "admin": {
+                        "name": "SDA - Système de découpage administratif",
+                        "type": "WMS",
+                        "url": "https://servicescarto.mern.gouv.qc.ca/pes/services/Territoire/SDA_WMS/MapServer/WMSServer",
+                        "layers": {
+                            "0": "MRC",
+                            "1": "Municipalités",
+                            "2": "Régions administratives"
+                        },
+                        "srs": "EPSG:3857"
+                    }
+                },
+                "auth_requirements": {
+                    "type": "OAuth2 Bearer Token",
+                    "token_endpoint": "https://servicescarto.mern.gouv.qc.ca/pes/token",
+                    "header": "Authorization: Bearer {token}"
+                }
+            },
+            "mffp": {
+                "name": "MFFP - Ministère des Forêts, de la Faune et des Parcs",
+                "portal": "https://www.donneesquebec.ca/",
+                "services": {
+                    "ecoforest": {
+                        "name": "Inventaire écoforestier du Québec",
+                        "type": "WMS",
+                        "url": "https://servicescarto.mffp.gouv.qc.ca/Inventaire_Ecoforestier/VerificationInventaire/MapServer/WMSServer",
+                        "capabilities_url": "https://servicescarto.mffp.gouv.qc.ca/Inventaire_Ecoforestier/VerificationInventaire/MapServer/WMSServer?service=WMS&request=GetCapabilities",
+                        "layers": {
+                            "0": "Peuplements forestiers",
+                            "1": "Composition en espèces",
+                            "2": "Classe d'âge",
+                            "3": "Densité du couvert",
+                            "4": "Hauteur dominante",
+                            "5": "Perturbations (feux, coupes, etc.)"
+                        },
+                        "srs": "EPSG:3857",
+                        "use_cases": ["Qualité habitat", "Nourriture gibier", "Couvert thermique"]
+                    }
+                },
+                "auth_requirements": {
+                    "type": "OAuth2 Bearer Token",
+                    "token_endpoint": "https://servicescarto.mffp.gouv.qc.ca/token",
+                    "header": "Authorization: Bearer {token}"
+                }
+            },
+            "sigeom": {
+                "name": "SIGÉOM - Système d'information géominière du Québec",
+                "portal": "https://sigeom.mines.gouv.qc.ca/",
+                "services": {
+                    "geology": {
+                        "name": "Cartes géologiques",
+                        "type": "WMS (GeoServer)",
+                        "url": "https://sigeom.mines.gouv.qc.ca/geoserver/SIGEOM_GEOSCIENCES/wms",
+                        "capabilities_url": "https://sigeom.mines.gouv.qc.ca/geoserver/SIGEOM_GEOSCIENCES/wms?service=WMS&request=GetCapabilities",
+                        "layers": {
+                            "SIGEOM_GEOSCIENCES:GEOLOGIE_SOCLE_1M": "Géologie du socle rocheux (1:1M)",
+                            "SIGEOM_GEOSCIENCES:DEPOTS_SURFACE_1M": "Dépôts de surface (1:1M)",
+                            "SIGEOM_GEOSCIENCES:FAILLES_1M": "Failles géologiques",
+                            "SIGEOM_GEOSCIENCES:GITES_MINERAUX": "Gîtes minéraux"
+                        },
+                        "srs": "EPSG:3857",
+                        "use_cases": ["Analyse géologique", "Corridors fauniques", "Qualité du sol"]
+                    }
+                },
+                "auth_requirements": {
+                    "type": "HTTP Basic Authentication",
+                    "header": "Authorization: Basic {base64(username:password)}"
+                }
+            }
+        },
+        "integration_checklist": [
+            "1. Obtenir les credentials API de chaque ministère via donneesquebec.ca",
+            "2. Configurer les variables d'environnement dans le backend",
+            "3. Tester les endpoints GetCapabilities pour valider l'accès",
+            "4. Activer les couches dans le WMSLayerSelector frontend"
+        ],
+        "env_variables_needed": {
+            "QUEBEC_MERN_TOKEN": "Token OAuth2 pour MERN (LiDAR, GRHQ)",
+            "QUEBEC_MFFP_TOKEN": "Token OAuth2 pour MFFP (Inventaire forestier)",
+            "QUEBEC_SIGEOM_API_KEY": "Credentials Basic Auth pour SIGÉOM (username:password)"
+        }
+    }
+
+
+@geospatial_router.get("/wms/sources-all")
+async def list_all_wms_sources():
+    """
+    List ALL WMS sources including those requiring authentication.
+    
+    Useful for admin interface to see what sources are available
+    and their authentication status.
+    """
+    available = wms_proxy.list_sources(include_unavailable=False, include_auth_required=False)
+    auth_required = wms_proxy.list_sources(include_unavailable=False, include_auth_required=True)
+    
+    # Filter to get only auth_required
+    auth_only = [s for s in auth_required if s["status"] == "auth_required"]
+    
+    return {
+        "status": "success",
+        "available_sources": available,
+        "auth_required_sources": auth_only,
+        "summary": {
+            "total_available": len(available),
+            "total_auth_required": len(auth_only),
+            "quebec_sources_pending": [s["id"] for s in auth_only if s.get("auth_provider")]
+        }
+    }
