@@ -197,8 +197,71 @@ SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
 if RESEND_API_KEY:
     resend.api_key = RESEND_API_KEY
 
-# Create the main app without a prefix
-app = FastAPI()
+# Create the main app with OpenAPI documentation
+app = FastAPI(
+    title="BIONIC™ API",
+    description="""
+# BIONIC™ - Behavior Intelligence Optimization for Nature-Integrated Computing
+
+## Architecture Modulaire
+
+L'API BIONIC™ est organisée en **couches modulaires**:
+
+### 🏗️ Couche Fondations
+- **Core Engine**: Orchestration et analyse territoriale complète
+- **Conditions Engine**: Données météo et conditions temps réel
+- **WMS Proxy**: Proxy cartographique avec fallback intelligent
+
+### 🧠 Couche Intelligence
+- **Behavior Suite**: 6 moteurs d'analyse comportementale
+- **Géo-Suite**: 5 moteurs d'analyse géospatiale (Corridor, Landcover, Nutrition, Population, Pressure)
+- **Engines Secondaires**: Terrain, Environment, Sentinel, Hydro, SIGÉOM
+
+### 🔮 Couche Prédiction
+- **FusionEngine**: Fusion Geo + Behavior avec pondération dynamique
+- **BehaviorEngine v3.0**: Auto-calibration ML (Gradient Boosting)
+
+## Formats de Réponse
+
+Tous les endpoints retournent des réponses normalisées:
+- Scores: 0-100 (normalisés)
+- Heatmaps: Grilles lat/lon avec valeurs
+- Timestamps: ISO 8601
+- Erreurs: Structure uniforme avec code et message
+
+## Authentification
+
+La plupart des endpoints publics ne nécessitent pas d'authentification.
+Les endpoints d'administration requièrent un token JWT.
+
+---
+*BIONIC™ - La chasse réinventée au Québec 🦌*
+    """,
+    version="5.0.0",
+    contact={
+        "name": "Équipe BIONIC™",
+        "email": "support@bionic-hunt.com"
+    },
+    license_info={
+        "name": "Propriétaire",
+        "url": "https://bionic-hunt.com/license"
+    },
+    openapi_tags=[
+        {"name": "Core", "description": "Orchestration et analyse territoriale"},
+        {"name": "Behavior Suite", "description": "Analyse comportementale (6 moteurs)"},
+        {"name": "BehaviorEngine v3.0", "description": "Auto-calibration ML"},
+        {"name": "Fusion", "description": "Fusion Geo + Behavior"},
+        {"name": "Géo-Suite", "description": "Analyse géospatiale (5 moteurs)"},
+        {"name": "Terrain", "description": "Analyse topographique"},
+        {"name": "Pressure", "description": "Pression de chasse"},
+        {"name": "Environment", "description": "Combinaison environnementale"},
+        {"name": "Sentinel", "description": "Analyse végétation Sentinel-2"},
+        {"name": "Hydro", "description": "Hydrographie et points d'eau"},
+        {"name": "SIGÉOM", "description": "Géologie et sols"},
+        {"name": "Conditions", "description": "Conditions temps réel"},
+        {"name": "WMS Proxy", "description": "Proxy cartographique avec fallback"}
+    ]
+)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
