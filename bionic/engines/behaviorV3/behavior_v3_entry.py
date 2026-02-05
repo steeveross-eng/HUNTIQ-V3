@@ -27,21 +27,21 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
 # Import des schémas
-from models.v3_schemas import (
+from v3_models.v3_schemas import (
     TrainingRequest, CalibrationRequest, FeedbackInput, RollbackRequest,
     FeedbackType, RollbackReason, CalibrationStatus
 )
 
 # Import des composants data (ils ajouteront leur propre config path si besoin)
-from data.calibration_history_tracker import calibration_tracker
-from data.training_data_manager import training_data_manager
-from data.simulated_data_generator import simulated_data_generator
+from v3_data.calibration_history_tracker import calibration_tracker
+from v3_data.training_data_manager import training_data_manager
+from v3_data.simulated_data_generator import simulated_data_generator
 
 # Import des composants core
-from core.ml_calibrator import ml_calibrator
-from core.weight_adjuster import weight_adjuster
-from core.feedback_collector import feedback_collector
-from core.rollback_manager import rollback_manager
+from v3_core.ml_calibrator import ml_calibrator
+from v3_core.weight_adjuster import weight_adjuster
+from v3_core.feedback_collector import feedback_collector
+from v3_core.rollback_manager import rollback_manager
 
 logger = logging.getLogger(__name__)
 
