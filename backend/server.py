@@ -4678,6 +4678,14 @@ try:
 except ImportError as e:
     print(f"Current Conditions not available: {e}")
 
+# Include BIONIC™ P1 Géo-Suite (North America Ready)
+try:
+    from geospatial.api.endpoints import router as geosuite_router
+    app.include_router(geosuite_router)
+    print("BIONIC™ P1 Géo-Suite loaded - 5 geospatial engines active (North America Ready)")
+except ImportError as e:
+    print(f"P1 Géo-Suite not available: {e}")
+
 # Include BIONIC™ Main Engine (POST /api/bionic/analyze)
 try:
     import sys
