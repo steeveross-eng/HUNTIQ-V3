@@ -155,64 +155,67 @@ const WaypointForm = ({ onAdd, selectedLocation, compact = false }) => {
 const WaypointList = ({ waypoints, onDelete, onSelect, compact = false }) => {
   if (waypoints.length === 0) {
     return (
-      <div className={compact ? "text-center py-3" : "text-center py-8"}>
-        <MapPin className="h-12 w-12 text-gray-600 mx-auto mb-3" />
-        <p className="text-gray-400 text-sm">Aucun waypoint</p>
-        <p className="text-gray-600 text-xs mt-1">
-          Cliquez sur la carte pour ajouter un point
+      <div className={compact ? "text-center py-2" : "text-center py-8"}>
+        <MapPin className={compact ? "h-6 w-6 text-gray-600 mx-auto mb-1" : "h-12 w-12 text-gray-600 mx-auto mb-3"} />
+        <p className={compact ? "text-gray-400 text-[8px]" : "text-gray-400 text-sm"}>Aucun waypoint</p>
+        <p className={compact ? "text-gray-600 text-[7px] mt-0.5" : "text-gray-600 text-xs mt-1"}>
+          Cliquez sur la carte
         </p>
       </div>
     );
   }
 
   return (
-    <ScrollArea className="h-[300px]">
-      <div className="space-y-2">
-        {waypoints.map((wp) => {
-          const typeInfo = WAYPOINT_TYPES[wp.type];
-          const Icon = typeInfo?.icon || MapPin;
+    <div className={compact ? "max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent" : ""}>
+      <ScrollArea className={compact ? "h-auto" : "h-[300px]"}>
+        <div className={compact ? "space-y-1" : "space-y-2"}>
+          {waypoints.map((wp) => {
+            const typeInfo = WAYPOINT_TYPES[wp.type];
+            const Icon = typeInfo?.icon || MapPin;
 
-          return (
-            <motion.div
-              key={wp.id}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="p-3 bg-black/40 rounded-sm border border-white/5 hover:border-white/15 transition-all group cursor-pointer"
-              onClick={() => onSelect(wp)}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-8 h-8 rounded-sm flex items-center justify-center"
-                    style={{ backgroundColor: `${typeInfo?.color}20` }}
+            return (
+              <motion.div
+                key={wp.id}
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                className={compact 
+                  ? "p-1.5 bg-black/40 rounded-sm border border-white/5 hover:border-white/15 transition-all group cursor-pointer"
+                  : "p-3 bg-black/40 rounded-sm border border-white/5 hover:border-white/15 transition-all group cursor-pointer"
+                }
+                onClick={() => onSelect(wp)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <div
+                      className={compact ? "w-5 h-5 rounded-sm flex items-center justify-center" : "w-8 h-8 rounded-sm flex items-center justify-center"}
+                      style={{ backgroundColor: `${typeInfo?.color}20` }}
+                    >
+                      <Icon className={compact ? "h-2.5 w-2.5" : "h-4 w-4"} style={{ color: typeInfo?.color }} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className={compact ? "text-white text-[8px] font-medium truncate" : "text-white text-sm font-medium"}>{wp.name}</p>
+                      <p className={compact ? "text-gray-600 text-[7px] font-mono" : "text-gray-500 text-xs"}>
+                        {wp.coordinates.lat.toFixed(2)}°N
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className={compact 
+                      ? "opacity-0 group-hover:opacity-100 h-5 w-5 p-0 text-red-400 hover:text-red-300"
+                      : "opacity-0 group-hover:opacity-100 h-8 w-8 p-0 text-red-400 hover:text-red-300"
+                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(wp.id);
+                    }}
                   >
-                    <Icon className="h-4 w-4" style={{ color: typeInfo?.color }} />
-                  </div>
-                  <div>
-                    <p className="text-white text-sm font-medium">{wp.name}</p>
-                    <p className="text-gray-500 text-xs">{typeInfo?.label}</p>
-                  </div>
+                    <Trash2 className={compact ? "h-2.5 w-2.5" : "h-4 w-4"} />
+                  </Button>
                 </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="opacity-0 group-hover:opacity-100 h-8 w-8 p-0 text-red-400 hover:text-red-300"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(wp.id);
-                  }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-              {wp.notes && (
-                <p className="text-gray-400 text-xs mt-2 pl-11">{wp.notes}</p>
-              )}
-              <p className="text-gray-600 text-xs mt-1 pl-11 font-mono">
-                {wp.coordinates.lat.toFixed(4)}°N, {Math.abs(wp.coordinates.lng).toFixed(4)}°W
-              </p>
-            </motion.div>
-          );
+              </motion.div>
+            );
         })}
       </div>
     </ScrollArea>
