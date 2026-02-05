@@ -62,7 +62,7 @@ class BehaviorEngineV3Inline:
         logger.info(f"BIONIC™ {self.name} v{self.version} ({self.phase}) initialized")
     
     def get_status(self):
-        from models.v3_schemas import EngineStatus, WeightSet
+        from v3_models.v3_schemas import EngineStatus, WeightSet
         active = calibration_tracker.get_active_calibration()
         fb_stats = feedback_collector.get_feedback_summary()
         history = calibration_tracker.get_full_history()
@@ -82,7 +82,7 @@ class BehaviorEngineV3Inline:
         )
     
     def get_metrics(self):
-        from models.v3_schemas import EngineMetrics
+        from v3_models.v3_schemas import EngineMetrics
         fb_stats = feedback_collector.get_feedback_summary()
         history = calibration_tracker.get_full_history()
         
@@ -102,7 +102,7 @@ class BehaviorEngineV3Inline:
     
     def train(self, request=None):
         if self._maintenance_mode:
-            from models.v3_schemas import TrainingResponse, TrainingMetrics
+            from v3_models.v3_schemas import TrainingResponse, TrainingMetrics
             return TrainingResponse(
                 success=False, training_id="", metrics=TrainingMetrics(),
                 message="Moteur en mode maintenance", new_model_ready=False
@@ -113,7 +113,7 @@ class BehaviorEngineV3Inline:
     
     def calibrate(self, request=None):
         if self._maintenance_mode:
-            from models.v3_schemas import CalibrationResponse
+            from v3_models.v3_schemas import CalibrationResponse
             return CalibrationResponse(
                 success=False, calibration_id="", status=CalibrationStatus.FAILED,
                 weights_applied=calibration_tracker.get_current_weights(),
@@ -125,7 +125,7 @@ class BehaviorEngineV3Inline:
         return weight_adjuster.calibrate(request)
     
     def get_weights(self):
-        from models.v3_schemas import WeightsResponse
+        from v3_models.v3_schemas import WeightsResponse
         current = calibration_tracker.get_current_weights()
         active = calibration_tracker.get_active_calibration()
         return WeightsResponse(
