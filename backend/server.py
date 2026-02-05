@@ -4698,7 +4698,7 @@ except ImportError as e:
 try:
     if '/app/bionic/engines/behaviorV3' not in sys.path:
         sys.path.insert(0, '/app/bionic/engines/behaviorV3')
-    from behaviorV3.api.endpoints import behavior_v3_router
+    from api.endpoints import behavior_v3_router
     app.include_router(behavior_v3_router)
     print("BIONIC™ P3 BehaviorEngine v3.0 loaded - ML auto-calibration active")
 except ImportError as e:
