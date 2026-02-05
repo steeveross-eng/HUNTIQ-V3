@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de création: 2026-02-03
-## Version: 5.4.0 (Interface Cartographique Complète)
+## Version: 5.5.0 (UX Harmonisée)
 ## Dernière mise à jour: 2026-02-05
 
 ---
