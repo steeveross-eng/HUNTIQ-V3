@@ -213,6 +213,17 @@ const LAYER_DISPLAY_NAMES = {
   ndvi: 'NDVI'
 };
 
+// ============================================================================
+// FIXED LAYERS - Couches avec opacité fixe (ON/OFF seulement, pas de slider)
+// ============================================================================
+const FIXED_OPACITY_LAYERS = {
+  'wms-canvec-hydro': {
+    opacity: 1.0,           // 100% opaque
+    color: '#1e3a5f',       // Bleu foncé eau
+    description: 'Hydrographie - Affichage fixe'
+  }
+};
+
 /**
  * Individual layer item component - Compact version
  */
