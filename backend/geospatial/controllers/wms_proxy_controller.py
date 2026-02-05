@@ -462,16 +462,35 @@ class WMSProxyController:
         
         params["bbox"] = bbox
         
+        # Build headers with authentication if available
+        headers = {
+            "User-Agent": "BIONIC-GeoEngine/1.0",
+            "Accept": "image/png,image/*"
+        }
+        
+        # Add authentication headers for Quebec government services
+        auth_provider = source.get("auth_provider")
+        if auth_provider:
+            auth_headers = get_quebec_auth_headers(auth_provider)
+            if auth_headers:
+                headers.update(auth_headers)
+                logger.info(f"Using {auth_provider} authentication for {source_id}")
+            else:
+                # No credentials configured, but they are required
+                if source.get("status") == "auth_required":
+                    return {
+                        "error": f"Authentication required for {source['name']}",
+                        "auth_provider": auth_provider,
+                        "message": f"Configure {QUEBEC_WMS_CREDENTIALS.get(auth_provider, {}).get('env_token', 'credentials')} environment variable"
+                    }
+        
         # Make request
         async with httpx.AsyncClient(timeout=self.client_timeout) as client:
             try:
                 response = await client.get(
                     source["base_url"],
                     params=params,
-                    headers={
-                        "User-Agent": "BIONIC-GeoEngine/1.0",
-                        "Accept": "image/png,image/*"
-                    }
+                    headers=headers
                 )
                 
                 if response.status_code == 200:
