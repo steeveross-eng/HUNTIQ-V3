@@ -888,7 +888,7 @@ const WMSLayerSelector = ({
                     <SelectItem value="terrain" className="text-white">
                       <div className="flex items-center gap-2">
                         <Mountain className="h-4 w-4 text-amber-400" />
-                        Terrain (Stadia)
+                        Terrain (Topo)
                       </div>
                     </SelectItem>
                   </SelectContent>
