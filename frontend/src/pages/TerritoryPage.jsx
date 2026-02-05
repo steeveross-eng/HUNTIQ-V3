@@ -75,30 +75,38 @@ const WaypointForm = ({ onAdd, selectedLocation }) => {
     setNotes('');
   };
 
+  // Compact styles
+  const inputClass = compact 
+    ? "bg-black/40 border-white/10 text-white text-[9px] h-6 mt-0.5"
+    : "bg-black/40 border-white/10 text-white mt-1";
+  const labelClass = compact 
+    ? "text-gray-300 text-[8px]"
+    : "text-gray-300";
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className={compact ? "space-y-1.5" : "space-y-4"}>
       <div>
-        <Label className="text-gray-300">Nom du waypoint</Label>
+        <Label className={labelClass}>Nom</Label>
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Ex: Caméra Nord"
-          className="bg-black/40 border-white/10 text-white mt-1"
+          className={inputClass}
           required
         />
       </div>
 
       <div>
-        <Label className="text-gray-300">Type</Label>
+        <Label className={labelClass}>Type</Label>
         <Select value={type} onValueChange={setType}>
-          <SelectTrigger className="bg-black/40 border-white/10 text-white mt-1">
+          <SelectTrigger className={compact ? "bg-black/40 border-white/10 text-white text-[9px] h-6 mt-0.5" : "bg-black/40 border-white/10 text-white mt-1"}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="bg-[#1a1a1a] border-white/10">
             {Object.entries(WAYPOINT_TYPES).map(([key, val]) => (
-              <SelectItem key={key} value={key} className="text-white">
-                <div className="flex items-center gap-2">
-                  <val.icon className="h-4 w-4" style={{ color: val.color }} />
+              <SelectItem key={key} value={key} className={compact ? "text-white text-[9px]" : "text-white"}>
+                <div className="flex items-center gap-1">
+                  <val.icon className={compact ? "h-3 w-3" : "h-4 w-4"} style={{ color: val.color }} />
                   {val.label}
                 </div>
               </SelectItem>
@@ -107,21 +115,23 @@ const WaypointForm = ({ onAdd, selectedLocation }) => {
         </Select>
       </div>
 
-      <div>
-        <Label className="text-gray-300">Notes (optionnel)</Label>
-        <Input
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Notes additionnelles..."
-          className="bg-black/40 border-white/10 text-white mt-1"
-        />
-      </div>
+      {!compact && (
+        <div>
+          <Label className={labelClass}>Notes (optionnel)</Label>
+          <Input
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Notes additionnelles..."
+            className={inputClass}
+          />
+        </div>
+      )}
 
       {selectedLocation && (
-        <div className="p-3 bg-[#f5a623]/10 rounded-sm border border-[#f5a623]/20">
-          <p className="text-xs text-gray-400">Position sélectionnée:</p>
-          <p className="text-sm text-white font-mono">
-            {selectedLocation.lat.toFixed(5)}°N, {Math.abs(selectedLocation.lng).toFixed(5)}°W
+        <div className={compact ? "p-1.5 bg-[#f5a623]/10 rounded-sm border border-[#f5a623]/20" : "p-3 bg-[#f5a623]/10 rounded-sm border border-[#f5a623]/20"}>
+          <p className={compact ? "text-[7px] text-gray-400" : "text-xs text-gray-400"}>Position:</p>
+          <p className={compact ? "text-[8px] text-white font-mono" : "text-sm text-white font-mono"}>
+            {selectedLocation.lat.toFixed(4)}°N, {Math.abs(selectedLocation.lng).toFixed(4)}°W
           </p>
         </div>
       )}
@@ -129,20 +139,23 @@ const WaypointForm = ({ onAdd, selectedLocation }) => {
       <Button
         type="submit"
         disabled={!selectedLocation || !name}
-        className="w-full bg-[#f5a623] text-black hover:bg-[#d9901c] rounded-sm"
+        className={compact 
+          ? "w-full bg-[#f5a623] text-black hover:bg-[#d9901c] rounded-sm text-[9px] h-6"
+          : "w-full bg-[#f5a623] text-black hover:bg-[#d9901c] rounded-sm"
+        }
       >
-        <Plus className="h-4 w-4 mr-2" />
-        Ajouter le waypoint
+        <Plus className={compact ? "h-3 w-3 mr-1" : "h-4 w-4 mr-2"} />
+        {compact ? "Ajouter" : "Ajouter le waypoint"}
       </Button>
     </form>
   );
 };
 
-// Waypoint list component
-const WaypointList = ({ waypoints, onDelete, onSelect }) => {
+// Waypoint list component - Compact support
+const WaypointList = ({ waypoints, onDelete, onSelect, compact = false }) => {
   if (waypoints.length === 0) {
     return (
-      <div className="text-center py-8">
+      <div className={compact ? "text-center py-3" : "text-center py-8"}>
         <MapPin className="h-12 w-12 text-gray-600 mx-auto mb-3" />
         <p className="text-gray-400 text-sm">Aucun waypoint</p>
         <p className="text-gray-600 text-xs mt-1">
