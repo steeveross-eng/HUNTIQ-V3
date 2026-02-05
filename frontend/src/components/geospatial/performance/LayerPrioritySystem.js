@@ -145,19 +145,32 @@ class LayerPrioritySystem {
    * Check if adding a layer would cause conflicts
    */
   checkConflicts(layerId, currentLayers) {
-    const conflicts = LAYER_CONFLICTS[layerId] || [];
+    const layerConfig = LAYER_CONFLICTS[layerId] || {};
     const activeConflicts = [];
     
-    if (Array.isArray(conflicts)) {
-      for (const conflictId of conflicts) {
-        if (currentLayers.includes(conflictId)) {
-          activeConflicts.push({
-            layerId: conflictId,
-            resolution: 'reduce_opacity',
-            suggestedOpacity: 0.3
-          });
-        }
+    // Check simple conflicts array
+    const simpleConflicts = layerConfig.simpleConflicts || [];
+    for (const conflictId of simpleConflicts) {
+      if (currentLayers.includes(conflictId)) {
+        activeConflicts.push({
+          layerId: conflictId,
+          resolution: 'reduce_opacity',
+          suggestedOpacity: 0.3
+        });
       }
+    }
+    
+    // Check conflictsWith
+    const conflictsWith = layerConfig.conflictsWith || [];
+    for (const conflictId of conflictsWith) {
+      if (currentLayers.includes(conflictId) && !activeConflicts.find(c => c.layerId === conflictId)) {
+        activeConflicts.push({
+          layerId: conflictId,
+          resolution: 'reduce_opacity',
+          suggestedOpacity: 0.3
+        });
+      }
+    }
     } else if (conflicts.conflictsWith) {
       for (const conflictId of conflicts.conflictsWith) {
         if (currentLayers.includes(conflictId)) {
