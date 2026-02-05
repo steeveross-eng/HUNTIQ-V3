@@ -708,6 +708,11 @@ const TerritoryPage = () => {
                   </Card>
                 )}
               </TabsContent>
+
+              {/* BIONIC™ P3 BehaviorEngine v3.0 Tab */}
+              <TabsContent value="behaviorv3" className="mt-4 space-y-4">
+                <BehaviorV3Panel className="w-full" />
+              </TabsContent>
             </Tabs>
 
             {/* Quick info */}
