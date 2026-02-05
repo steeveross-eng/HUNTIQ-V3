@@ -40,7 +40,7 @@ WMS_SOURCES = {
         "status": "unavailable",
         "status_reason": "Authentification requise"
     },
-    # LiDAR Québec - Élévation
+    # LiDAR Québec - Élévation (requires authentication since 2024)
     "lidar": {
         "name": "LiDAR Québec",
         "base_url": "https://servicescarto.mern.gouv.qc.ca/pes/services/Elevation/LIDAR/MapServer/WMSServer",
@@ -51,9 +51,11 @@ WMS_SOURCES = {
         },
         "srs": "EPSG:3857",
         "format": "image/png",
-        "version": "1.3.0"
+        "version": "1.3.0",
+        "status": "unavailable",
+        "status_reason": "Authentification requise"
     },
-    # GRHQ - Hydrographie Québec
+    # GRHQ - Hydrographie Québec (requires authentication since 2024)
     "grhq": {
         "name": "GRHQ Hydrographie",
         "base_url": "https://servicescarto.mern.gouv.qc.ca/pes/services/Territoire/GRHQ/MapServer/WMSServer",
@@ -65,9 +67,11 @@ WMS_SOURCES = {
         },
         "srs": "EPSG:3857",
         "format": "image/png",
-        "version": "1.3.0"
+        "version": "1.3.0",
+        "status": "unavailable",
+        "status_reason": "Authentification requise"
     },
-    # MFFP - Forêt Québec
+    # MFFP - Forêt Québec (requires authentication since 2024)
     "forest": {
         "name": "Inventaire forestier MFFP",
         "base_url": "https://servicescarto.mffp.gouv.qc.ca/Inventaire_Ecoforestier/VerificationInventaire/MapServer/WMSServer",
@@ -78,7 +82,9 @@ WMS_SOURCES = {
         },
         "srs": "EPSG:3857",
         "format": "image/png",
-        "version": "1.3.0"
+        "version": "1.3.0",
+        "status": "unavailable",
+        "status_reason": "Authentification requise"
     },
     # HydroSHEDS
     "hydrosheds": {
