@@ -1566,7 +1566,11 @@ async def get_quebec_credentials_status():
     
     Returns which credentials are configured and which services they enable.
     """
-    from ..controllers.wms_proxy_controller import check_quebec_credentials_status, QUEBEC_WMS_CREDENTIALS
+    # Import directly to avoid relative import issues
+    import sys
+    if '/app/backend' not in sys.path:
+        sys.path.insert(0, '/app/backend')
+    from geospatial.controllers.wms_proxy_controller import check_quebec_credentials_status, QUEBEC_WMS_CREDENTIALS
     
     status = check_quebec_credentials_status()
     
