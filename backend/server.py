@@ -655,9 +655,9 @@ async def get_modules_documentation():
     from modules.docs import MODULES_DOCS
     return {
         "success": True,
-        "documentation_url": "/docs",
-        "redoc_url": "/redoc",
-        "openapi_url": "/openapi.json",
+        "documentation_url": "/api/docs",
+        "redoc_url": "/api/redoc",
+        "openapi_url": "/api/openapi.json",
         "modules": MODULES_DOCS
     }
 
