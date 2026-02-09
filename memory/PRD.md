@@ -2,7 +2,7 @@
 
 ## Date de création: 2026-02-03
 ## Dernière mise à jour: Décembre 2025
-## Version: 3.4 (Architecture Modulaire - Phase 4 Complétée)
+## Version: 3.5 (Architecture Modulaire - Phase 5 Complétée)
 
 ---
 
@@ -20,9 +20,9 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 - **Backend**: FastAPI (Python)
 - **Base de données**: MongoDB
 - **IA**: GPT-5.2 via Emergent LLM Key
-- **Architecture**: Modulaire v1.3 (Phases 2+3+4 complétées)
+- **Architecture**: Modulaire v1.4 (Phases 2+3+4+5 complétées)
 
-### Structure Modulaire - 25 Modules Opérationnels
+### Structure Modulaire - 30 Modules Opérationnels
 
 ```
 /app/backend/modules/
@@ -57,7 +57,17 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 │   ├── progression_engine/v1/      ✅
 │   └── networking_engine/v1/       ✅
 │
-└── routers.py                     ✅ Point d'entrée central (v1.3)
+├── [PHASE 5 - DATA LAYERS] 5 modules ✅ (NOUVEAU)
+│   ├── data_layers/
+│   │   ├── ecoforestry_layers/v1/     ✅ SIEF, inventaire forestier
+│   │   ├── behavioral_layers/v1/      ✅ Comportement faune
+│   │   ├── simulation_layers/v1/      ✅ Simulation météo-faune
+│   │   ├── layers_3d/v1/              ✅ Élévation, terrain 3D
+│   │   └── advanced_geospatial_layers/v1/ ✅ Corridors, connectivité
+│   │
+│   └── __init__.py                ✅ Central registry
+│
+└── routers.py                     ✅ Point d'entrée central (v1.4)
 ```
 
 ---
