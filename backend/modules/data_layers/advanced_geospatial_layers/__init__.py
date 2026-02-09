@@ -1,6 +1,6 @@
-"""Advanced Geospatial Layers
-
-Layers: slope, relief, visibility, effort, strategic.
+"""Advanced Geospatial Data Layers
+Data provider for corridors, concentration zones, and connectivity.
 """
+from .data_layer import AdvancedGeospatialDataLayer, get_advanced_geospatial_layer
 
-__version__ = "1.0.0"
+__all__ = ["AdvancedGeospatialDataLayer", "get_advanced_geospatial_layer"]

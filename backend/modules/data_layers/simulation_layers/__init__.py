@@ -1,6 +1,6 @@
-"""Simulation Layers
-
-Layers: movement, microclimate, pressure_sim.
+"""Simulation Data Layers
+Data provider for weather-fauna correlation simulations.
 """
+from .data_layer import SimulationDataLayer, get_simulation_layer
 
-__version__ = "1.0.0"
+__all__ = ["SimulationDataLayer", "get_simulation_layer"]

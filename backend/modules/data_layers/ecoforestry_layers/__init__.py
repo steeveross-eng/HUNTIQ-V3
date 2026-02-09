@@ -1,6 +1,6 @@
-"""Ecoforestry Layers
-
-Layers: species, stand, cover, density, habitat.
+"""Ecoforestry Data Layers
+Data provider for SIEF forest inventory and habitat data.
 """
+from .data_layer import EcoforestryDataLayer, get_ecoforestry_layer
 
-__version__ = "1.0.0"
+__all__ = ["EcoforestryDataLayer", "get_ecoforestry_layer"]

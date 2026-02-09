@@ -1,6 +1,6 @@
-"""3D Layers
-
-Layers: terrain, vegetation, shadow, thermal, wind.
+"""3D Data Layers
+Data provider for terrain elevation and 3D analysis.
 """
+from .data_layer import Layers3DDataLayer, get_3d_layer
 
-__version__ = "1.0.0"
+__all__ = ["Layers3DDataLayer", "get_3d_layer"]

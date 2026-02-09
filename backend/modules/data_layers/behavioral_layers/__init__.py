@@ -1,6 +1,6 @@
-"""Behavioral Layers
-
-Layers: activity_zones, corridor, refuge, pressure.
+"""Behavioral Data Layers
+Data provider for wildlife behavior patterns and observations.
 """
+from .data_layer import BehavioralDataLayer, get_behavioral_layer
 
-__version__ = "1.0.0"
+__all__ = ["BehavioralDataLayer", "get_behavioral_layer"]
