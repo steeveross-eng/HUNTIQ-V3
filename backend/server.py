@@ -4576,6 +4576,16 @@ try:
 except ImportError as e:
     print(f"WMS Proxy API not available: {e}")
 
+# ============================================
+# MODULAR CORE ENGINES (Phase 2)
+# ============================================
+try:
+    register_routers(app)
+    print(f"✓ {MODULE_STATUS['total_modules']} CORE modules loaded successfully")
+    print(f"  Modules: {', '.join(MODULE_STATUS['modules'])}")
+except Exception as e:
+    print(f"⚠ Modular engines loading error: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
