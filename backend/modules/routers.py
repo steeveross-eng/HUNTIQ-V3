@@ -316,7 +316,8 @@ MODULE_STATUS = {
     "phase_3_modules": len([r for r, m in CORE_ROUTERS if m.get("phase") == 3]),
     "phase_4_modules": len([r for r, m in CORE_ROUTERS if m.get("phase") == 4]),
     "phase_5_modules": len([r for r, m in CORE_ROUTERS if m.get("phase") == 5]),
+    "phase_6_modules": len([r for r, m in CORE_ROUTERS if m.get("phase") == 6]),
     "modules": [meta["name"] for _, meta in CORE_ROUTERS],
     "status": "operational",
-    "architecture_version": "modular_v1.4"
+    "architecture_version": "modular_v1.5"
 }
