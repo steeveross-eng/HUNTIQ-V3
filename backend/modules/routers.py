@@ -258,6 +258,16 @@ CORE_ROUTERS: List[Tuple[APIRouter, dict]] = [
         "phase": 5,
         "description": "Data provider for corridors and connectivity"
     }),
+    
+    # ==========================================
+    # Phase 6 - Special Modules (1 module)
+    # ==========================================
+    (live_heading_router, {
+        "name": "live_heading_engine",
+        "version": "1.0.0",
+        "phase": 6,
+        "description": "Immersive live heading view for hunting navigation"
+    }),
 ]
 
 
