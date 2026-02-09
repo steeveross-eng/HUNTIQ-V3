@@ -2,7 +2,7 @@
 
 ## Date de création: 2026-02-03
 ## Dernière mise à jour: Décembre 2025
-## Version: 3.5 (Architecture Modulaire - Phase 5 Complétée)
+## Version: 3.6 (Architecture Modulaire - Phase 6 Complétée)
 
 ---
 
@@ -20,9 +20,9 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 - **Backend**: FastAPI (Python)
 - **Base de données**: MongoDB
 - **IA**: GPT-5.2 via Emergent LLM Key
-- **Architecture**: Modulaire v1.4 (Phases 2+3+4+5 complétées)
+- **Architecture**: Modulaire v1.5 (Phases 2+3+4+5+6 complétées)
 
-### Structure Modulaire - 30 Modules Opérationnels
+### Structure Modulaire - 31 Modules Opérationnels
 
 ```
 /app/backend/modules/
@@ -46,8 +46,8 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 │   └── plugins_engine/v1/         ✅
 │
 ├── [PHASE 4 - PLAN MAÎTRE] 10 modules ✅
-│   ├── recommendation_engine/v1/   ✅ Priorité 1
-│   ├── collaborative_engine/v1/    ✅ Priorité 2
+│   ├── recommendation_engine/v1/   ✅
+│   ├── collaborative_engine/v1/    ✅
 │   ├── ecoforestry_engine/v1/      ✅
 │   ├── engine_3d/v1/               ✅
 │   ├── wildlife_behavior_engine/v1/ ✅
@@ -57,17 +57,34 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 │   ├── progression_engine/v1/      ✅
 │   └── networking_engine/v1/       ✅
 │
-├── [PHASE 5 - DATA LAYERS] 5 modules ✅ (NOUVEAU)
+├── [PHASE 5 - DATA LAYERS] 5 modules ✅
 │   ├── data_layers/
-│   │   ├── ecoforestry_layers/v1/     ✅ SIEF, inventaire forestier
-│   │   ├── behavioral_layers/v1/      ✅ Comportement faune
-│   │   ├── simulation_layers/v1/      ✅ Simulation météo-faune
-│   │   ├── layers_3d/v1/              ✅ Élévation, terrain 3D
-│   │   └── advanced_geospatial_layers/v1/ ✅ Corridors, connectivité
-│   │
-│   └── __init__.py                ✅ Central registry
+│   │   ├── ecoforestry_layers/v1/     ✅
+│   │   ├── behavioral_layers/v1/      ✅
+│   │   ├── simulation_layers/v1/      ✅
+│   │   ├── layers_3d/v1/              ✅
+│   │   └── advanced_geospatial_layers/v1/ ✅
 │
-└── routers.py                     ✅ Point d'entrée central (v1.4)
+├── [PHASE 6 - LIVE HEADING VIEW] 1 module ✅ (NOUVEAU)
+│   └── live_heading_engine/v1/    ✅ Navigation immersive
+│
+└── routers.py                     ✅ Point d'entrée central (v1.5)
+```
+
+### Frontend Modulaire
+```
+/app/frontend/src/modules/
+└── live_heading_view/             ✅ (NOUVEAU - Phase 6)
+    ├── index.js
+    └── components/
+        ├── LiveHeadingView.jsx    ✅ Vue principale immersive
+        ├── CompassWidget.jsx      ✅ Boussole animée
+        ├── WindIndicator.jsx      ✅ Indicateur de vent
+        ├── POIMarker.jsx          ✅ Marqueurs POI
+        ├── AlertToast.jsx         ✅ Alertes toast
+        ├── SessionControls.jsx    ✅ Contrôles session
+        ├── SessionStats.jsx       ✅ Statistiques en direct
+        └── ForwardCone.jsx        ✅ Cône de vision
 ```
 
 ---
