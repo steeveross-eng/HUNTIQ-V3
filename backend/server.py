@@ -39,6 +39,11 @@ from referral_system import (
 )
 
 # ============================================
+# MODULAR ENGINE IMPORTS (Phase 2)
+# ============================================
+from modules.routers import register_routers, get_router_info, MODULE_STATUS
+
+# ============================================
 # DEFAULT ANALYSIS CATEGORIES STRUCTURE
 # ============================================
 
