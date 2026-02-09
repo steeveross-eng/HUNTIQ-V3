@@ -9,14 +9,13 @@ The primary request is to refactor the entire application from its current monol
 2.  **No Cross-Module Dependencies:** Modules, especially at the core level, must not have dependencies on each other.
 3.  **Backend Refactoring:**
     *   Create a  directory.
-    *   Extract existing logic from the monolithic  into distinct engine modules (e.g., , , ).
+    *   Extract existing logic from the monolithic  into distinct engine modules.
     *    will ultimately become a simple orchestrator that only imports the routers from the modules.
-    *   Add 10 new master plan engines for future features (e.g., , , ).
+    *   Add 10 new master plan engines for future features.
     *   Isolate data-providing logic into 5  modules.
 4.  **Frontend Refactoring:**
     *   Create a  directory.
     *   Create corresponding frontend modules for each backend engine.
-    *   The existing UI component library () and core logic will be preserved initially and refactored later.
 5.  **New Feature Module:**
     *   Implement a new  module (backend and frontend) for an immersive, sensor-driven map view.
 6.  **Phased Implementation:** The entire transformation must be executed in a controlled, phased approach, with user validation at each step.
@@ -24,38 +23,36 @@ The primary request is to refactor the entire application from its current monol
 **User's preferred language**: French
 
 **what currently exists?**
-The agent has successfully cloned the HUNTIQ V3 project from the user's GitHub repository. The environment is fully set up with all dependencies installed, and both the React frontend and FastAPI backend services are running.
+The project is fully set up and running. The refactoring is proceeding in phases. Phases 1, 2, and 3 are complete.
+- **Phase 1 (Infrastructure):** The complete modular directory structure for all backend and frontend modules was created.
+- **Phase 2 (Core Engines):** 7 Core backend modules (, , , , , , ) were created, their logic extracted from the monolith, and integrated into .
+- **Phase 3 (Business Engines):** 8 Business backend modules (, , , , , , , ) were created and integrated.
 
-Crucially, **Phase 1** of the modular refactoring is complete. This means the entire directory and file skeleton for the new modular architecture has been created in  and  as per the user's detailed plan. This structure includes placeholder  files,  files, configuration files, and documentation stubs. The original monolithic application remains fully functional.
+A total of **15 backend modules** now exist and are operational, with their own versioned API endpoints. The original monolithic API in  remains fully functional to ensure non-regression. OpenAPI (Swagger) documentation for all new modular endpoints has been implemented and is accessible at .
 
 **Last working item**:
-*   **Last item agent was working on:** The agent was executing **Phase 2: Moteurs Core Backend**. After analyzing the existing monolithic code (, ), it began the first step of the extraction process: migrating the logic for the .
+*   **Last item agent was working on:** The agent began **Phase 4: Moteurs Plan Maître Backend**. Following user instructions, it prioritized the creation of  and . It was in the process of creating the file structure for these modules and the other 8 master plan engines.
 *   **Status:** IN PROGRESS
 *   **Agent Testing Done:** N
-*   **Which testing method agent to use?** backend testing agent. The plan for Phase 2 requires creating new module files, extracting code into them, and creating new API endpoints. After the extraction of each of the 7 core engines, the agent must run unit tests for the new module and integration tests to ensure the new endpoints work and that there are no regressions in the existing application.  checks on the new and old endpoints are also required.
+*   **Which testing method agent to use?** manual testing by curl. Once the modules are created, the agent needs to test the newly created placeholder endpoints to ensure they are registered correctly and return a basic success response. A final non-regression check on the monolith API is also required.
 *   **User Testing Done:** N
 
+**All Pending/In progress Issue list**:
+*   None.
+
 **In progress Task List**:
-*   **Task 1:** Complete Phase 2 - Moteurs Core Backend Extraction (P0)
-    *   **Where to resume:** The agent has analyzed the source files (, ) and started the extraction of . It needs to complete the code migration for  into  and then proceed with the remaining 6 core engines in the specified order:
-        1.  
-        2.  
-        3.  
-        4.  
-        5.  
-        6.  
-    *   **What will be achieved with this?** The 7 core backend functionalities will be isolated from the monolith into their own independent, versioned modules. Each module will have its own FastAPI router, Pydantic models, and service logic. The original  will not be modified yet, ensuring the application remains fully functional during the transition.
+*   **Task 1:** Complete Phase 4 - Moteurs Plan Maître Backend (P0)
+    *   **Where to resume:** The agent has created the  files for  and , and was about to create the files for the remaining 8 master plan engines. The next step is to create the , , and  files for all 10 modules in this phase, populate them with placeholder logic and a basic health-check endpoint, and then integrate them into the main application via .
+    *   **What will be achieved with this?** The 10 advanced backend engines from the BIONIC Master Plan will be created as functional but empty modules. This will bring the total number of modules to 25, completing the backend module creation part of the refactoring plan.
     *   **Status:** IN PROGRESS
-    *   **Should Test frontend/backend/both after fix?** both. Extensive backend testing is required for each new module's endpoints. Frontend non-regression testing is also vital to ensure the site remains operational, as it still relies on the original monolithic API.
+    *   **Should Test frontend/backend/both after fix?** backend
     *   **Blocked on something:** None.
 
 **Upcoming and Future Tasks**
 *   **Upcoming Tasks (P0):**
-    *   **Phase 3: Moteurs Métier Backend:** Extract the 8 business-logic engines (e.g., , , ).
-    *   **Phase 4: Moteurs Plan Maître Backend:** Create the 10 new advanced engines from the BIONIC Master Plan (e.g., , ).
     *   **Phase 5: Couches de Données:** Isolate data-providing logic into 5 distinct data layer modules.
     *   **Phase 6: Module Live Heading View:** Build the complete backend and frontend for this new immersive UI feature.
-    *   **Phase 7: Découplage server.py:** The most critical phase. Refactor  to remove all business logic, transforming it into a pure orchestrator that imports the routers from the newly created modules.
+    *   **Phase 7: Découplage server.py:** The most critical phase. Refactor  to remove all business logic, transforming it into a pure orchestrator that only imports the routers from the newly created modules.
 *   **Future Tasks (P1):**
     *   **Phase 8: Modularisation Frontend Core:** Refactor the frontend to use the new core module structure.
     *   **Phase 9: Modularisation Frontend Métier:** Refactor the frontend for the business modules.
@@ -63,24 +60,19 @@ Crucially, **Phase 1** of the modular refactoring is complete. This means the en
     *   **Phase 11: Tests & Documentation:** Finalize all unit/integration tests and complete the README documentation for every module.
 
 **Completed work in this session**
-- **Project Setup:** Cloned the HUNTIQ V3 project from GitHub, installed all dependencies, and confirmed the application is running.
-- **Architectural Planning:** Collaborated with the user to define and validate a highly detailed, 11-phase plan to refactor the monolithic application into a strict modular architecture (PLAN MAÎTRE BIONIC).
-- **Phase 1: Infrastructure Modulaire:** Successfully executed and completed Phase 1. This involved:
-    - Creating the entire directory structure for 26 backend modules and 5 data layers under .
-    - Creating the directory structure for 20 frontend modules under .
-    - Populating these directories with placeholder files (, ), versioning folders (), and component folders.
-    - Creating central configuration () and documentation (, ) files.
-    - All work was completed without altering the existing, running codebase.
+- **Phase 2 - Moteurs Core Backend:** Successfully created, extracted logic for, and integrated 7 core modules. Tested each module's new endpoints and verified non-regression of the main application.
+- **Phase 3 - Moteurs Métier Backend:** Successfully created and integrated 8 business modules with placeholder logic. Tested all new endpoints and verified non-regression.
+- **OpenAPI Documentation:** Created a Swagger UI for all new modular APIs, accessible at . Resolved a routing issue to ensure it was served correctly through the API gateway prefix.
+- **Planning:** Created and got user approval for detailed plans for Phase 3 () and Phase 4 ().
+- Started implementation of **Phase 4**.
 
 **Earlier issues found/mentioned but not fixed**
-*   None. The session has focused exclusively on the planned architectural refactoring, not on bug fixes.
+*   None.
 
 **Known issue recurrence from previous fork**
-*   None. This is the first session on this major refactoring task.
+*   None.
 
 **Code Architecture**
-The target architecture is a modular, multi-engine system. The full, planned structure has been created as empty directories.
-
 
 
 **Key Technical Concepts**
@@ -88,71 +80,78 @@ The target architecture is a modular, multi-engine system. The full, planned str
 *   **Backend:** FastAPI, Pydantic.
 *   **Frontend:** React.
 *   **Database:** MongoDB.
-*   **Design Pattern:** The user enforces a Strict Modular Architect pattern where the agent must follow explicit, phased instructions without interpretation. Modules are isolated, versioned, and have no inter-dependencies at the core level.
+*   **Design Pattern:** The user enforces a Strict Modular Architect pattern. The refactoring is phased, with non-regression of the monolith being a critical requirement until the final decoupling phase.
 
 **key DB schema**
-*   The project uses MongoDB, but the specific schema and collections have not been explored yet. Logic is being extracted from Python files, not directly from database analysis.
+*   Not explored in detail. Logic is being extracted from application code, not by analyzing the database structure.
 
 **changes in tech stack**
-*   None. The tech stack remains React, FastAPI, and MongoDB. The change is purely architectural.
+*   None.
 
 **All files of reference**
-*   **/app/backend/server.py:** The main monolith file from which logic is being extracted.
-*   **/app/backend/analyzer.py:** A large service file containing logic for scoring, nutrition, and AI, which is a primary source for extraction in Phase 2.
-*   **/app/backend/modules/:** The root directory for all new backend modules. The agent has already created the full directory structure here.
-*   **/app/frontend/src/modules/:** The root directory for all new frontend modules. The agent has already created the full directory structure here.
-*   **/app/backend/config/settings.py:** New configuration file for the modular architecture.
-*   **/app/memory/PRD.md:** The agent reviewed this file from the user's repo to understand the project's scope.
+*   **/app/backend/server.py:** Modified to import and include routers from the 15 completed modules.
+*   **/app/backend/analyzer.py & /app/backend/referral_system.py:** Key monolithic files from which logic was extracted for Phase 2 & 3.
+*   **/app/backend/modules/routers.py:** Created and updated to import all module routers for central registration in .
+*   **/app/backend/modules/docs.py:** Created to generate the OpenAPI schema for the documentation page.
+*   **/app/backend/modules/\*_engine/v1/**: Directories for the 15 completed modules, containing , , and .
+*   **/app/memory/PRD.md:** Updated to reflect the completion of Phases 2 and 3.
+*   **/app/backend/modules/PHASE3_PLAN.md & PHASE4_PLAN.md:** Planning documents created for user approval.
 
 **Areas that need refactoring**:
-The entire application is being refactored. The highest priority files for refactoring are  and other large service files like , , and . Their logic must be carefully moved into the new module structure.
+The primary target remains . While new modules are being integrated, the original monolithic code within it is intentionally left untouched for now. The final decoupling (Phase 7) will address this.
 
 **key api endpoints**
-*   **Existing (Monolithic):** , , . These are defined in  and must remain functional.
-*   **To be created (Modular):** New, versioned endpoints will be created within each module's router, such as , , etc.
+*   **Monolithic (Legacy):** All original endpoints like , ,  remain functional.
+*   **Modular (New):**
+    *   : Versioned endpoints for each of the 15 completed modules.
+    *   : Provides a status of all loaded modules.
+    *   : Serves the Swagger UI documentation.
+    *   : Serves the raw OpenAPI JSON schema.
 
 **Critical Info for New Agent**
-*   **You MUST act as a STRICT MODULAR ARCHITECT.** Follow the user's plan precisely. Do not interpret, simplify, or modify the plan. The user requires detailed plans and explicit validation before you execute each phase.
-*   The refactoring is a large-scale, multi-phase task. **Phase 1 (scaffolding) is complete.** You are starting **Phase 2 (core engine extraction)**.
-*   **Non-Regression is CRITICAL.** During the extraction phases (2 through 6), the original application and its API endpoints in  must remain fully functional. You are adding new modular code that will coexist with the old code until the final decoupling phase (Phase 7).
-*   **Isolation is KEY.** The user has forbidden dependencies between the core engine modules. Each engine must be a self-contained unit.
-*   **Communicate in French.**
+*   **You MUST act as a STRICT MODULAR ARCHITECT.** Follow the user's plan precisely. Do not interpret, simplify, or modify the plan.
+*   **Non-Regression is CRITICAL.** The original application and its API endpoints in  must remain fully functional. You are adding new modular code that coexists with the old code.
+*   **Phases 1, 2, and 3 are COMPLETE.** You are starting the implementation of **Phase 4**.
+*   **Communicate in French.** The user's preferred language is French.
 
 **documents and test reports created in this job**
-*   /app/backend/config/settings.py
-*   /app/backend/modules/manifest.json
-*   /app/backend/modules/README.md
-*   /app/frontend/src/modules/README.md
+*   /app/memory/PRD.md
+*   /app/test_reports/iteration_1.json
+*   /app/test_reports/iteration_2.json
+*   /app/backend/modules/PHASE3_PLAN.md
+*   /app/backend/modules/PHASE4_PLAN.md
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Requests a detailed plan for Phase 1. (Completed)
-2.  **Agent:** Provides a detailed plan for Phase 1 (objectives, deliverables, risks, tests). (Completed)
-3.  **User:** Requests a final, complete tree structure confirmation before starting. (Completed)
-4.  **Agent:** Provides the complete target file and directory structure for the entire project. (Completed)
-5.  **User:** Approves the final structure and gives the command:  (Completed)
-6.  **Agent:** Executes Phase 1 and provides a completion report with test results. (Completed)
-7.  **User:** Acknowledges the report and asks for the detailed plan for Phase 2. (Pending Agent Action)
-8.  **Agent:** Provides a detailed plan for Phase 2 (Moteurs Core Backend extraction). (Completed)
-9.  **User:** Approves the Phase 2 plan and gives the command:  (Pending Agent Action)
-10. **Agent:** Acknowledges validation and begins execution of Phase 2, starting with code analysis. (In Progress)
+1.  **Agent:** Presents a detailed plan for Phase 3.
+2.  **User:** Approves the Phase 3 plan and gives the go-ahead.
+3.  **Agent:** Completes Phase 3, tests all 15 modules, updates PRD, and asks for Phase 4 priority.
+4.  **User:** Praises the work on Phase 3. Confirms priority for Phase 4:  and  first, then the rest. Asks for the detailed plan.
+5.  **Agent:** Confirms understanding and starts preparing the Phase 4 plan.
+6.  **Agent:** Presents the detailed Phase 4 plan for approval.
+7.  **User:** Approves the detailed Phase 4 plan.
+8.  **Agent:** Acknowledges approval and begins execution of Phase 4.
+9.  **Agent:** Creates initial files for the first two priority modules.
+10. **Agent:** Continues creating placeholder files for the remaining 8 modules in Phase 4.
 
 **Project Health Check:**
 *   **Running:** The application is fully operational.
 *   **Broken:** Nothing is broken.
-*   **Mocked:** No mocked components are mentioned.
+*   **Mocked:** The new module endpoints are essentially mocked, returning static placeholder data.
 
 **3rd Party Integrations**
-*   **OpenAI GPT-5.2:** Mentioned in the user's plan for the . The implementation will likely use the  library.
-*   **emergentintegrations:** Present in , indicating potential use of the Emergent LLM Key.
+*   **OpenAI GPT-5.2:** Planned for use in the , but the implementation is part of a later phase.
+*   **emergentintegrations:** Present in .
 
 **Testing status**
-*   **Testing agent used after significant changes:** NO. The agent performed manual  and  script tests after Phase 1. A testing agent will be necessary after Phase 2.
+*   **Testing agent used after significant changes:** NO
 *   **Troubleshoot agent used after agent stuck in loop:** NO
-*   **Test files created:** None yet.
-*   **Known regressions:** None.
+*   **Test files created:**
+    *   /app/test_reports/iteration_1.json
+    *   /app/test_reports/iteration_2.json
+*   **Known regressions:** None. Extensive non-regression testing was performed after Phases 2 and 3 using .
 
 **Credentials to test flow:**
-*   None required so far.
+*   None required.
 
 **What agent forgot to execute**
-*   The agent has followed the user's prescriptive plan meticulously and has not overlooked any requested steps. The task is proceeding as designed by the user.</analysis>
+*   The agent did not forget anything; it was in the middle of executing a multi-step task (creating placeholder files for all 10 modules of Phase 4) when the session ended. The work needs to be picked up from that point.</analysis>
