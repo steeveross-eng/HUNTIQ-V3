@@ -3,7 +3,7 @@
 Central router integration for all HUNTIQ modules.
 This file is the single point of import for server.py
 
-Version: 1.2.0 - Phase 3 Complete
+Version: 1.3.0 - Phase 4 Complete
 """
 
 from fastapi import APIRouter
@@ -31,6 +31,20 @@ from modules.territory_engine.v1 import router as territory_router
 from modules.tracking_engine.v1 import router as tracking_router
 from modules.marketplace_engine.v1 import router as marketplace_router
 from modules.plugins_engine.v1 import router as plugins_router
+
+# ==============================================
+# MASTER PLAN ENGINE ROUTERS (Phase 4)
+# ==============================================
+from modules.recommendation_engine.v1 import router as recommendation_router
+from modules.collaborative_engine.v1 import router as collaborative_router
+from modules.ecoforestry_engine.v1 import router as ecoforestry_router
+from modules.engine_3d.v1 import router as engine_3d_router
+from modules.wildlife_behavior_engine.v1 import router as wildlife_router
+from modules.weather_fauna_simulation_engine.v1 import router as simulation_router
+from modules.adaptive_strategy_engine.v1 import router as adaptive_router
+from modules.advanced_geospatial_engine.v1 import router as advanced_geo_router
+from modules.progression_engine.v1 import router as progression_router
+from modules.networking_engine.v1 import router as networking_router
 
 
 # List of all available routers with their metadata
@@ -132,6 +146,70 @@ CORE_ROUTERS: List[Tuple[APIRouter, dict]] = [
         "phase": 3,
         "description": "Feature flags and plugin management"
     }),
+    
+    # ==========================================
+    # Phase 4 - Master Plan Engines (10 modules)
+    # ==========================================
+    (recommendation_router, {
+        "name": "recommendation_engine",
+        "version": "1.0.0",
+        "phase": 4,
+        "description": "Intelligent product and strategy recommendations"
+    }),
+    (collaborative_router, {
+        "name": "collaborative_engine",
+        "version": "1.0.0",
+        "phase": 4,
+        "description": "Hunter collaboration and group management"
+    }),
+    (ecoforestry_router, {
+        "name": "ecoforestry_engine",
+        "version": "1.0.0",
+        "phase": 4,
+        "description": "Ecoforestry data and habitat analysis"
+    }),
+    (engine_3d_router, {
+        "name": "engine_3d",
+        "version": "1.0.0",
+        "phase": 4,
+        "description": "3D terrain visualization and analysis"
+    }),
+    (wildlife_router, {
+        "name": "wildlife_behavior_engine",
+        "version": "1.0.0",
+        "phase": 4,
+        "description": "Wildlife behavior modeling and prediction"
+    }),
+    (simulation_router, {
+        "name": "weather_fauna_simulation_engine",
+        "version": "1.0.0",
+        "phase": 4,
+        "description": "Weather-wildlife correlation simulation"
+    }),
+    (adaptive_router, {
+        "name": "adaptive_strategy_engine",
+        "version": "1.0.0",
+        "phase": 4,
+        "description": "Adaptive real-time hunting strategies"
+    }),
+    (advanced_geo_router, {
+        "name": "advanced_geospatial_engine",
+        "version": "1.0.0",
+        "phase": 4,
+        "description": "Advanced geospatial analysis and corridors"
+    }),
+    (progression_router, {
+        "name": "progression_engine",
+        "version": "1.0.0",
+        "phase": 4,
+        "description": "Gamification and user progression"
+    }),
+    (networking_router, {
+        "name": "networking_engine",
+        "version": "1.0.0",
+        "phase": 4,
+        "description": "Hunter social network"
+    }),
 ]
 
 
@@ -178,7 +256,8 @@ MODULE_STATUS = {
     "total_modules": len(CORE_ROUTERS),
     "phase_2_modules": len([r for r, m in CORE_ROUTERS if m.get("phase") == 2]),
     "phase_3_modules": len([r for r, m in CORE_ROUTERS if m.get("phase") == 3]),
+    "phase_4_modules": len([r for r, m in CORE_ROUTERS if m.get("phase") == 4]),
     "modules": [meta["name"] for _, meta in CORE_ROUTERS],
     "status": "operational",
-    "architecture_version": "modular_v1.2"
+    "architecture_version": "modular_v1.3"
 }
