@@ -185,11 +185,11 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 - [x] layers_3d
 - [x] advanced_geospatial_layers
 
-#### Phase 6: Module Live Heading View
-- [ ] Backend complet
-- [ ] Frontend immersif
+#### Phase 6: Module Live Heading View ✅ COMPLÉTÉE
+- [x] Backend complet (live_heading_engine)
+- [x] Frontend immersif (8 composants React)
 
-#### Phase 7: Découplage server.py
+#### Phase 7: Découplage server.py ← PROCHAINE PHASE
 - [ ] Migration des routes vers modules
 - [ ] server.py devient orchestrateur pur
 
@@ -208,7 +208,7 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 - `/app/test_reports/iteration_2.json` - Phase 3
 
 ### Statut
-- [x] 30/30 modules opérationnels
+- [x] 31/31 modules opérationnels
 - [x] Non-régression validée (monolithe + modules existants)
 - [x] Frontend fonctionnel
 - [x] Documentation Swagger accessible
