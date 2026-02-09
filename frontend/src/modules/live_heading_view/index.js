@@ -1,14 +1,14 @@
 /**
- * Live Heading View Module - SPECIAL
+ * Live Heading View Module - PHASE 6
  * 
- * Provides immersive live heading view.
+ * Immersive live heading view for hunting navigation.
  * 
  * Features:
  * - GPS-based travelling view
  * - Forward cone (30-60°)
  * - Direction line
  * - Wind overlay (real-time)
- * - Strategy overlay
+ * - POI markers
  * - Alerts overlay
  * - Compass widget
  * 
@@ -20,12 +20,12 @@ export const MODULE_NAME = 'live_heading_view';
 export const MODULE_VERSION = '1.0.0';
 export const MODULE_TYPE = 'special';
 
-// Component exports will be added during implementation
-// export { LiveHeadingView } from './components/LiveHeadingView';
-// export { ForwardCone } from './components/ForwardCone';
-// export { DirectionLine } from './components/DirectionLine';
-// export { WindOverlay } from './components/WindOverlay';
-// export { StrategyOverlay } from './components/StrategyOverlay';
-// export { AlertsOverlay } from './components/AlertsOverlay';
-// export { CompassWidget } from './components/CompassWidget';
-// export { TravellingView } from './components/TravellingView';
+// Component exports
+export { LiveHeadingView } from './components/LiveHeadingView';
+export { CompassWidget } from './components/CompassWidget';
+export { ForwardCone } from './components/ForwardCone';
+export { WindIndicator } from './components/WindIndicator';
+export { POIMarker } from './components/POIMarker';
+export { AlertToast } from './components/AlertToast';
+export { SessionControls } from './components/SessionControls';
+export { SessionStats } from './components/SessionStats';
