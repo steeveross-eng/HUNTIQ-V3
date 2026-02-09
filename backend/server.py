@@ -200,8 +200,49 @@ SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
 if RESEND_API_KEY:
     resend.api_key = RESEND_API_KEY
 
-# Create the main app without a prefix
-app = FastAPI()
+# Create the main app with OpenAPI documentation
+app = FastAPI(
+    title="HUNTIQ V3 - API Modulaire",
+    description="""
+# HUNTIQ V3 - Plateforme de Chasse Intelligente
+
+API complète pour la gestion et l'analyse des territoires de chasse au Québec.
+
+## Architecture Modulaire (v1)
+- 7 moteurs CORE indépendants et versionnés
+- Endpoints sous `/api/v1/{module}/`
+- Documentation Swagger/OpenAPI intégrée
+
+## Modules disponibles
+| Module | Préfixe | Description |
+|--------|---------|-------------|
+| Nutrition | `/api/v1/nutrition` | Analyse des ingrédients |
+| Scoring | `/api/v1/scoring` | Évaluation scientifique |
+| AI | `/api/v1/ai` | Analyse GPT-5.2 |
+| Weather | `/api/v1/weather` | Conditions météo |
+| Geospatial | `/api/v1/geospatial` | Gestion territoires |
+| WMS | `/api/v1/wms` | Couches cartographiques |
+| Strategy | `/api/v1/strategy` | Stratégies de chasse |
+    """,
+    version="3.2.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
+    openapi_tags=[
+        {"name": "Root", "description": "Endpoints racine"},
+        {"name": "Modules Status", "description": "État des modules modulaires"},
+        {"name": "Nutrition Engine", "description": "Analyse nutritionnelle des attractants"},
+        {"name": "Scoring Engine", "description": "Scoring scientifique (13 critères)"},
+        {"name": "AI Engine", "description": "Analyse IA GPT-5.2"},
+        {"name": "Weather Engine", "description": "Conditions météo de chasse"},
+        {"name": "Geospatial Engine", "description": "Gestion des territoires"},
+        {"name": "WMS Engine", "description": "Couches cartographiques WMS"},
+        {"name": "Strategy Engine", "description": "Stratégies de chasse"},
+        {"name": "Products", "description": "Gestion des produits"},
+        {"name": "Orders", "description": "Gestion des commandes"},
+        {"name": "Admin", "description": "Administration"},
+    ]
+)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
