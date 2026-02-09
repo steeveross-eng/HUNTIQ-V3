@@ -135,10 +135,11 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 
 ### Statut des Modules
 - **Endpoint**: /api/modules/status
-- **Total modules**: 25
+- **Total modules**: 30
 - **Phase 2**: 7 modules
 - **Phase 3**: 8 modules
 - **Phase 4**: 10 modules
+- **Phase 5**: 5 modules (Data Layers)
 
 ---
 
@@ -146,12 +147,12 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 
 ### P0 - Critique
 
-#### Phase 5: Couches de Données (5 modules)
-- [ ] ecoforestry_layers
-- [ ] behavioral_layers
-- [ ] simulation_layers
-- [ ] layers_3d
-- [ ] advanced_geospatial_layers
+#### Phase 5: Couches de Données (5 modules) ✅ COMPLÉTÉE
+- [x] ecoforestry_layers
+- [x] behavioral_layers
+- [x] simulation_layers
+- [x] layers_3d
+- [x] advanced_geospatial_layers
 
 #### Phase 6: Module Live Heading View
 - [ ] Backend complet
@@ -176,7 +177,7 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 - `/app/test_reports/iteration_2.json` - Phase 3
 
 ### Statut
-- [x] 25/25 modules opérationnels
+- [x] 30/30 modules opérationnels
 - [x] Non-régression validée (monolithe + modules existants)
 - [x] Frontend fonctionnel
 - [x] Documentation Swagger accessible
