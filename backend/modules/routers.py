@@ -219,6 +219,40 @@ CORE_ROUTERS: List[Tuple[APIRouter, dict]] = [
         "phase": 4,
         "description": "Hunter social network"
     }),
+    
+    # ==========================================
+    # Phase 5 - Data Layers (5 modules)
+    # ==========================================
+    (ecoforestry_data_router, {
+        "name": "ecoforestry_data_layer",
+        "version": "1.0.0",
+        "phase": 5,
+        "description": "Data provider for SIEF forest inventory and habitat"
+    }),
+    (behavioral_data_router, {
+        "name": "behavioral_data_layer",
+        "version": "1.0.0",
+        "phase": 5,
+        "description": "Data provider for wildlife behavior patterns"
+    }),
+    (simulation_data_router, {
+        "name": "simulation_data_layer",
+        "version": "1.0.0",
+        "phase": 5,
+        "description": "Data provider for weather-fauna simulations"
+    }),
+    (layers_3d_data_router, {
+        "name": "3d_data_layer",
+        "version": "1.0.0",
+        "phase": 5,
+        "description": "Data provider for terrain elevation and 3D analysis"
+    }),
+    (advanced_geo_data_router, {
+        "name": "advanced_geospatial_data_layer",
+        "version": "1.0.0",
+        "phase": 5,
+        "description": "Data provider for corridors and connectivity"
+    }),
 ]
 
 
