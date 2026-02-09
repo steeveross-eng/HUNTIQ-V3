@@ -7,6 +7,7 @@ Version: 1.0.0
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any, Literal
 from datetime import datetime, timezone
+from enum import Enum
 import uuid
 
 
@@ -16,9 +17,6 @@ class CorridorType(str, Enum):
     MIGRATION = "migration"
     DAILY = "daily"
     SEASONAL = "seasonal"
-
-
-from enum import Enum
 
 
 class ConcentrationZone(BaseModel):
