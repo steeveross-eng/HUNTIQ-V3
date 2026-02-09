@@ -225,9 +225,9 @@ API complète pour la gestion et l'analyse des territoires de chasse au Québec.
 | Strategy | `/api/v1/strategy` | Stratégies de chasse |
     """,
     version="3.2.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
-    openapi_url="/openapi.json",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json",
     openapi_tags=[
         {"name": "Root", "description": "Endpoints racine"},
         {"name": "Modules Status", "description": "État des modules modulaires"},
