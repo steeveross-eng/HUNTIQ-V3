@@ -55,6 +55,11 @@ from modules.data_layers.simulation_layers import router as simulation_data_rout
 from modules.data_layers.layers_3d import router as layers_3d_data_router
 from modules.data_layers.advanced_geospatial_layers import router as advanced_geo_data_router
 
+# ==============================================
+# SPECIAL MODULES (Phase 6)
+# ==============================================
+from modules.live_heading_engine import router as live_heading_router
+
 
 # List of all available routers with their metadata
 CORE_ROUTERS: List[Tuple[APIRouter, dict]] = [
