@@ -649,6 +649,19 @@ async def get_modules_status():
         }
 
 
+@api_router.get("/modules/docs")
+async def get_modules_documentation():
+    """Get detailed documentation for all modular engines"""
+    from modules.docs import MODULES_DOCS
+    return {
+        "success": True,
+        "documentation_url": "/docs",
+        "redoc_url": "/redoc",
+        "openapi_url": "/openapi.json",
+        "modules": MODULES_DOCS
+    }
+
+
 # ============================================
 # ADMIN AUTHENTICATION
 # ============================================
