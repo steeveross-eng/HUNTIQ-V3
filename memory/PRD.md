@@ -132,7 +132,7 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 | progression_engine | /api/v1/progression | Gamification, XP, badges, défis |
 | networking_engine | /api/v1/network | Réseau social chasseurs |
 
-### Phase 5: Couches de Données Backend ✅ (NOUVEAU)
+### Phase 5: Couches de Données Backend ✅
 | Module | Endpoint | Fonctionnalités |
 |--------|----------|-----------------|
 | ecoforestry_data_layer | /api/v1/data/ecoforestry | Peuplements forestiers SIEF, coupes, HSI habitats |
@@ -140,6 +140,20 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 | simulation_data_layer | /api/v1/data/simulation | Corrélations météo, conditions optimales |
 | 3d_data_layer | /api/v1/data/3d | Élévation DEM, pente/aspect, viewshed |
 | advanced_geospatial_data_layer | /api/v1/data/geospatial-advanced | Corridors, zones concentration, connectivité, heatmaps |
+
+### Phase 6: Live Heading View ✅ (NOUVEAU)
+| Module | Endpoint | Fonctionnalités |
+|--------|----------|-----------------|
+| live_heading_engine | /api/v1/live-heading | Sessions navigation, position updates, POIs, alertes |
+
+**Frontend Live Heading View:**
+- `LiveHeadingView.jsx` - Vue immersive plein écran avec cône de vision
+- `CompassWidget.jsx` - Boussole animée avec rotation en temps réel
+- `WindIndicator.jsx` - Direction du vent avec indicateur de favorabilité
+- `POIMarker.jsx` - Marqueurs de points d'intérêt dans le cône
+- `AlertToast.jsx` - Notifications contextuelles (vent, POI proches)
+- `SessionControls.jsx` - Pause/Resume/Fin de session
+- `SessionStats.jsx` - Distance, durée, POIs en temps réel
 
 ---
 
