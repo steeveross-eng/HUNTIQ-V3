@@ -1,34 +1,434 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* ============================================
+   RESPONSIVE TYPOGRAPHY SYSTEM
+   PC (1920px+), Tablet (768px-1919px), Mobile (<768px)
+   ============================================ */
+
+/* Base font sizes - Mobile first approach */
+:root {
+    /* Mobile (default) */
+    --font-size-hero: 2rem;          /* 32px */
+    --font-size-h1: 1.75rem;         /* 28px */
+    --font-size-h2: 1.5rem;          /* 24px */
+    --font-size-h3: 1.25rem;         /* 20px */
+    --font-size-body: 0.938rem;      /* 15px */
+    --font-size-small: 0.813rem;     /* 13px */
+    --font-size-xs: 0.75rem;         /* 12px */
+    
+    /* Spacing */
+    --spacing-section: 3rem;
+    --spacing-card: 1rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
+/* Tablet breakpoint (768px - 1279px) */
+@media (min-width: 768px) {
+    :root {
+        --font-size-hero: 2.75rem;       /* 44px */
+        --font-size-h1: 2.25rem;         /* 36px */
+        --font-size-h2: 1.75rem;         /* 28px */
+        --font-size-h3: 1.375rem;        /* 22px */
+        --font-size-body: 1rem;          /* 16px */
+        --font-size-small: 0.875rem;     /* 14px */
+        --font-size-xs: 0.813rem;        /* 13px */
+        
+        --spacing-section: 4rem;
+        --spacing-card: 1.25rem;
     }
 }
 
-.App-header {
-    background-color: #0f0f10;
+/* Desktop breakpoint (1280px+) */
+@media (min-width: 1280px) {
+    :root {
+        --font-size-hero: 3.5rem;        /* 56px */
+        --font-size-h1: 2.75rem;         /* 44px */
+        --font-size-h2: 2rem;            /* 32px */
+        --font-size-h3: 1.5rem;          /* 24px */
+        --font-size-body: 1.063rem;      /* 17px */
+        --font-size-small: 0.938rem;     /* 15px */
+        --font-size-xs: 0.875rem;        /* 14px */
+        
+        --spacing-section: 5rem;
+        --spacing-card: 1.5rem;
+    }
+}
+
+/* Large Desktop (1920px+) */
+@media (min-width: 1920px) {
+    :root {
+        --font-size-hero: 4rem;          /* 64px */
+        --font-size-h1: 3rem;            /* 48px */
+        --font-size-h2: 2.25rem;         /* 36px */
+        --font-size-h3: 1.75rem;         /* 28px */
+        --font-size-body: 1.125rem;      /* 18px */
+        --font-size-small: 1rem;         /* 16px */
+        --font-size-xs: 0.938rem;        /* 15px */
+        
+        --spacing-section: 6rem;
+        --spacing-card: 2rem;
+    }
+}
+
+/* ============================================
+   HERO SECTION - New Background Image
+   ============================================ */
+.hero-bg {
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.65)),
+        url('https://customer-assets.emergentagent.com/job_99393da0-0860-424b-8278-2fffa34ca9ef/artifacts/x41bdnbe_IMG_2019%20%281%29.JPG');
+    background-size: cover;
+    background-position: center 30%;
+    background-attachment: fixed;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
 }
 
-.App-link {
-    color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
+/* Mobile - disable fixed attachment for performance */
+@media (max-width: 767px) {
+    .hero-bg {
+        background-attachment: scroll;
+        background-position: center center;
     }
-    to {
-        transform: rotate(360deg);
+}
+
+/* ============================================
+   TYPOGRAPHY CLASSES
+   ============================================ */
+
+/* Hero title - largest text */
+.text-hero {
+    font-size: var(--font-size-hero);
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+/* H1 - Page titles */
+.text-h1 {
+    font-size: var(--font-size-h1);
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+/* H2 - Section titles */
+.text-h2 {
+    font-size: var(--font-size-h2);
+    line-height: 1.25;
+    font-weight: 600;
+}
+
+/* H3 - Card titles */
+.text-h3 {
+    font-size: var(--font-size-h3);
+    line-height: 1.3;
+    font-weight: 600;
+}
+
+/* Body text */
+.text-body {
+    font-size: var(--font-size-body);
+    line-height: 1.6;
+}
+
+/* Small text */
+.text-small {
+    font-size: var(--font-size-small);
+    line-height: 1.5;
+}
+
+/* Extra small text */
+.text-xs {
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+}
+
+/* ============================================
+   GOLDEN STYLING
+   ============================================ */
+
+/* Golden gradient text */
+.golden-text {
+    background: linear-gradient(135deg, #f5a623 0%, #f7c857 50%, #f5a623 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Golden border */
+.golden-border {
+    border: 2px solid #f5a623;
+    box-shadow: 0 0 20px rgba(245, 166, 35, 0.3);
+}
+
+/* Button animations */
+.btn-golden {
+    background: linear-gradient(135deg, #f5a623 0%, #f7c857 50%, #f5a623 100%);
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+}
+
+@keyframes gradient-shift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* ============================================
+   PRODUCT CARDS
+   ============================================ */
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 40px rgba(245, 166, 35, 0.2);
+}
+
+/* Score badge animation */
+.score-badge {
+    animation: pulse-gold 2s infinite;
+}
+
+@keyframes pulse-gold {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(245, 166, 35, 0);
+    }
+}
+
+/* Rank badge */
+.rank-badge {
+    background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+.nav-link {
+    position: relative;
+    font-size: var(--font-size-small);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #f5a623;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* ============================================
+   FEATURE CARDS
+   ============================================ */
+.feature-card {
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.9) 0%, rgba(20, 20, 20, 0.9) 100%);
+    border: 1px solid rgba(245, 166, 35, 0.2);
+    transition: border-color 0.3s ease, transform 0.3s ease;
+    padding: var(--spacing-card);
+}
+
+.feature-card:hover {
+    border-color: rgba(245, 166, 35, 0.5);
+    transform: translateY(-3px);
+}
+
+/* ============================================
+   FILTER TABS
+   ============================================ */
+.filter-tab {
+    transition: all 0.3s ease;
+    font-size: var(--font-size-small);
+}
+
+.filter-tab.active {
+    background: rgba(245, 166, 35, 0.1);
+    border-color: #f5a623;
+}
+
+/* ============================================
+   REFERRAL WIDGET STYLES
+   ============================================ */
+.referral-widget-glow {
+    animation: widget-glow 2s ease-in-out infinite;
+}
+
+@keyframes widget-glow {
+    0%, 100% {
+        box-shadow: 0 10px 40px rgba(245, 166, 35, 0.3);
+    }
+    50% {
+        box-shadow: 0 10px 50px rgba(245, 166, 35, 0.5);
+    }
+}
+
+/* Reward counter animation */
+.reward-pulse {
+    animation: reward-pulse 0.5s ease-out;
+}
+
+@keyframes reward-pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Widget slide-in animation */
+.widget-slide-in {
+    animation: widget-slide-in 0.3s ease-out;
+}
+
+@keyframes widget-slide-in {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Progress bar custom styling */
+.progress-referral [data-state="complete"] {
+    background: linear-gradient(90deg, #f5a623, #f7c857);
+}
+
+/* Floating animation for widget button */
+.widget-float {
+    animation: widget-float 3s ease-in-out infinite;
+}
+
+@keyframes widget-float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Counter number change animation */
+.counter-change {
+    animation: counter-change 0.3s ease-out;
+}
+
+@keyframes counter-change {
+    0% {
+        transform: scale(1.3);
+        color: #f5a623;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Shimmer effect for new rewards */
+.shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+.shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* ============================================
+   RESPONSIVE SPACING UTILITIES
+   ============================================ */
+.section-padding {
+    padding-top: var(--spacing-section);
+    padding-bottom: var(--spacing-section);
+}
+
+.card-padding {
+    padding: var(--spacing-card);
+}
+
+/* ============================================
+   MOBILE OPTIMIZATIONS
+   ============================================ */
+@media (max-width: 767px) {
+    /* Reduce spacing on mobile */
+    .mobile-compact {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Stack elements vertically */
+    .mobile-stack {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    /* Full width on mobile */
+    .mobile-full {
+        width: 100%;
+    }
+}
+
+/* ============================================
+   TABLET OPTIMIZATIONS
+   ============================================ */
+@media (min-width: 768px) and (max-width: 1279px) {
+    .tablet-grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .tablet-padding {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+/* ============================================
+   DESKTOP OPTIMIZATIONS
+   ============================================ */
+@media (min-width: 1280px) {
+    .desktop-grid-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    
+    .desktop-padding {
+        padding-left: 4rem;
+        padding-right: 4rem;
     }
 }
