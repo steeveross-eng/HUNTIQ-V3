@@ -3,7 +3,7 @@
 Central router integration for all HUNTIQ modules.
 This file is the single point of import for server.py
 
-Version: 1.1.0 - Phase 3 Added
+Version: 1.2.0 - Phase 3 Complete
 """
 
 from fastapi import APIRouter
@@ -27,11 +27,17 @@ from modules.user_engine.v1 import router as user_router
 from modules.admin_engine.v1 import router as admin_router
 from modules.notification_engine.v1 import router as notification_router
 from modules.referral_engine.v1 import router as referral_router
+from modules.territory_engine.v1 import router as territory_router
+from modules.tracking_engine.v1 import router as tracking_router
+from modules.marketplace_engine.v1 import router as marketplace_router
+from modules.plugins_engine.v1 import router as plugins_router
 
 
 # List of all available routers with their metadata
 CORE_ROUTERS: List[Tuple[APIRouter, dict]] = [
-    # Phase 2 - Core Engines
+    # ==========================================
+    # Phase 2 - Core Engines (7 modules)
+    # ==========================================
     (nutrition_router, {
         "name": "nutrition_engine",
         "version": "1.0.0",
@@ -75,7 +81,9 @@ CORE_ROUTERS: List[Tuple[APIRouter, dict]] = [
         "description": "Hunting strategy generation"
     }),
     
-    # Phase 3 - Business Engines
+    # ==========================================
+    # Phase 3 - Business Engines (8 modules)
+    # ==========================================
     (user_router, {
         "name": "user_engine",
         "version": "1.0.0",
@@ -99,6 +107,30 @@ CORE_ROUTERS: List[Tuple[APIRouter, dict]] = [
         "version": "1.0.0",
         "phase": 3,
         "description": "Referral and affiliate system"
+    }),
+    (territory_router, {
+        "name": "territory_engine",
+        "version": "1.0.0",
+        "phase": 3,
+        "description": "Territory and land management"
+    }),
+    (tracking_router, {
+        "name": "tracking_engine",
+        "version": "1.0.0",
+        "phase": 3,
+        "description": "GPS tracking and location sharing"
+    }),
+    (marketplace_router, {
+        "name": "marketplace_engine",
+        "version": "1.0.0",
+        "phase": 3,
+        "description": "C2C marketplace for hunting equipment"
+    }),
+    (plugins_router, {
+        "name": "plugins_engine",
+        "version": "1.0.0",
+        "phase": 3,
+        "description": "Feature flags and plugin management"
     }),
 ]
 
@@ -147,5 +179,6 @@ MODULE_STATUS = {
     "phase_2_modules": len([r for r, m in CORE_ROUTERS if m.get("phase") == 2]),
     "phase_3_modules": len([r for r, m in CORE_ROUTERS if m.get("phase") == 3]),
     "modules": [meta["name"] for _, meta in CORE_ROUTERS],
-    "status": "operational"
+    "status": "operational",
+    "architecture_version": "modular_v1.2"
 }
