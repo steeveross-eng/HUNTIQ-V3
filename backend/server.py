@@ -587,6 +587,27 @@ class SiteSettings(BaseModel):
 async def root():
     return {"message": "Chasse Bionic™ API - Hybrid Dropshipping/Affiliation System"}
 
+
+@api_router.get("/modules/status")
+async def get_modules_status():
+    """Get status of all modular engines (Phase 2)"""
+    try:
+        router_info = get_router_info()
+        return {
+            "success": True,
+            "status": "operational",
+            "total_modules": len(router_info),
+            "modules": router_info,
+            "architecture": "modular_v1"
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "status": "error",
+            "error": str(e)
+        }
+
+
 # ============================================
 # ADMIN AUTHENTICATION
 # ============================================
