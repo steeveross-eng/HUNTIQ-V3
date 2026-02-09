@@ -3,7 +3,7 @@
 Central router integration for all HUNTIQ modules.
 This file is the single point of import for server.py
 
-Version: 1.3.0 - Phase 4 Complete
+Version: 1.4.0 - Phase 5 Complete (Data Layers)
 """
 
 from fastapi import APIRouter
@@ -45,6 +45,15 @@ from modules.adaptive_strategy_engine.v1 import router as adaptive_router
 from modules.advanced_geospatial_engine.v1 import router as advanced_geo_router
 from modules.progression_engine.v1 import router as progression_router
 from modules.networking_engine.v1 import router as networking_router
+
+# ==============================================
+# DATA LAYER ROUTERS (Phase 5)
+# ==============================================
+from modules.data_layers.ecoforestry_layers import router as ecoforestry_data_router
+from modules.data_layers.behavioral_layers import router as behavioral_data_router
+from modules.data_layers.simulation_layers import router as simulation_data_router
+from modules.data_layers.layers_3d import router as layers_3d_data_router
+from modules.data_layers.advanced_geospatial_layers import router as advanced_geo_data_router
 
 
 # List of all available routers with their metadata
