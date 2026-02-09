@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
-const SITE_URL = process.env.REACT_APP_BACKEND_URL || 'https://geo-wildlife.preview.emergentagent.com';
+const SITE_URL = process.env.REACT_APP_BACKEND_URL || 'https://modular-huntiq.preview.emergentagent.com';
 
 const SEOHead = () => {
   const location = useLocation();
