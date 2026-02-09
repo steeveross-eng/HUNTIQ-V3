@@ -101,7 +101,7 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 | marketplace_engine | /api/v1/marketplace | C2C équipement |
 | plugins_engine | /api/v1/plugins | Feature flags |
 
-### Phase 4: Moteurs Plan Maître Backend ✅ (NOUVEAU)
+### Phase 4: Moteurs Plan Maître Backend ✅
 | Module | Endpoint | Fonctionnalités |
 |--------|----------|-----------------|
 | recommendation_engine | /api/v1/recommendation | Recommandations personnalisées, filtrage hybride |
@@ -114,6 +114,15 @@ Refactorisation majeure vers une architecture modulaire stricte ("PLAN MAÎTRE B
 | advanced_geospatial_engine | /api/v1/advanced-geo | Corridors, zones concentration, heatmaps |
 | progression_engine | /api/v1/progression | Gamification, XP, badges, défis |
 | networking_engine | /api/v1/network | Réseau social chasseurs |
+
+### Phase 5: Couches de Données Backend ✅ (NOUVEAU)
+| Module | Endpoint | Fonctionnalités |
+|--------|----------|-----------------|
+| ecoforestry_data_layer | /api/v1/data/ecoforestry | Peuplements forestiers SIEF, coupes, HSI habitats |
+| behavioral_data_layer | /api/v1/data/behavioral | Observations faune, patterns activité, mouvements |
+| simulation_data_layer | /api/v1/data/simulation | Corrélations météo, conditions optimales |
+| 3d_data_layer | /api/v1/data/3d | Élévation DEM, pente/aspect, viewshed |
+| advanced_geospatial_data_layer | /api/v1/data/geospatial-advanced | Corridors, zones concentration, connectivité, heatmaps |
 
 ---
 
