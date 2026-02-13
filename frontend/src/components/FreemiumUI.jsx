@@ -478,9 +478,6 @@ export const ProStatusCard = ({ userId }) => {
   );
 };
 
-// Named exports for individual components
-export { ProBadge, QuotaIndicator, UpgradeBanner, UpgradeModal, FeatureLock, ProStatusCard };
-
 // Default export - main wrapper component for route usage
 const FreemiumUI = () => {
   const userId = localStorage.getItem('user_id') || 'guest';
