@@ -117,22 +117,26 @@ Intégration et complétion de HUNTIQ V3 - Plateforme premium pour chasseurs, ge
 
 ## 4. Tests Passés ✅
 
-### Backend (100%)
+### Backend (96%)
 - API root endpoint
 - Payment packages (PRO pricing correct)
 - Products endpoint
 - Admin statistics
 - Marketplace categories/listings
 - Suppliers, customers, orders, commissions
+- **Freemium Engine** (quotas, check, status, user)
+- **Onboarding Engine** (config, progress, step complete)
+- **Tutorials Engine** (list, detail, progress)
 
-### Frontend (95%)
+### Frontend (85%)
 - Homepage navigation
-- Analyze page
+- Analyze page (13 critères BIONIC™)
 - Shop page
 - Territory page
 - Formations page
 - Cart functionality
 - Cookie consent
+- Composants Freemium/Onboarding/Tutorials (conditionnels)
 
 ---
 
