@@ -4571,6 +4571,30 @@ try:
 except ImportError as e:
     print(f"WMS Proxy API not available: {e}")
 
+# Include Freemium Engine
+try:
+    from freemium_engine import freemium_router
+    app.include_router(freemium_router)
+    print("Freemium Engine loaded")
+except ImportError as e:
+    print(f"Freemium Engine not available: {e}")
+
+# Include Onboarding Engine
+try:
+    from onboarding_engine import onboarding_router
+    app.include_router(onboarding_router)
+    print("Onboarding Engine loaded")
+except ImportError as e:
+    print(f"Onboarding Engine not available: {e}")
+
+# Include Tutorials Engine
+try:
+    from tutorials_engine import tutorials_router
+    app.include_router(tutorials_router)
+    print("Tutorials Engine loaded")
+except ImportError as e:
+    print(f"Tutorials Engine not available: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
