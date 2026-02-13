@@ -295,12 +295,12 @@ export const AdminTopUsersPage = () => {
               <span className="text-sm text-gray-400">Filtres:</span>
             </div>
             
-            <Select value={subscriptionFilter} onValueChange={setSubscriptionFilter}>
+            <Select value={subscriptionFilter || "all"} onValueChange={(v) => setSubscriptionFilter(v === "all" ? "" : v)}>
               <SelectTrigger className="w-40 bg-gray-900 border-gray-700">
                 <SelectValue placeholder="Abonnement" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tous</SelectItem>
+                <SelectItem value="all">Tous</SelectItem>
                 <SelectItem value="FREE">FREE</SelectItem>
                 <SelectItem value="PRO_MONTHLY">PRO Mensuel</SelectItem>
                 <SelectItem value="PRO_YEARLY">PRO Annuel</SelectItem>
@@ -308,12 +308,12 @@ export const AdminTopUsersPage = () => {
               </SelectContent>
             </Select>
             
-            <Select value={userTypeFilter} onValueChange={setUserTypeFilter}>
+            <Select value={userTypeFilter || "all"} onValueChange={(v) => setUserTypeFilter(v === "all" ? "" : v)}>
               <SelectTrigger className="w-40 bg-gray-900 border-gray-700">
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tous types</SelectItem>
+                <SelectItem value="all">Tous types</SelectItem>
                 <SelectItem value="hunter">Chasseur</SelectItem>
                 <SelectItem value="outfitter">Pourvoyeur</SelectItem>
                 <SelectItem value="supplier">Fournisseur</SelectItem>
