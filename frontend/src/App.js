@@ -39,6 +39,10 @@ import ProductDiscoveryAdmin from "@/components/ProductDiscoveryAdmin";
 import ReferralModule from "@/components/ReferralModule";
 import ReferralAdminPanel from "@/components/ReferralAdminPanel";
 import DynamicReferralWidget from "@/components/DynamicReferralWidget";
+import { ProBadge, ProStatusCard, UpgradeBanner, UpgradeModal, QuotaIndicator } from "@/components/FreemiumUI";
+import { TutorialTrigger, TutorialModal } from "@/components/InteractiveTutorials";
+import { OnboardingFlow, OnboardingModal } from "@/components/OnboardingFlow";
+import AdminTopUsersPage from "@/components/AdminTopUsers";
 import { ShopPage, ComparePage } from "@/pages";
 import { 
   ShoppingCart, FlaskConical, GitCompare, Star, DollarSign, ThumbsUp, Heart, Eye,
