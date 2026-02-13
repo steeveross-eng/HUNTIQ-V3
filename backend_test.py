@@ -501,6 +501,13 @@ class HuntiqAPITester:
         print("-" * 30)
         self.test_admin_stats()
         
+        print("\n👥 Admin Top Users Module Tests:")
+        self.test_admin_users_categories()
+        self.test_admin_users_stats_summary()
+        self.test_admin_users_top_list()
+        self.test_admin_users_top_export()
+        self.test_admin_users_profile()
+        
         # Print Results
         print("\n" + "=" * 60)
         print("📊 TEST RESULTS SUMMARY")
