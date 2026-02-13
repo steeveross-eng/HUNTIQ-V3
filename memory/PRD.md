@@ -198,15 +198,15 @@ STRIPE_API_KEY=sk_test_emergent
 
 ### Variables Frontend (.env)
 ```
-REACT_APP_BACKEND_URL=https://global-audit-v3.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://huntiq-merge.preview.emergentagent.com
 ```
 
 ---
 
 ## 7. URLs & Accès
 
-- **Preview**: https://global-audit-v3.preview.emergentagent.com
-- **API**: https://global-audit-v3.preview.emergentagent.com/api
+- **Preview**: https://huntiq-merge.preview.emergentagent.com
+- **API**: https://huntiq-merge.preview.emergentagent.com/api
 
 ---
 

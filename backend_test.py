@@ -10,7 +10,7 @@ import json
 from datetime import datetime
 
 class HuntiqAPITester:
-    def __init__(self, base_url="https://global-audit-v3.preview.emergentagent.com"):
+    def __init__(self, base_url="https://huntiq-merge.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.tests_run = 0
