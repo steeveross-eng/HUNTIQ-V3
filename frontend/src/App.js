@@ -738,6 +738,9 @@ function App() {
               <Route path="/plan-maitre" element={<PlanMaitrePage />} />
               <Route path="/referral" element={<ReferralModule />} />
               <Route path="/admin" element={<AdminPage onProductsUpdate={fetchProducts} />} />
+              <Route path="/admin/users/top" element={<AdminTopUsers />} />
+              <Route path="/onboarding" element={<OnboardingFlow />} />
+              <Route path="/tutorials" element={<InteractiveTutorials />} />
               <Route path="/networking" element={<NetworkingHub />} />
               <Route path="/lands" element={<LandsRental />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
