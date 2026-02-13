@@ -1,41 +1,53 @@
-# HUNTIQ V3 - Product Requirements Document
+# HUNTIQ V5 - Product Requirements Document
 
 ## Date de mise à jour: 2026-02-13
-## Version: 3.5 (Phase U1 - Stabilisation Complète)
+## Version: 5.0 (Fusion V3+V4 Complète)
 
 ---
 
 ## 1. Énoncé du Problème Original
 
-Intégration et complétion de HUNTIQ V3 - Plateforme premium pour chasseurs, gestionnaires de territoires et utilisateurs de caméras de chasse.
+Fusion de HUNTIQ V3 et V4 pour créer HUNTIQ V5 - Plateforme premium pour chasseurs, gestionnaires de territoires et utilisateurs de caméras de chasse.
 
 ### Sources
-- **Repository GitHub**: https://github.com/steeveross-eng/HUNTIQ-V3
+- **Repository V3**: https://github.com/steeveross-eng/HUNTIQ-V3
+- **Repository V4**: https://github.com/steeveross-eng/HUNTIQ-V4
 - **Plateforme Emergent**: Pod d'intégration
 
 ---
 
-## 2. Architecture
+## 2. Architecture V5 (Fusionnée)
 
 ### Stack Technique
-- **Frontend**: React 18 + Tailwind CSS + ShadCN UI + Leaflet Maps
+- **Frontend**: React 18 + Tailwind CSS + ShadCN UI + Leaflet Maps (Architecture V4 modulaire)
 - **Backend**: FastAPI (Python) avec modules multiples
 - **Base de données**: MongoDB
 - **Paiements**: Stripe (via emergentintegrations)
 - **Hébergement**: Emergent Platform
+
+### Structure Frontend V5
+```
+/app/frontend/src/
+├── App.js              # Point d'entrée principal (V4)
+├── components/         # Composants réutilisables (V4 + Phase 0.5)
+├── modules/            # 37 modules V4 (notifications, weather, etc.)
+├── pages/              # Pages principales (Dashboard, Business, etc.)
+├── contexts/           # Contextes React (Language, Auth)
+├── hooks/              # Hooks personnalisés
+└── services/           # Services API
+```
 
 ### Structure Backend
 ```
 /app/backend/
 ├── server.py          # Serveur principal FastAPI
 ├── payments.py        # Payment Engine (Stripe)
+├── freemium_engine.py # Gestion quotas FREE/PRO
+├── onboarding_engine.py # Flow d'inscription
+├── tutorials_engine.py # Tutoriels interactifs
+├── admin_users.py     # Module Admin Top Users
 ├── analyzer.py        # Module d'analyse BIONIC™
 ├── marketplace.py     # Hunt Marketplace
-├── territories.py     # Gestion territoires
-├── user_auth.py       # Authentification
-├── networking.py      # Module réseau
-├── referral_system.py # Système de parrainage
-├── lands_rental.py    # Location de terres
 └── ...
 ```
 
