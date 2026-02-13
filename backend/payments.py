@@ -116,26 +116,60 @@ MARKETPLACE_PACKAGES = {
         "features": ["Extension de 90 jours", "Économie 22%"]
     },
     
-    # PRO Subscriptions
+    # PRO Subscriptions - HUNTIQ V3 Official Pricing
     "pro_monthly": {
         "id": "pro_monthly",
         "name": "PRO Mensuel",
-        "description": "Accès PRO pendant 1 mois",
-        "amount": 19.99,
+        "description": "Accès PRO complet pendant 1 mois avec essai gratuit de 7 jours",
+        "amount": 7.99,
         "currency": "cad",
         "type": "subscription",
         "duration_days": 30,
-        "features": ["Annonces illimitées", "Badge PRO", "Statistiques avancées", "Support prioritaire"]
+        "trial_days": 7,
+        "features": [
+            "Analyses IA illimitées",
+            "Carte interactive avancée",
+            "Badge PRO",
+            "Statistiques de territoire",
+            "Support prioritaire",
+            "7 jours d'essai gratuit"
+        ]
     },
     "pro_yearly": {
         "id": "pro_yearly",
         "name": "PRO Annuel",
-        "description": "Accès PRO pendant 1 an - 2 mois gratuits!",
-        "amount": 199.99,
+        "description": "Accès PRO pendant 1 an - Économisez 17% avec essai gratuit de 7 jours",
+        "amount": 79.00,
         "currency": "cad",
         "type": "subscription",
         "duration_days": 365,
-        "features": ["Annonces illimitées", "Badge PRO", "Statistiques avancées", "Support prioritaire", "2 mois gratuits"]
+        "trial_days": 7,
+        "features": [
+            "Analyses IA illimitées",
+            "Carte interactive avancée",
+            "Badge PRO",
+            "Statistiques de territoire",
+            "Support prioritaire",
+            "7 jours d'essai gratuit",
+            "Économisez 17%"
+        ]
+    },
+    "pro_lifetime": {
+        "id": "pro_lifetime",
+        "name": "PRO À Vie",
+        "description": "Accès PRO permanent - Un seul paiement, accès illimité",
+        "amount": 199.00,
+        "currency": "cad",
+        "type": "one_time",
+        "duration_days": 36500,
+        "features": [
+            "Accès PRO permanent",
+            "Toutes les fonctionnalités PRO",
+            "Mises à jour futures incluses",
+            "Badge PRO Lifetime",
+            "Support VIP à vie",
+            "Meilleur rapport qualité/prix"
+        ]
     },
     
     # Outfitter/Pourvoyeur Packages
