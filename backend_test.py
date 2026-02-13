@@ -340,6 +340,25 @@ class HuntiqAPITester:
         self.test_orders_endpoint()
         self.test_commissions_endpoint()
         
+        # HUNTIQ V3 New Modules Tests
+        print("\n🆕 HUNTIQ V3 NEW MODULES TESTS")
+        print("-" * 30)
+        print("🔒 Freemium Engine Tests:")
+        self.test_freemium_quotas()
+        self.test_freemium_user_quotas()
+        self.test_freemium_check()
+        self.test_freemium_status()
+        
+        print("\n👋 Onboarding Engine Tests:")
+        self.test_onboarding_config()
+        self.test_onboarding_progress()
+        self.test_onboarding_step_complete()
+        
+        print("\n🎓 Tutorials Engine Tests:")
+        self.test_tutorials_list()
+        self.test_tutorial_detail()
+        self.test_tutorial_progress()
+
         # Admin Tests
         print("\n👑 ADMIN TESTS")
         print("-" * 30)
