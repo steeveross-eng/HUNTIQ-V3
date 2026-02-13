@@ -1,7 +1,7 @@
 # HUNTIQ V3 - Product Requirements Document
 
 ## Date de mise à jour: 2026-02-13
-## Version: 3.4 (Phase 0.5 - Stabilisation & Admin Top Users)
+## Version: 3.5 (Phase U1 - Stabilisation Complète)
 
 ---
 
