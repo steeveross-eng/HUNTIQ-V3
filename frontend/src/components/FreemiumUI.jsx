@@ -478,11 +478,21 @@ export const ProStatusCard = ({ userId }) => {
   );
 };
 
-export default {
-  ProBadge,
-  QuotaIndicator,
-  UpgradeBanner,
-  UpgradeModal,
-  FeatureLock,
-  ProStatusCard
+// Named exports for individual components
+export { ProBadge, QuotaIndicator, UpgradeBanner, UpgradeModal, FeatureLock, ProStatusCard };
+
+// Default export - main wrapper component for route usage
+const FreemiumUI = () => {
+  const userId = localStorage.getItem('user_id') || 'guest';
+  return (
+    <main className="min-h-screen bg-background py-24 px-4">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <h1 className="text-3xl font-bold text-white mb-8">Gestion Freemium</h1>
+        <ProStatusCard userId={userId} />
+        <UpgradeBanner userId={userId} />
+      </div>
+    </main>
+  );
 };
+
+export default FreemiumUI;
