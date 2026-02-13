@@ -297,6 +297,143 @@ class HuntiqAPITester:
         """Test tutorial progress tracking"""
         return self.run_test("Tutorial Progress", "GET", "/tutorials/progress/test_user_123")
 
+    # ============================================
+    # ADMIN TOP USERS MODULE TESTS
+    # ============================================
+
+    def test_admin_users_categories(self):
+        """Test admin top users categories endpoint"""
+        success, response = self.run_test("Admin Top Users Categories", "GET", "/admin/users/top/categories")
+        if success and response:
+            try:
+                data = response.json()
+                categories = data.get('categories', [])
+                
+                # Check for all 12 expected categories
+                expected_categories = [
+                    'global', 'free', 'pro_monthly', 'pro_yearly', 'pro_lifetime',
+                    'contributors', 'marketplace', 'analyzer', 'territory', 'growth',
+                    'pro_boost_candidates', 'mastery_candidates'
+                ]
+                
+                category_ids = [cat.get('id') for cat in categories]
+                
+                if len(categories) == 12:
+                    print(f"   ✅ All 12 categories present: {len(categories)} categories")
+                else:
+                    print(f"   ❌ Expected 12 categories, got {len(categories)}")
+                
+                missing_categories = [cat for cat in expected_categories if cat not in category_ids]
+                if not missing_categories:
+                    print(f"   ✅ All expected category IDs present")
+                else:
+                    print(f"   ❌ Missing categories: {missing_categories}")
+                    
+            except Exception as e:
+                print(f"   ⚠️ Error parsing categories response: {e}")
+        
+        return success
+
+    def test_admin_users_stats_summary(self):
+        """Test admin users statistics summary"""
+        success, response = self.run_test("Admin Users Stats Summary", "GET", "/admin/users/stats/summary")
+        if success and response:
+            try:
+                data = response.json()
+                
+                # Check required fields
+                required_fields = ['total_users', 'free_users', 'pro_users', 'conversion_rate']
+                
+                for field in required_fields:
+                    if field in data:
+                        print(f"   ✅ {field}: {data[field]}")
+                    else:
+                        print(f"   ❌ Missing field: {field}")
+                
+                # Check pro_users structure
+                if 'pro_users' in data and isinstance(data['pro_users'], dict):
+                    pro_fields = ['total', 'monthly', 'yearly', 'lifetime']
+                    for field in pro_fields:
+                        if field in data['pro_users']:
+                            print(f"   ✅ pro_users.{field}: {data['pro_users'][field]}")
+                        else:
+                            print(f"   ❌ Missing pro_users.{field}")
+                            
+            except Exception as e:
+                print(f"   ⚠️ Error parsing stats summary: {e}")
+        
+        return success
+
+    def test_admin_users_top_list(self):
+        """Test admin top users list with category filter"""
+        success, response = self.run_test("Admin Top Users List", "GET", "/admin/users/top?category=global&page=1&page_size=10")
+        if success and response:
+            try:
+                data = response.json()
+                
+                # Check response structure
+                required_fields = ['category', 'users', 'total_count', 'page', 'page_size']
+                
+                for field in required_fields:
+                    if field in data:
+                        print(f"   ✅ {field}: {data[field] if field != 'users' else f'List with {len(data[field])} users'}")
+                    else:
+                        print(f"   ❌ Missing field: {field}")
+                
+                # Check user structure if users exist
+                if 'users' in data and len(data['users']) > 0:
+                    user = data['users'][0]
+                    user_fields = ['user_id', 'name', 'email', 'status', 'global_activity_score']
+                    for field in user_fields:
+                        if field in user:
+                            print(f"   ✅ User has {field}")
+                        else:
+                            print(f"   ❌ User missing {field}")
+                            
+            except Exception as e:
+                print(f"   ⚠️ Error parsing top users response: {e}")
+        
+        return success
+
+    def test_admin_users_top_export(self):
+        """Test admin top users CSV export"""
+        success, response = self.run_test("Admin Top Users CSV Export", "GET", "/admin/users/top/export?category=global")
+        if success and response:
+            try:
+                data = response.json()
+                
+                # Check export response structure
+                required_fields = ['filename', 'content', 'total_records']
+                
+                for field in required_fields:
+                    if field in data:
+                        if field == 'content':
+                            print(f"   ✅ {field}: CSV content present ({len(data[field])} chars)")
+                        else:
+                            print(f"   ✅ {field}: {data[field]}")
+                    else:
+                        print(f"   ❌ Missing field: {field}")
+                
+                # Check CSV content structure
+                if 'content' in data and data['content']:
+                    lines = data['content'].split('\n')
+                    if len(lines) > 0:
+                        print(f"   ✅ CSV has {len(lines)} lines")
+                        # Check header
+                        if 'User ID' in lines[0] and 'Nom' in lines[0]:
+                            print(f"   ✅ CSV header looks correct")
+                        else:
+                            print(f"   ❌ CSV header may be incorrect")
+                            
+            except Exception as e:
+                print(f"   ⚠️ Error parsing export response: {e}")
+        
+        return success
+
+    def test_admin_users_profile(self):
+        """Test admin user profile detail"""
+        return self.run_test("Admin User Profile", "GET", "/admin/users/profile/test_user_123")
+
     def run_all_tests(self):
         """Run all backend tests"""
         print("=" * 60)
