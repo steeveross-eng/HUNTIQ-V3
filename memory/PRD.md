@@ -136,40 +136,45 @@ Intégration et complétion de HUNTIQ V3 - Plateforme premium pour chasseurs, ge
 
 ## 4. Tests Passés ✅
 
-### Phase 0.5 - Backend (100%)
+### Phase U1 - Stabilisation (2026-02-13) - Backend (100% - 22/22 tests)
+- API Root endpoint /api/
+- Freemium Engine (status, check, quotas, user)
+- Onboarding Engine (config, progress, start, step complete) - Bug ObjectId corrigé
+- Tutorials Engine (list, detail, progress)
+- Admin Users Module (top users, categories, stats)
+- Admin Stats dashboard
+- Products CRUD (list, create, top)
+- Payment Engine (plans PRO 7.99/79/199 CAD)
+- Site Maintenance Mode
+- Admin Login authentication
+
+### Phase U1 - Frontend (100%)
+- Homepage navigation complète
+- Admin Panel avec authentification
+- Admin Top Users avec 12 onglets catégories
+- Tous les composants UI fonctionnels
+
+### Historique Phase 0.5
 - Admin Top Users: 12 catégories, stats summary, export CSV, profils
-- API root endpoint
 - Payment packages (PRO pricing correct: 7.99/79/199 CAD)
-- Products endpoint
-- Admin statistics
 - Marketplace categories/listings
 - Suppliers, customers, orders, commissions
 - **Freemium Engine** (quotas, check, status, user)
 - **Onboarding Engine** (config, progress, step complete)
 - **Tutorials Engine** (list, detail, progress)
 
-### Phase 0.5 - Frontend (100%)
-- Admin Top Users page avec dashboard, 12 tabs, filtres, export CSV
-- Homepage navigation
-- Analyze page (13 critères BIONIC™)
-- Shop page
-- Territory page
-- Formations page
-- Cart functionality
-- Cookie consent
-- Composants Freemium/Onboarding/Tutorials
-
 ---
 
 ## 5. Backlog & Préparation Audit
 
-### P0 - Critique (Pré-Audit) ✅ TOUS COMPLÉTÉS
+### P0 - Critique ✅ TOUS COMPLÉTÉS
 - [x] Payment Engine Phase 13 complété
 - [x] Freemium Engine complété
 - [x] Onboarding Engine complété
 - [x] Tutoriels interactifs complétés
 - [x] Phase 0.5 Stabilisation complétée
 - [x] Module Admin Top Users complété
+- [x] Phase U1 Stabilisation complétée (2026-02-13)
 - [ ] Tests terrain & offline (à valider manuellement)
 
 ### P1 - Important
