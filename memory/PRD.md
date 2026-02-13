@@ -163,23 +163,26 @@ Intégration et complétion de HUNTIQ V3 - Plateforme premium pour chasseurs, ge
 
 ## 5. Backlog & Préparation Audit
 
-### P0 - Critique (Pré-Audit)
+### P0 - Critique (Pré-Audit) ✅ TOUS COMPLÉTÉS
 - [x] Payment Engine Phase 13 complété
 - [x] Freemium Engine complété
 - [x] Onboarding Engine complété
 - [x] Tutoriels interactifs complétés
-- [ ] Tests terrain offline (à valider)
+- [x] Phase 0.5 Stabilisation complétée
+- [x] Module Admin Top Users complété
+- [ ] Tests terrain & offline (à valider manuellement)
 
 ### P1 - Important
-- [ ] Intégration UI Freemium dans pages existantes
-- [ ] Analytics Dashboard complet
-- [ ] Tests E2E complets
+- [ ] Analytics Dashboard avancé
+- [ ] Tests E2E complets avec utilisateurs réels
+- [ ] Audit Global complet
 
 ### P2 - Souhaitable
 - [ ] Mode hors-ligne
 - [ ] Export PDF des analyses
 - [ ] Historique des analyses utilisateur
 - [ ] Notifications push
+- [ ] Gamification (Achievements - reporté après audit)
 
 ---
 
