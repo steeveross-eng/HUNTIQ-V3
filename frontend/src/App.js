@@ -39,6 +39,11 @@ import ProductDiscoveryAdmin from "@/components/ProductDiscoveryAdmin";
 import ReferralModule from "@/components/ReferralModule";
 import ReferralAdminPanel from "@/components/ReferralAdminPanel";
 import DynamicReferralWidget from "@/components/DynamicReferralWidget";
+// Phase 0.5 Components
+import AdminTopUsers from "@/components/AdminTopUsers";
+import FreemiumUI from "@/components/FreemiumUI";
+import OnboardingFlow from "@/components/OnboardingFlow";
+import InteractiveTutorials from "@/components/InteractiveTutorials";
 import { ShopPage, ComparePage } from "@/pages";
 import DashboardPage from "@/pages/DashboardPage";
 import BusinessPage from "@/pages/BusinessPage";
