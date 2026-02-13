@@ -1,119 +1,166 @@
 # HUNTIQ V3 - Product Requirements Document
 
-## Date de création: 2026-02-03
-## Version: 3.1 (avec IA GPT-5.2)
+## Date de mise à jour: 2026-02-13
+## Version: 3.2 (Phase 13 - Payment Engine)
 
 ---
 
 ## 1. Énoncé du Problème Original
 
-Fusionner HUNTIQ V1 et V2 + Intégrer l'IA GPT-5.2 pour l'analyse d'attractants.
+Intégration et complétion de HUNTIQ V3 - Plateforme premium pour chasseurs, gestionnaires de territoires et utilisateurs de caméras de chasse.
 
 ### Sources
-- **HUNTIQ V2** (base): https://github.com/steeveross-eng/HUNTIQ-V2
-- **HUNTIQ V1** (à fusionner): https://github.com/steeveross-eng/HUNTIQ
+- **Repository GitHub**: https://github.com/steeveross-eng/HUNTIQ-V3
+- **Plateforme Emergent**: Pod d'intégration
 
 ---
 
 ## 2. Architecture
 
 ### Stack Technique
-- **Frontend**: React 18 + Tailwind CSS + ShadCN UI
-- **Backend**: FastAPI (Python)
+- **Frontend**: React 18 + Tailwind CSS + ShadCN UI + Leaflet Maps
+- **Backend**: FastAPI (Python) avec modules multiples
 - **Base de données**: MongoDB
-- **IA**: GPT-5.2 via Emergent LLM Key
+- **Paiements**: Stripe (via emergentintegrations)
 - **Hébergement**: Emergent Platform
+
+### Structure Backend
+```
+/app/backend/
+├── server.py          # Serveur principal FastAPI
+├── payments.py        # Payment Engine (Stripe)
+├── analyzer.py        # Module d'analyse BIONIC™
+├── marketplace.py     # Hunt Marketplace
+├── territories.py     # Gestion territoires
+├── user_auth.py       # Authentification
+├── networking.py      # Module réseau
+├── referral_system.py # Système de parrainage
+├── lands_rental.py    # Location de terres
+└── ...
+```
 
 ---
 
 ## 3. Fonctionnalités Implémentées ✅
 
-### 3.1 AnalyzerModule BIONIC™ Complet
-- **13 Critères d'Évaluation** pondérés scientifiquement
-  1. Durée d'attraction (15%)
-  2. Appétence naturelle (12%)
-  3. Puissance olfactive (12%)
-  4. Persistance (10%)
-  5. Nutrition (10%)
-  6. Composés comportementaux (10%)
-  7. Résistance intempéries (8%)
-  8. Sécurité alimentaire (7%)
-  9. Certification ACIA (6%)
-  10. Résistance physique (4%)
-  11. Pureté ingrédients (3%)
-  12. Fidélisation (2%)
-  13. Stabilité chimique (1%)
+### 3.1 Modules Core
+- ✅ Authentification (inscription/connexion/réinitialisation)
+- ✅ Gestion des utilisateurs et profils
+- ✅ Cookie Consent / GDPR compliance
+- ✅ Maintenance Mode
 
-### 3.2 Analyse IA GPT-5.2
-- **Paramètres personnalisables**:
-  - Espèce cible (cerf, orignal, ours, sanglier, dindon)
-  - Saison (printemps, été, automne/rut, hiver)
-  - Conditions météo (froid, normal, chaud, pluie, neige)
-  - Type de terrain (forêt, champ, marais, montagne)
-- **Résultats**: Score, recommandation, meilleur moment, conseils d'application, produits alternatifs, base scientifique
+### 3.2 AnalyzerModule BIONIC™
+- ✅ 13 critères d'évaluation pondérés
+- ✅ Analyse IA avancée (GPT-5.2)
+- ✅ Comparaison de produits
+- ✅ Scoring scientifique
 
-### 3.3 FormationsPage FédéCP & BIONIC™
-**Formations FédéCP officielles:**
-1. Initiation chasse avec arme à feu (Obligatoire, 8h, ~75$)
-2. Initiation chasse à l'arc (Obligatoire arc/arbalète, 4h, ~50$)
-3. Formation au piégeage (Obligatoire, 8h, ~60$)
-4. Formation chasse à l'orignal (Facultatif, 4h, ~40$)
+### 3.3 Hunt Marketplace
+- ✅ Listings (vente, location, échange)
+- ✅ Filtres et recherche avancée
+- ✅ Favoris et notifications
+- ✅ Système de messagerie
 
-**Formations BIONIC™ exclusives:**
-1. Analyse de territoire BIONIC™
-2. Science des attractants
-3. Météo et mouvement du gibier
+### 3.4 Territory Module
+- ✅ Carte interactive (Leaflet)
+- ✅ Données géospatiales Québec
+- ✅ Zones de chasse
 
-**Types de Territoires au Québec:**
-1. Terres publiques (MFFP)
-2. ZEC (Zones d'exploitation contrôlée)
-3. Pourvoiries (privées avec services)
-4. Réserves fauniques (SÉPAQ)
-5. Terres privées
+### 3.5 Formations
+- ✅ Formations FédéCP officielles
+- ✅ Formations BIONIC™ exclusives
+- ✅ Types de territoires Québec
 
----
+### 3.6 Payment Engine (Phase 13) ✅ COMPLÉTÉ
+- ✅ Stripe Checkout intégré
+- ✅ Tarifs PRO validés:
+  - PRO Mensuel: 7.99 CAD (essai 7 jours)
+  - PRO Annuel: 79.00 CAD (essai 7 jours)
+  - PRO À Vie: 199.00 CAD
+- ✅ Packages Marketplace (featured, auto-bump, renewal)
+- ✅ Webhooks Stripe
+- ✅ Pages Success/Cancel
 
-## 4. APIs Développées
-
-### Endpoints d'Analyse
-- `POST /api/analyze` - Analyse standard
-- `POST /api/analyze/ai-advanced` - Analyse IA GPT-5.2
-- `GET /api/analyze/criteria` - Liste des 13 critères
-- `GET /api/analyze/references` - Références scientifiques
-
-### Endpoints Produits
-- `GET /api/products/top` - Top produits
-- `POST /api/products` - Créer produit
-- `GET /api/cart/{session_id}` - Voir panier
+### 3.7 Networking Hub
+- ✅ Guides et pourvoyeurs
+- ✅ Système de parrainage
+- ✅ Partenariats
 
 ---
 
-## 5. Backlog Restant
+## 4. Tests Passés ✅
 
-### P0 - Critique
-- [x] ~~Tests fonctionnels~~ ✅ Complétés
+### Backend (100%)
+- API root endpoint
+- Payment packages (PRO pricing correct)
+- Products endpoint
+- Admin statistics
+- Marketplace categories/listings
+- Suppliers, customers, orders, commissions
+
+### Frontend (95%)
+- Homepage navigation
+- Analyze page
+- Shop page
+- Territory page
+- Formations page
+- Cart functionality
+- Cookie consent
+
+---
+
+## 5. Backlog & Préparation Audit
+
+### P0 - Critique (Pré-Audit)
+- [x] Payment Engine Phase 13 complété
+- [ ] Tests terrain offline (à valider)
 
 ### P1 - Important
-- [ ] Optimiser temps de réponse IA (caching)
-- [ ] Ajouter plus d'espèces (faisan, lièvre, etc.)
-- [ ] Export PDF des analyses
+- [ ] Onboarding Engine complet
+- [ ] Tutoriels interactifs
+- [ ] Freemium Engine (quotas, badges, modals)
+- [ ] Analytics Dashboard complet
 
 ### P2 - Souhaitable
-- [ ] Historique des analyses utilisateur
-- [ ] Comparaison multi-produits IA
 - [ ] Mode hors-ligne
+- [ ] Export PDF des analyses
+- [ ] Historique des analyses utilisateur
 
 ---
 
-## 6. Configuration
+## 6. Configuration Environnement
 
-### Variables d'environnement Backend
+### Variables Backend (.env)
 ```
 MONGO_URL="mongodb://localhost:27017"
 DB_NAME="test_database"
-EMERGENT_LLM_KEY="sk-emergent-xxxx"
+CORS_ORIGINS="*"
+STRIPE_API_KEY=sk_test_emergent
+```
+
+### Variables Frontend (.env)
+```
+REACT_APP_BACKEND_URL=https://global-audit-v3.preview.emergentagent.com
 ```
 
 ---
 
-*HUNTIQ V3 - Powered by GPT-5.2 & Emergent Platform*
+## 7. URLs & Accès
+
+- **Preview**: https://global-audit-v3.preview.emergentagent.com
+- **API**: https://global-audit-v3.preview.emergentagent.com/api
+
+---
+
+## 8. Prochaines Étapes
+
+1. Compléter les modules Onboarding, Tutoriels, Freemium
+2. Audit Global complet
+3. Tests terrain et offline
+4. Stabilisation finale
+5. GO-LIVE (après validation exécutive)
+
+---
+
+*HUNTIQ V3 - Powered by Emergent Platform*
+*Phase 13 Payment Engine - COMPLÉTÉ*
