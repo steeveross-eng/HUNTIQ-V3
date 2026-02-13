@@ -144,18 +144,21 @@ Intégration et complétion de HUNTIQ V3 - Plateforme premium pour chasseurs, ge
 
 ### P0 - Critique (Pré-Audit)
 - [x] Payment Engine Phase 13 complété
+- [x] Freemium Engine complété
+- [x] Onboarding Engine complété
+- [x] Tutoriels interactifs complétés
 - [ ] Tests terrain offline (à valider)
 
 ### P1 - Important
-- [ ] Onboarding Engine complet
-- [ ] Tutoriels interactifs
-- [ ] Freemium Engine (quotas, badges, modals)
+- [ ] Intégration UI Freemium dans pages existantes
 - [ ] Analytics Dashboard complet
+- [ ] Tests E2E complets
 
 ### P2 - Souhaitable
 - [ ] Mode hors-ligne
 - [ ] Export PDF des analyses
 - [ ] Historique des analyses utilisateur
+- [ ] Notifications push
 
 ---
 
