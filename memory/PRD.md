@@ -178,6 +178,10 @@ Intégration et complétion de HUNTIQ V3 - Plateforme premium pour chasseurs, ge
 - [ ] Tests terrain & offline (à valider manuellement)
 
 ### P1 - Important
+- [ ] Phase U2: Validation finale utilisateur
+- [ ] Configurer RESEND_API_KEY pour emails
+- [ ] Configurer WEATHER_KEY pour météo
+- [ ] Bug UI: lien Admin non-cliquable avec panier ouvert
 - [ ] Analytics Dashboard avancé
 - [ ] Tests E2E complets avec utilisateurs réels
 - [ ] Audit Global complet
