@@ -206,7 +206,7 @@ async def start_onboarding(user_id: str):
     """Démarre l'onboarding pour un utilisateur"""
     database = await get_db()
     
-    existing = await database.onboarding_progress.find_one({"user_id": user_id})
+    existing = await database.onboarding_progress.find_one({"user_id": user_id}, {"_id": 0})
     
     if existing and existing.get("is_complete"):
         return {
@@ -227,6 +227,8 @@ async def start_onboarding(user_id: str):
             "completed_at": None
         }
         await database.onboarding_progress.insert_one(progress)
+        # Remove _id added by insert_one before returning
+        progress.pop("_id", None)
     else:
         progress = existing
     
