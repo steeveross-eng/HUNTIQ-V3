@@ -447,9 +447,4 @@ export const TutorialTrigger = ({ userId, className = "" }) => {
   );
 };
 
-export default {
-  TutorialsList,
-  InteractiveTutorial,
-  TutorialModal,
-  TutorialTrigger
-};
+export default TutorialModal;
