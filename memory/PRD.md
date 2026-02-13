@@ -136,9 +136,10 @@ Intégration et complétion de HUNTIQ V3 - Plateforme premium pour chasseurs, ge
 
 ## 4. Tests Passés ✅
 
-### Backend (96%)
+### Phase 0.5 - Backend (100%)
+- Admin Top Users: 12 catégories, stats summary, export CSV, profils
 - API root endpoint
-- Payment packages (PRO pricing correct)
+- Payment packages (PRO pricing correct: 7.99/79/199 CAD)
 - Products endpoint
 - Admin statistics
 - Marketplace categories/listings
@@ -147,7 +148,8 @@ Intégration et complétion de HUNTIQ V3 - Plateforme premium pour chasseurs, ge
 - **Onboarding Engine** (config, progress, step complete)
 - **Tutorials Engine** (list, detail, progress)
 
-### Frontend (85%)
+### Phase 0.5 - Frontend (100%)
+- Admin Top Users page avec dashboard, 12 tabs, filtres, export CSV
 - Homepage navigation
 - Analyze page (13 critères BIONIC™)
 - Shop page
@@ -155,7 +157,7 @@ Intégration et complétion de HUNTIQ V3 - Plateforme premium pour chasseurs, ge
 - Formations page
 - Cart functionality
 - Cookie consent
-- Composants Freemium/Onboarding/Tutorials (conditionnels)
+- Composants Freemium/Onboarding/Tutorials
 
 ---
 
