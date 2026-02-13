@@ -81,7 +81,34 @@ Intégration et complétion de HUNTIQ V3 - Plateforme premium pour chasseurs, ge
 - ✅ Webhooks Stripe
 - ✅ Pages Success/Cancel
 
-### 3.7 Networking Hub
+### 3.7 Freemium Engine ✅ COMPLÉTÉ
+- ✅ Quotas FREE validés:
+  - Marketplace: 2 annonces (infos vendeur floutées)
+  - Analyzer IA: 1 analyse/semaine (résultats partiels)
+  - Territoires: 1
+  - Waypoints: 2
+  - Hotspots import: 1
+  - Notifications: météo générale
+- ✅ PRO = illimité + outils avancés
+- ✅ API /api/freemium/* (quotas, check, use, upgrade, status)
+
+### 3.8 Onboarding Engine ✅ COMPLÉTÉ
+- ✅ 5 étapes: welcome, profile, preferences, features, complete
+- ✅ Profil chasseur: espèces, région, expérience, objectifs
+- ✅ Préférences: langue, notifications (météo, activité, news)
+- ✅ Tour des fonctionnalités (Analyzer, Territory, Marketplace, PRO)
+- ✅ 8 espèces cibles, 16 régions Québec, 4 niveaux d'expérience
+
+### 3.9 Tutoriels Interactifs ✅ COMPLÉTÉ
+- ✅ 3 tutoriels core:
+  - Analyzer BIONIC™ (5 étapes)
+  - Territory Map (6 étapes)
+  - Marketplace (6 étapes)
+- ✅ Système de progression persistant
+- ✅ Types d'étapes: info, action, warning, completion
+- ✅ Confidentialité hotspots intégrée dans tutoriels
+
+### 3.10 Networking Hub
 - ✅ Guides et pourvoyeurs
 - ✅ Système de parrainage
 - ✅ Partenariats
