@@ -39,11 +39,11 @@ import ProductDiscoveryAdmin from "@/components/ProductDiscoveryAdmin";
 import ReferralModule from "@/components/ReferralModule";
 import ReferralAdminPanel from "@/components/ReferralAdminPanel";
 import DynamicReferralWidget from "@/components/DynamicReferralWidget";
-import { ProBadge, ProStatusCard, UpgradeBanner, UpgradeModal, QuotaIndicator } from "@/components/FreemiumUI";
-import { TutorialTrigger, TutorialModal } from "@/components/InteractiveTutorials";
-import { OnboardingFlow, OnboardingModal } from "@/components/OnboardingFlow";
-import AdminTopUsersPage from "@/components/AdminTopUsers";
 import { ShopPage, ComparePage } from "@/pages";
+import DashboardPage from "@/pages/DashboardPage";
+import BusinessPage from "@/pages/BusinessPage";
+import PlanMaitrePage from "@/pages/PlanMaitrePage";
+import { NotificationProvider } from "@/modules/notifications";
 import { 
   ShoppingCart, FlaskConical, GitCompare, Star, DollarSign, ThumbsUp, Heart, Eye,
   Shield, MousePointer, TrendingUp, CheckCircle, ChevronRight, Menu, X, ArrowLeft,
@@ -101,11 +101,12 @@ const Navigation = ({ cartCount, onCartOpen }) => {
         </Link>
         <nav className="hidden md:flex items-center gap-4">
           <Link to="/" className="text-gray-400 hover:text-white transition-colors">{t('nav_home')}</Link>
+          <Link to="/dashboard" className="text-[#f5a623] hover:text-[#d4890e] transition-colors font-medium" data-testid="nav-dashboard">Dashboard</Link>
+          <Link to="/business" className="text-purple-400 hover:text-purple-300 transition-colors font-medium" data-testid="nav-business">Business</Link>
+          <Link to="/plan-maitre" className="text-emerald-400 hover:text-emerald-300 transition-colors font-medium" data-testid="nav-plan-maitre">Plan Maître</Link>
           <Link to="/analyze" className="text-gray-400 hover:text-white transition-colors">{t('nav_analyze')}</Link>
-          <Link to="/compare" className="text-gray-400 hover:text-white transition-colors">{t('nav_compare')}</Link>
           <Link to="/shop" className="text-gray-400 hover:text-white transition-colors">{t('nav_shop')}</Link>
           <Link to="/territoire" className="text-gray-400 hover:text-white transition-colors">{t('nav_territory')}</Link>
-          <Link to="/formations" className="text-gray-400 hover:text-white transition-colors">Formations</Link>
         </nav>
         <div className="flex items-center gap-4">
           <LanguageSwitcher />
@@ -147,9 +148,6 @@ const HeroSection = () => {
   const { t, brand } = useLanguage();
   return (
     <section className="hero-bg min-h-screen flex flex-col items-center justify-center text-center px-4 pt-24" data-testid="hero-section">
-      <div className="golden-border rounded-2xl p-6 mb-8 bg-black/60">
-        <Logo size="large" />
-      </div>
       <h1 className="text-4xl md:text-5xl golden-text font-bold mb-8 max-w-4xl leading-tight">
         {brand.tagline}
       </h1>
@@ -705,6 +703,11 @@ function App() {
   return (
     <LanguageProvider>
       <AuthProvider>
+        <NotificationProvider 
+          coordinates={{ lat: 46.8139, lng: -71.2080 }}
+          enabled={true}
+          warningMinutes={15}
+        >
         <div className="App min-h-screen bg-background">
           <BrowserRouter>
             <SEOHead />
@@ -725,9 +728,11 @@ function App() {
               <Route path="/mon-territoire-bionic" element={<MonTerritoireBionicPage />} />
               <Route path="/marketplace" element={<MarketplacePage />} />
               <Route path="/formations" element={<FormationsPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/business" element={<BusinessPage />} />
+              <Route path="/plan-maitre" element={<PlanMaitrePage />} />
               <Route path="/referral" element={<ReferralModule />} />
               <Route path="/admin" element={<AdminPage onProductsUpdate={fetchProducts} />} />
-              <Route path="/admin/users/top" element={<AdminTopUsersPage />} />
               <Route path="/networking" element={<NetworkingHub />} />
               <Route path="/lands" element={<LandsRental />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
@@ -740,6 +745,7 @@ function App() {
             <CookieConsent />
           </BrowserRouter>
         </div>
+        </NotificationProvider>
       </AuthProvider>
     </LanguageProvider>
   );
