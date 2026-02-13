@@ -447,4 +447,46 @@ export const TutorialTrigger = ({ userId, className = "" }) => {
   );
 };
 
-export default TutorialModal;
+// Named exports
+export { TutorialsList, InteractiveTutorial, TutorialModal, TutorialTrigger };
+
+// Page wrapper for route usage
+const InteractiveTutorials = () => {
+  const userId = localStorage.getItem('user_id') || 'guest';
+  const [selectedTutorial, setSelectedTutorial] = useState(null);
+
+  const handleStartTutorial = (tutorialId) => {
+    setSelectedTutorial(tutorialId);
+  };
+
+  const handleComplete = () => {
+    setSelectedTutorial(null);
+  };
+
+  return (
+    <main className="min-h-screen bg-background py-24 px-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center gap-3 mb-8">
+          <GraduationCap className="h-8 w-8 text-[#f5a623]" />
+          <h1 className="text-3xl font-bold text-white">Tutoriels HUNTIQ</h1>
+        </div>
+        
+        {selectedTutorial ? (
+          <InteractiveTutorial
+            tutorialId={selectedTutorial}
+            userId={userId}
+            onComplete={handleComplete}
+            onClose={() => setSelectedTutorial(null)}
+          />
+        ) : (
+          <TutorialsList 
+            userId={userId} 
+            onStartTutorial={handleStartTutorial}
+          />
+        )}
+      </div>
+    </main>
+  );
+};
+
+export default InteractiveTutorials;
