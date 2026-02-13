@@ -447,9 +447,6 @@ export const TutorialTrigger = ({ userId, className = "" }) => {
   );
 };
 
-// Named exports
-export { TutorialsList, InteractiveTutorial, TutorialModal, TutorialTrigger };
-
 // Page wrapper for route usage
 const InteractiveTutorials = () => {
   const userId = localStorage.getItem('user_id') || 'guest';
