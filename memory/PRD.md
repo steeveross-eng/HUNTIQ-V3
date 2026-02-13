@@ -148,7 +148,15 @@ Fusion de HUNTIQ V3 et V4 pour créer HUNTIQ V5 - Plateforme premium pour chasse
 
 ## 4. Tests Passés ✅
 
-### Phase U1 - Stabilisation (2026-02-13) - Backend (100% - 22/22 tests)
+### Phase U1 - Fusion V5 Frontend (2026-02-13) - 100%
+- ✅ Frontend V4 migré avec succès
+- ✅ Navigation V4: Dashboard, Business, Plan Maître, Analyze, Shop, Territory
+- ✅ Modules Phase 0.5 intégrés: Tutorials, Onboarding, FreemiumUI, AdminTopUsers
+- ✅ Dashboard BIONIC™ Phase 8 fonctionnel (météo, scoring, insights IA)
+- ✅ Territory Map avec couches, waypoints, exclusion eau
+- ✅ Analyzeur BIONIC™ avec 13 critères
+
+### Phase U1 - Backend (100% - 22/22 tests)
 - API Root endpoint /api/
 - Freemium Engine (status, check, quotas, user)
 - Onboarding Engine (config, progress, start, step complete) - Bug ObjectId corrigé
@@ -160,20 +168,20 @@ Fusion de HUNTIQ V3 et V4 pour créer HUNTIQ V5 - Plateforme premium pour chasse
 - Site Maintenance Mode
 - Admin Login authentication
 
-### Phase U1 - Frontend (100%)
-- Homepage navigation complète
-- Admin Panel avec authentification
-- Admin Top Users avec 12 onglets catégories
-- Tous les composants UI fonctionnels
-
-### Historique Phase 0.5
-- Admin Top Users: 12 catégories, stats summary, export CSV, profils
-- Payment packages (PRO pricing correct: 7.99/79/199 CAD)
-- Marketplace categories/listings
-- Suppliers, customers, orders, commissions
-- **Freemium Engine** (quotas, check, status, user)
-- **Onboarding Engine** (config, progress, step complete)
-- **Tutorials Engine** (list, detail, progress)
+### Routes Frontend V5 Validées
+| Route | Module | Status |
+|-------|--------|--------|
+| / | Homepage V4 | ✅ |
+| /dashboard | Dashboard BIONIC™ | ✅ |
+| /business | Business Page | ✅ |
+| /plan-maitre | Plan Maître | ✅ |
+| /analyze | Analyzer BIONIC™ | ✅ |
+| /shop | Shop Page | ✅ |
+| /territoire | Territory Map | ✅ |
+| /tutorials | Tutoriels (Phase 0.5) | ✅ |
+| /onboarding | Onboarding Flow (Phase 0.5) | ✅ |
+| /admin | Admin Panel | ✅ |
+| /admin/users/top | Admin Top Users (Phase 0.5) | ✅ |
 
 ---
 
