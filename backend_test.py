@@ -167,6 +167,136 @@ class HuntiqAPITester:
         """Test payment transactions endpoint"""
         return self.run_test("Payment Transactions", "GET", "/payments/transactions")
 
+    # ============================================
+    # HUNTIQ V3 NEW MODULES TESTS
+    # ============================================
+
+    def test_freemium_quotas(self):
+        """Test freemium quotas configuration"""
+        success, response = self.run_test("Freemium Quotas Config", "GET", "/freemium/quotas")
+        if success and response:
+            try:
+                data = response.json()
+                free_quotas = data.get('free_quotas', {})
+                pricing = data.get('pricing', {})
+                
+                # Check key quotas
+                if 'marketplace_listings' in free_quotas and free_quotas['marketplace_listings']['limit'] == 2:
+                    print(f"   ✅ Marketplace listings quota: {free_quotas['marketplace_listings']['limit']}")
+                else:
+                    print(f"   ❌ Marketplace listings quota incorrect")
+                
+                if 'analyzer_ai' in free_quotas and free_quotas['analyzer_ai']['limit'] == 1:
+                    print(f"   ✅ AI analyzer quota: {free_quotas['analyzer_ai']['limit']}/week")
+                else:
+                    print(f"   ❌ AI analyzer quota incorrect")
+                
+                # Check pricing
+                if pricing.get('monthly', {}).get('amount') == 7.99:
+                    print(f"   ✅ Monthly pricing: {pricing['monthly']['amount']} CAD")
+                else:
+                    print(f"   ❌ Monthly pricing incorrect")
+                    
+            except Exception as e:
+                print(f"   ⚠️ Error parsing quotas response: {e}")
+        
+        return success
+
+    def test_freemium_user_quotas(self):
+        """Test user quota status"""
+        return self.run_test("User Quota Status", "GET", "/freemium/user/test_user_123")
+
+    def test_freemium_check(self):
+        """Test quota check functionality"""
+        test_data = {
+            "user_id": "test_user_123",
+            "feature": "marketplace_listings"
+        }
+        return self.run_test("Freemium Check", "POST", "/freemium/check", data=test_data)
+
+    def test_freemium_status(self):
+        """Test PRO status check"""
+        return self.run_test("PRO Status", "GET", "/freemium/status/test_user_123")
+
+    def test_onboarding_config(self):
+        """Test onboarding configuration"""
+        success, response = self.run_test("Onboarding Config", "GET", "/onboarding/config")
+        if success and response:
+            try:
+                data = response.json()
+                steps = data.get('steps', [])
+                options = data.get('options', {})
+                
+                # Check key steps
+                step_ids = [step.get('id') for step in steps]
+                expected_steps = ['welcome', 'profile', 'preferences', 'features', 'complete']
+                
+                if all(step in step_ids for step in expected_steps):
+                    print(f"   ✅ All onboarding steps present: {len(steps)} steps")
+                else:
+                    print(f"   ❌ Missing onboarding steps")
+                
+                # Check options
+                if 'target_species' in options and len(options['target_species']) > 0:
+                    print(f"   ✅ Target species options: {len(options['target_species'])} species")
+                else:
+                    print(f"   ❌ Target species options missing")
+                    
+            except Exception as e:
+                print(f"   ⚠️ Error parsing onboarding config: {e}")
+        
+        return success
+
+    def test_onboarding_progress(self):
+        """Test onboarding progress tracking"""
+        return self.run_test("Onboarding Progress", "GET", "/onboarding/progress/test_user_123")
+
+    def test_onboarding_step_complete(self):
+        """Test onboarding step completion"""
+        test_data = {
+            "user_id": "test_user_123",
+            "step_id": "welcome",
+            "data": None
+        }
+        return self.run_test("Complete Onboarding Step", "POST", "/onboarding/step/complete", data=test_data)
+
+    def test_tutorials_list(self):
+        """Test tutorials list"""
+        success, response = self.run_test("Tutorials List", "GET", "/tutorials/list")
+        if success and response:
+            try:
+                data = response.json()
+                tutorials = data.get('tutorials', [])
+                
+                # Check for key tutorials
+                tutorial_ids = [t.get('id') for t in tutorials]
+                expected_tutorials = ['analyzer_bionic', 'territory_map', 'marketplace']
+                
+                if all(tutorial in tutorial_ids for tutorial in expected_tutorials):
+                    print(f"   ✅ All core tutorials present: {len(tutorials)} tutorials")
+                else:
+                    print(f"   ❌ Missing core tutorials")
+                
+                # Check tutorial structure
+                analyzer_tutorial = next((t for t in tutorials if t.get('id') == 'analyzer_bionic'), None)
+                if analyzer_tutorial and analyzer_tutorial.get('steps_count', 0) > 0:
+                    print(f"   ✅ Analyzer tutorial has {analyzer_tutorial['steps_count']} steps")
+                else:
+                    print(f"   ❌ Analyzer tutorial structure incorrect")
+                    
+            except Exception as e:
+                print(f"   ⚠️ Error parsing tutorials list: {e}")
+        
+        return success
+
+    def test_tutorial_detail(self):
+        """Test tutorial detail endpoint"""
+        return self.run_test("Tutorial Detail", "GET", "/tutorials/detail/analyzer_bionic")
+
+    def test_tutorial_progress(self):
+        """Test tutorial progress tracking"""
+        return self.run_test("Tutorial Progress", "GET", "/tutorials/progress/test_user_123")
+
     def run_all_tests(self):
         """Run all backend tests"""
         print("=" * 60)
