@@ -4362,7 +4362,7 @@ try:
         await init_territory_module()
         logger.info("Territory analysis module started")
 except ImportError as e:
-    logger.warning(f"Territory module not available: {e}")
+    logging.warning(f"Territory module not available: {e}")
 
 # Include Hunt Marketplace Module
 try:
