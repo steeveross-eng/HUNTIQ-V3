@@ -4595,6 +4595,14 @@ try:
 except ImportError as e:
     print(f"Tutorials Engine not available: {e}")
 
+# Include Admin Users Module
+try:
+    from admin_users import admin_users_router
+    app.include_router(admin_users_router)
+    print("Admin Users Module loaded")
+except ImportError as e:
+    print(f"Admin Users Module not available: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
