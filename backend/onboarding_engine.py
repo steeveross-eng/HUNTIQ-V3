@@ -196,6 +196,8 @@ async def get_onboarding_progress(user_id: str):
             "completed_at": None
         }
         await database.onboarding_progress.insert_one(progress)
+        # Remove _id added by insert_one before returning
+        progress.pop("_id", None)
     
     return progress
 
